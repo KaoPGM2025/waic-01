@@ -1,475 +1,305 @@
-<!doctype html>
-<html lang="th" class="h-full">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>บันทึกรายได้</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="/_sdk/element_sdk.js"></script>
-  <script src="/_sdk/data_sdk.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
-  <style>
-    body {
-      box-sizing: border-box;
-    }
-    * {
-      font-family: 'Prompt', sans-serif;
-    }
-    .glass-card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-    }
-    .income-item {
-      transition: all 0.2s ease;
-    }
-    .income-item:hover {
-      transform: translateX(4px);
-    }
-    .tab-active {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      color: white;
-      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
-    }
-    .btn-add {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      transition: all 0.3s ease;
-    }
-    .btn-add:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
-    }
-    .summary-card {
-      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-    }
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-slide {
-      animation: slideIn 0.3s ease;
-    }
-    .delete-confirm {
-      background: #fee2e2;
-      border: 1px solid #fca5a5;
-    }
-  </style>
-  <style>@view-transition { navigation: auto; }</style>
- </head>
- <body class="h-full bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50">
-  <div id="app" class="h-full overflow-auto">
-   <div class="min-h-full p-4 md:p-6"><!-- Header -->
-    <div class="text-center mb-6">
-     <div class="inline-flex items-center gap-3 mb-2"><span class="text-4xl">💰</span>
-      <h1 id="app-title" class="text-2xl md:text-3xl font-bold text-emerald-800">บันทึกรายได้</h1>
-     </div>
-     <p class="text-emerald-600 text-sm">บันทึกรายได้ของคุณอย่างง่ายดาย</p>
-    </div><!-- Summary Cards -->
-    <div class="grid grid-cols-3 gap-3 mb-6">
-     <div class="summary-card rounded-2xl p-4 text-center">
-      <p class="text-xs text-emerald-600 mb-1">วันนี้</p>
-      <p id="today-total" class="text-lg md:text-xl font-bold text-emerald-800">฿0</p>
-     </div>
-     <div class="summary-card rounded-2xl p-4 text-center">
-      <p class="text-xs text-emerald-600 mb-1">สัปดาห์นี้</p>
-      <p id="week-total" class="text-lg md:text-xl font-bold text-emerald-800">฿0</p>
-     </div>
-     <div class="summary-card rounded-2xl p-4 text-center">
-      <p class="text-xs text-emerald-600 mb-1">เดือนนี้</p>
-      <p id="month-total" class="text-lg md:text-xl font-bold text-emerald-800">฿0</p>
-     </div>
-    </div><!-- Add Income Form -->
-    <div class="glass-card rounded-2xl p-5 mb-6 shadow-lg border border-emerald-100">
-     <h2 class="text-lg font-semibold text-emerald-800 mb-4 flex items-center gap-2"><span>➕</span> เพิ่มรายได้ใหม่</h2>
-     <form id="income-form" class="space-y-4">
-      <div><label for="amount" class="block text-sm font-medium text-emerald-700 mb-1">จำนวนเงิน</label> <input type="number" id="amount" placeholder="0.00" step="0.01" min="0" required class="w-full px-4 py-3 rounded-xl border-2 border-emerald-200 focus:border-emerald-500 focus:outline-none text-lg font-semibold text-emerald-800">
-      </div>
-      <div><label for="description" class="block text-sm font-medium text-emerald-700 mb-1">รายละเอียด</label> <input type="text" id="description" placeholder="เช่น ขายของออนไลน์, เงินเดือน" required class="w-full px-4 py-3 rounded-xl border-2 border-emerald-200 focus:border-emerald-500 focus:outline-none">
-      </div>
-      <div><label for="category" class="block text-sm font-medium text-emerald-700 mb-1">หมวดหมู่</label> <select id="category" required class="w-full px-4 py-3 rounded-xl border-2 border-emerald-200 focus:border-emerald-500 focus:outline-none bg-white"> <option value="salary">💼 เงินเดือน</option> <option value="freelance">💻 ฟรีแลนซ์</option> <option value="business">🏪 ธุรกิจ</option> <option value="investment">📈 การลงทุน</option> <option value="bonus">🎁 โบนัส</option> <option value="other">📦 อื่นๆ</option> </select>
-      </div>
-      <div><label for="date" class="block text-sm font-medium text-emerald-700 mb-1">วันที่</label> <input type="date" id="date" required class="w-full px-4 py-3 rounded-xl border-2 border-emerald-200 focus:border-emerald-500 focus:outline-none">
-      </div><button type="submit" id="submit-btn" class="btn-add w-full py-3 rounded-xl text-white font-semibold text-lg"> บันทึกรายได้ </button>
-     </form>
-    </div><!-- View Tabs -->
-    <div class="flex gap-2 mb-4 bg-white rounded-xl p-1 shadow-sm"><button data-view="day" class="view-tab flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all tab-active"> 📅 วัน </button> <button data-view="week" class="view-tab flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all text-emerald-600"> 📆 สัปดาห์ </button> <button data-view="month" class="view-tab flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all text-emerald-600"> 🗓️ เดือน </button>
-    </div><!-- Income List -->
-    <div class="glass-card rounded-2xl p-5 shadow-lg border border-emerald-100">
-     <div class="flex justify-between items-center mb-4">
-      <h2 id="list-title" class="text-lg font-semibold text-emerald-800">รายได้วันนี้</h2><span id="list-count" class="text-sm text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full">0 รายการ</span>
-     </div>
-     <div id="income-list" class="space-y-3">
-      <div class="text-center py-8 text-emerald-400"><span class="text-4xl block mb-2">📝</span>
-       <p>ยังไม่มีรายได้</p>
-      </div>
-     </div>
-    </div><!-- Limit Warning -->
-    <div id="limit-warning" class="hidden mt-4 p-4 bg-amber-100 border border-amber-300 rounded-xl text-amber-800 text-sm text-center">
-     ⚠️ คุณใกล้ถึงขีดจำกัด 999 รายการแล้ว กรุณาลบรายการเก่าเพื่อเพิ่มรายการใหม่
-    </div>
-   </div>
-  </div>
-  <script>
-    const defaultConfig = {
-      app_title: 'บันทึกรายได้',
-      currency_symbol: '฿',
-      primary_color: '#10b981',
-      secondary_color: '#ecfdf5',
-      text_color: '#065f46'
-    };
-
-    let config = { ...defaultConfig };
-    let incomeData = [];
-    let currentView = 'day';
-    let deletingId = null;
-
-    const categoryIcons = {
-      salary: '💼',
-      freelance: '💻',
-      business: '🏪',
-      investment: '📈',
-      bonus: '🎁',
-      other: '📦'
-    };
-
-    const categoryNames = {
-      salary: 'เงินเดือน',
-      freelance: 'ฟรีแลนซ์',
-      business: 'ธุรกิจ',
-      investment: 'การลงทุน',
-      bonus: 'โบนัส',
-      other: 'อื่นๆ'
-    };
-
-    // Date helpers
-    function getToday() {
-      return new Date().toISOString().split('T')[0];
-    }
-
-    function getStartOfWeek() {
-      const today = new Date();
-      const day = today.getDay();
-      const diff = today.getDate() - day + (day === 0 ? -6 : 1);
-      return new Date(today.setDate(diff)).toISOString().split('T')[0];
-    }
-
-    function getStartOfMonth() {
-      const today = new Date();
-      return new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
-    }
-
-    function formatCurrency(amount) {
-      const symbol = config.currency_symbol || defaultConfig.currency_symbol;
-      return `${symbol}${amount.toLocaleString('th-TH', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
-    }
-
-    function formatDate(dateStr) {
-      const date = new Date(dateStr);
-      return date.toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
-    }
-
-    // Calculate totals
-    function calculateTotals() {
-      const today = getToday();
-      const weekStart = getStartOfWeek();
-      const monthStart = getStartOfMonth();
-
-      let todayTotal = 0;
-      let weekTotal = 0;
-      let monthTotal = 0;
-
-      incomeData.forEach(item => {
-        const itemDate = item.date;
-        if (itemDate === today) todayTotal += item.amount;
-        if (itemDate >= weekStart) weekTotal += item.amount;
-        if (itemDate >= monthStart) monthTotal += item.amount;
-      });
-
-      document.getElementById('today-total').textContent = formatCurrency(todayTotal);
-      document.getElementById('week-total').textContent = formatCurrency(weekTotal);
-      document.getElementById('month-total').textContent = formatCurrency(monthTotal);
-    }
-
-    // Filter data by view
-    function getFilteredData() {
-      const today = getToday();
-      const weekStart = getStartOfWeek();
-      const monthStart = getStartOfMonth();
-
-      let filtered = [];
-      switch (currentView) {
-        case 'day':
-          filtered = incomeData.filter(item => item.date === today);
-          break;
-        case 'week':
-          filtered = incomeData.filter(item => item.date >= weekStart);
-          break;
-        case 'month':
-          filtered = incomeData.filter(item => item.date >= monthStart);
-          break;
-      }
-
-      return filtered.sort((a, b) => new Date(b.date) - new Date(a.date) || new Date(b.created_at) - new Date(a.created_at));
-    }
-
-    // Render income list
-    function renderIncomeList() {
-      const listEl = document.getElementById('income-list');
-      const countEl = document.getElementById('list-count');
-      const titleEl = document.getElementById('list-title');
-      const filtered = getFilteredData();
-
-      const titles = {
-        day: 'รายได้วันนี้',
-        week: 'รายได้สัปดาห์นี้',
-        month: 'รายได้เดือนนี้'
-      };
-      titleEl.textContent = titles[currentView];
-      countEl.textContent = `${filtered.length} รายการ`;
-
-      if (filtered.length === 0) {
-        listEl.innerHTML = `
-          <div class="text-center py-8 text-emerald-400">
-            <span class="text-4xl block mb-2">📝</span>
-            <p>ยังไม่มีรายได้</p>
-          </div>
-        `;
-        return;
-      }
-
-      const existingItems = new Map();
-      listEl.querySelectorAll('.income-item').forEach(el => {
-        existingItems.set(el.dataset.id, el);
-      });
-
-      const newIds = new Set(filtered.map(item => item.__backendId));
-
-      existingItems.forEach((el, id) => {
-        if (!newIds.has(id)) {
-          el.remove();
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบบันทึกรายได้ - Income Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #f8fafc;
         }
-      });
-
-      filtered.forEach((item, index) => {
-        const id = item.__backendId;
-        let itemEl = existingItems.get(id);
-
-        if (itemEl) {
-          updateIncomeItem(itemEl, item);
-        } else {
-          itemEl = createIncomeItem(item);
-          if (index === 0) {
-            listEl.prepend(itemEl);
-          } else {
-            const prevItem = filtered[index - 1];
-            const prevEl = listEl.querySelector(`[data-id="${prevItem.__backendId}"]`);
-            if (prevEl) {
-              prevEl.after(itemEl);
-            } else {
-              listEl.appendChild(itemEl);
-            }
-          }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
         }
-      });
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-blue-600">ระบบบันทึกรายได้</h1>
+            <p class="text-gray-500">ติดตามรายรับรายวัน รายสัปดาห์ และรายเดือน</p>
+        </header>
 
-      const emptyMsg = listEl.querySelector('.text-center.py-8');
-      if (emptyMsg && filtered.length > 0) {
-        emptyMsg.remove();
-      }
-    }
-
-    function createIncomeItem(item) {
-      const div = document.createElement('div');
-      div.className = 'income-item animate-slide bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-4 border border-emerald-100';
-      div.dataset.id = item.__backendId;
-      updateIncomeItem(div, item);
-      return div;
-    }
-
-    function updateIncomeItem(el, item) {
-      const isDeleting = deletingId === item.__backendId;
-      el.innerHTML = `
-        <div class="flex justify-between items-start">
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="text-xl">${categoryIcons[item.category] || '📦'}</span>
-              <span class="font-semibold text-emerald-800">${item.description}</span>
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="glass-card p-6 rounded-2xl border-l-4 border-green-500">
+                <p class="text-sm text-gray-500 mb-1">รายได้วันนี้</p>
+                <h2 id="totalToday" class="text-2xl font-bold text-gray-800">฿0.00</h2>
             </div>
-            <div class="text-xs text-emerald-500">
-              ${categoryNames[item.category] || 'อื่นๆ'} • ${formatDate(item.date)}
+            <div class="glass-card p-6 rounded-2xl border-l-4 border-blue-500">
+                <p class="text-sm text-gray-500 mb-1">รายได้สัปดาห์นี้</p>
+                <h2 id="totalWeek" class="text-2xl font-bold text-gray-800">฿0.00</h2>
             </div>
-          </div>
-          <div class="text-right">
-            <p class="text-lg font-bold text-emerald-600">+${formatCurrency(item.amount)}</p>
-            ${isDeleting ? `
-              <div class="flex gap-1 mt-2">
-                <button onclick="confirmDelete('${item.__backendId}')" class="px-2 py-1 bg-red-500 text-white text-xs rounded-lg hover:bg-red-600">ยืนยัน</button>
-                <button onclick="cancelDelete()" class="px-2 py-1 bg-gray-300 text-gray-700 text-xs rounded-lg hover:bg-gray-400">ยกเลิก</button>
-              </div>
-            ` : `
-              <button onclick="startDelete('${item.__backendId}')" class="text-xs text-red-400 hover:text-red-600 mt-1">🗑️ ลบ</button>
-            `}
-          </div>
+            <div class="glass-card p-6 rounded-2xl border-l-4 border-purple-500">
+                <p class="text-sm text-gray-500 mb-1">รายได้เดือนนี้</p>
+                <h2 id="totalMonth" class="text-2xl font-bold text-gray-800">฿0.00</h2>
+            </div>
         </div>
-      `;
-    }
 
-    function startDelete(id) {
-      deletingId = id;
-      renderIncomeList();
-    }
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Form Section -->
+            <div class="lg:col-span-1">
+                <div class="glass-card p-6 rounded-2xl sticky top-8">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-700">เพิ่มรายการใหม่</h3>
+                    <form id="incomeForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">ชื่อรายการ</label>
+                            <input type="text" id="title" required placeholder="เช่น เงินเดือน, ขายของ" 
+                                class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">จำนวนเงิน (บาท)</label>
+                            <input type="number" id="amount" required placeholder="0.00" step="0.01"
+                                class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">วันที่</label>
+                            <input type="date" id="date" required
+                                class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition">
+                        </div>
+                        <button type="submit" 
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl transition shadow-lg shadow-blue-200">
+                            บันทึกข้อมูล
+                        </button>
+                    </form>
+                </div>
+            </div>
 
-    function cancelDelete() {
-      deletingId = null;
-      renderIncomeList();
-    }
+            <!-- Visualization & List Section -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Chart -->
+                <div class="glass-card p-6 rounded-2xl">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-700">กราฟแนวโน้มรายได้</h3>
+                    <div class="h-64">
+                        <canvas id="incomeChart"></canvas>
+                    </div>
+                </div>
 
-    async function confirmDelete(id) {
-      const item = incomeData.find(i => i.__backendId === id);
-      if (!item) return;
+                <!-- History Table -->
+                <div class="glass-card rounded-2xl overflow-hidden">
+                    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-700">ประวัติรายการ</h3>
+                        <span class="text-xs bg-gray-100 px-3 py-1 rounded-full text-gray-500" id="itemCount">0 รายการ</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 text-gray-500 text-sm uppercase">
+                                    <th class="p-4 font-medium">วันที่</th>
+                                    <th class="p-4 font-medium">รายการ</th>
+                                    <th class="p-4 font-medium text-right">จำนวนเงิน</th>
+                                    <th class="p-4 font-medium text-center">จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="incomeTableBody">
+                                <!-- Data will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="emptyState" class="p-12 text-center text-gray-400">
+                        ยังไม่มีข้อมูลบันทึกในขณะนี้
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-      const btn = document.querySelector(`[data-id="${id}"] button`);
-      if (btn) btn.disabled = true;
+    <!-- Notification Container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-50"></div>
 
-      const result = await window.dataSdk.delete(item);
-      if (!result.isOk) {
-        const listEl = document.getElementById('income-list');
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'text-red-500 text-sm text-center py-2';
-        errorDiv.textContent = 'เกิดข้อผิดพลาด กรุณาลองใหม่';
-        listEl.prepend(errorDiv);
-        setTimeout(() => errorDiv.remove(), 3000);
-      }
-      deletingId = null;
-    }
+    <script>
+        // State Management
+        let incomes = JSON.parse(localStorage.getItem('incomes')) || [];
+        let chartInstance = null;
 
-    // Check limit
-    function checkLimit() {
-      const warning = document.getElementById('limit-warning');
-      if (incomeData.length >= 950) {
-        warning.classList.remove('hidden');
-      } else {
-        warning.classList.add('hidden');
-      }
-    }
+        // Form Elements
+        const incomeForm = document.getElementById('incomeForm');
+        const incomeTableBody = document.getElementById('incomeTableBody');
+        const emptyState = document.getElementById('emptyState');
 
-    // Form submission
-    document.getElementById('income-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
+        // Set default date to today
+        document.getElementById('date').valueAsDate = new Date();
 
-      if (incomeData.length >= 999) {
-        const form = document.getElementById('income-form');
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'text-red-500 text-sm text-center py-2 mb-2';
-        errorDiv.textContent = '⚠️ ถึงขีดจำกัด 999 รายการแล้ว กรุณาลบรายการเก่าก่อน';
-        form.prepend(errorDiv);
-        setTimeout(() => errorDiv.remove(), 3000);
-        return;
-      }
+        // Utility: Format Number
+        const formatCurrency = (num) => {
+            return new Intl.NumberFormat('th-TH', {
+                style: 'currency',
+                currency: 'THB'
+            }).format(num);
+        };
 
-      const submitBtn = document.getElementById('submit-btn');
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'กำลังบันทึก...';
+        // Utility: Toast Message
+        const showToast = (message) => {
+            const toast = document.createElement('div');
+            toast.className = 'bg-gray-800 text-white px-6 py-3 rounded-lg shadow-xl mb-2 transition-opacity duration-300 opacity-0';
+            toast.textContent = message;
+            const container = document.getElementById('toastContainer');
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('opacity-100'), 10);
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        };
 
-      const amount = parseFloat(document.getElementById('amount').value);
-      const description = document.getElementById('description').value.trim();
-      const category = document.getElementById('category').value;
-      const date = document.getElementById('date').value;
+        // Main logic: Calculate and Update UI
+        const updateUI = () => {
+            localStorage.setItem('incomes', JSON.stringify(incomes));
+            
+            // 1. Update Table
+            renderTable();
+            
+            // 2. Update Summary Cards
+            updateSummaries();
+            
+            // 3. Update Chart
+            updateChart();
+        };
 
-      const result = await window.dataSdk.create({
-        amount,
-        description,
-        category,
-        date,
-        created_at: new Date().toISOString()
-      });
+        const renderTable = () => {
+            incomeTableBody.innerHTML = '';
+            document.getElementById('itemCount').textContent = `${incomes.length} รายการ`;
+            
+            if (incomes.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                
+                // Sort by date descending
+                const sortedIncomes = [...incomes].sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                sortedIncomes.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-gray-50 hover:bg-gray-50 transition';
+                    row.innerHTML = `
+                        <td class="p-4 text-sm text-gray-600">${new Date(item.date).toLocaleDateString('th-TH')}</td>
+                        <td class="p-4 font-medium text-gray-800">${item.title}</td>
+                        <td class="p-4 text-right text-green-600 font-semibold">${formatCurrency(item.amount)}</td>
+                        <td class="p-4 text-center">
+                            <button onclick="deleteItem('${item.id}')" class="text-red-400 hover:text-red-600 p-2 rounded-lg hover:bg-red-50 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </td>
+                    `;
+                    incomeTableBody.appendChild(row);
+                });
+            }
+        };
 
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'บันทึกรายได้';
+        const updateSummaries = () => {
+            const now = new Date();
+            const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            
+            // Current Week calculation
+            const startOfWeek = new Date(now);
+            startOfWeek.setDate(now.getDate() - now.getDay());
+            startOfWeek.setHours(0,0,0,0);
+            
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-      if (result.isOk) {
-        document.getElementById('income-form').reset();
-        document.getElementById('date').value = getToday();
-      } else {
-        const form = document.getElementById('income-form');
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'text-red-500 text-sm text-center py-2 mb-2';
-        errorDiv.textContent = 'เกิดข้อผิดพลาด กรุณาลองใหม่';
-        form.prepend(errorDiv);
-        setTimeout(() => errorDiv.remove(), 3000);
-      }
-    });
+            let todayTotal = 0;
+            let weekTotal = 0;
+            let monthTotal = 0;
 
-    // Tab switching
-    document.querySelectorAll('.view-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.view-tab').forEach(t => {
-          t.classList.remove('tab-active');
-          t.classList.add('text-emerald-600');
+            incomes.forEach(item => {
+                const itemDate = new Date(item.date);
+                if (itemDate >= startOfDay) todayTotal += item.amount;
+                if (itemDate >= startOfWeek) weekTotal += item.amount;
+                if (itemDate >= startOfMonth) monthTotal += item.amount;
+            });
+
+            document.getElementById('totalToday').textContent = formatCurrency(todayTotal);
+            document.getElementById('totalWeek').textContent = formatCurrency(weekTotal);
+            document.getElementById('totalMonth').textContent = formatCurrency(monthTotal);
+        };
+
+        const updateChart = () => {
+            const ctx = document.getElementById('incomeChart').getContext('2d');
+            
+            // Process data for chart: sum by date
+            const dataMap = {};
+            incomes.forEach(item => {
+                dataMap[item.date] = (dataMap[item.date] || 0) + item.amount;
+            });
+
+            const sortedDates = Object.keys(dataMap).sort((a, b) => new Date(a) - new Date(b));
+            const labels = sortedDates.map(d => new Date(d).toLocaleDateString('th-TH', {day:'numeric', month:'short'}));
+            const values = sortedDates.map(d => dataMap[d]);
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'รายได้ต่อวัน',
+                        data: values,
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#2563eb',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        };
+
+        // Actions
+        incomeForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newItem = {
+                id: Date.now().toString(),
+                title: document.getElementById('title').value,
+                amount: parseFloat(document.getElementById('amount').value),
+                date: document.getElementById('date').value
+            };
+
+            incomes.push(newItem);
+            incomeForm.reset();
+            document.getElementById('date').valueAsDate = new Date();
+            updateUI();
+            showToast('บันทึกข้อมูลสำเร็จแล้ว');
         });
-        tab.classList.add('tab-active');
-        tab.classList.remove('text-emerald-600');
-        currentView = tab.dataset.view;
-        renderIncomeList();
-      });
-    });
 
-    // Data handler
-    const dataHandler = {
-      onDataChanged(data) {
-        incomeData = data;
-        calculateTotals();
-        renderIncomeList();
-        checkLimit();
-      }
-    };
+        window.deleteItem = (id) => {
+            incomes = incomes.filter(item => item.id !== id);
+            updateUI();
+            showToast('ลบรายการแล้ว');
+        };
 
-    // Config change handler
-    async function onConfigChange(cfg) {
-      config = { ...defaultConfig, ...cfg };
-      document.getElementById('app-title').textContent = config.app_title || defaultConfig.app_title;
-      calculateTotals();
-    }
-
-    function mapToCapabilities(cfg) {
-      return {
-        recolorables: [],
-        borderables: [],
-        fontEditable: undefined,
-        fontSizeable: undefined
-      };
-    }
-
-    function mapToEditPanelValues(cfg) {
-      return new Map([
-        ['app_title', cfg.app_title || defaultConfig.app_title],
-        ['currency_symbol', cfg.currency_symbol || defaultConfig.currency_symbol]
-      ]);
-    }
-
-    // Initialize
-    async function init() {
-      document.getElementById('date').value = getToday();
-
-      if (window.elementSdk) {
-        window.elementSdk.init({
-          defaultConfig,
-          onConfigChange,
-          mapToCapabilities,
-          mapToEditPanelValues
-        });
-      }
-
-      if (window.dataSdk) {
-        const result = await window.dataSdk.init(dataHandler);
-        if (!result.isOk) {
-          console.error('Failed to initialize data SDK');
-        }
-      }
-    }
-
-    init();
-  </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c83753cd19a731d',t:'MTc3MDEzNzc0OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+        // Init
+        updateUI();
+    </script>
+</body>
 </html>
