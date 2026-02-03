@@ -197,15 +197,19 @@
         };
 
         const updateSummaries = () => {
+            // Get current date and set to start of day for accurate comparison
             const now = new Date();
-            const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const todayStr = now.toISOString().split('T')[0];
             
-            // Current Week calculation
+            // Calculate start of current week (Sunday)
             const startOfWeek = new Date(now);
             startOfWeek.setDate(now.getDate() - now.getDay());
-            startOfWeek.setHours(0,0,0,0);
+            startOfWeek.setHours(0, 0, 0, 0);
             
-            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+            // Calculate start of current month
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth();
+            const startOfMonth = new Date(currentYear, currentMonth, 1);
 
             let todayTotal = 0;
             let weekTotal = 0;
@@ -213,9 +217,22 @@
 
             incomes.forEach(item => {
                 const itemDate = new Date(item.date);
-                if (itemDate >= startOfDay) todayTotal += item.amount;
-                if (itemDate >= startOfWeek) weekTotal += item.amount;
-                if (itemDate >= startOfMonth) monthTotal += item.amount;
+                const itemDateStr = item.date; // Use the raw date string "YYYY-MM-DD"
+
+                // 1. Check Today
+                if (itemDateStr === todayStr) {
+                    todayTotal += item.amount;
+                }
+
+                // 2. Check Week (Item is between start of week and now)
+                if (itemDate >= startOfWeek && itemDate <= now) {
+                    weekTotal += item.amount;
+                }
+
+                // 3. Check Month (Item is in current year and current month)
+                if (itemDate.getFullYear() === currentYear && itemDate.getMonth() === currentMonth) {
+                    monthTotal += item.amount;
+                }
             });
 
             document.getElementById('totalToday').textContent = formatCurrency(todayTotal);
