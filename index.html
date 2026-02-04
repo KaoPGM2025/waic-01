@@ -45,7 +45,7 @@
             <div class="status-toggle flex items-center bg-white p-3 rounded-2xl shadow-sm border border-gray-100">
                 <span id="statusLabel" class="mr-3 font-medium text-green-600">ออนไลน์</span>
                 <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="statusCheckbox" class="sr-only peer" checked>
+                    <input type="checkbox" id="statusCheckbox" class="sr-only peer">
                     <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
                 </label>
             </div>
@@ -144,7 +144,9 @@
         // State Management
         let incomes = JSON.parse(localStorage.getItem('incomes')) || [];
         let chartInstance = null;
-        let isOnline = true;
+        
+        // Load persistent status from localStorage (default to true if not found)
+        let isOnline = localStorage.getItem('system_status') !== 'offline';
 
         // Elements
         const incomeForm = document.getElementById('incomeForm');
@@ -155,22 +157,33 @@
         const mainContent = document.getElementById('mainContent');
         const formInputs = incomeForm.querySelectorAll('input, button');
 
-        // Toggle System Status
-        statusCheckbox.addEventListener('change', (e) => {
-            isOnline = e.target.checked;
-            if (isOnline) {
+        // Function to set status UI
+        const setStatusUI = (online, silent = false) => {
+            isOnline = online;
+            statusCheckbox.checked = online;
+            localStorage.setItem('system_status', online ? 'online' : 'offline');
+
+            if (online) {
                 statusLabel.textContent = 'ออนไลน์';
                 statusLabel.className = 'mr-3 font-medium text-green-600';
                 mainContent.classList.remove('system-offline');
                 formInputs.forEach(el => el.disabled = false);
-                showToast('ระบบกลับมาออนไลน์แล้ว');
+                if (!silent) showToast('ระบบกลับมาออนไลน์แล้ว');
             } else {
                 statusLabel.textContent = 'ออฟไลน์';
                 statusLabel.className = 'mr-3 font-medium text-red-500';
                 mainContent.classList.add('system-offline');
                 formInputs.forEach(el => el.disabled = true);
-                showToast('ระบบเข้าสู่โหมดออฟไลน์ (ระงับการบันทึก)');
+                if (!silent) showToast('ระบบเข้าสู่โหมดออฟไลน์ (ระงับการบันทึก)');
             }
+        }
+
+        // Initialize Status on Load
+        setStatusUI(isOnline, true);
+
+        // Toggle System Status Listener
+        statusCheckbox.addEventListener('change', (e) => {
+            setStatusUI(e.target.checked);
         });
 
         // Set default date to today
