@@ -88,9 +88,10 @@
                                     class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition disabled:bg-gray-100">
                             </div>
                             <div>
-                                <label class="block text-sm text-gray-600 mb-1 font-medium">วันที่บันทึก</label>
-                                <input type="date" id="date" required
-                                    class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition disabled:bg-gray-100">
+                                <label class="block text-sm text-gray-600 mb-1 font-medium">วันที่บันทึก (อัตโนมัติ)</label>
+                                <input type="date" id="date" readonly
+                                    class="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-500 outline-none cursor-not-allowed">
+                                <p class="text-[10px] text-gray-400 mt-1">* ระบบล็อควันที่ปัจจุบันเพื่อความแม่นยำของยอดวันนี้</p>
                             </div>
                             <button type="submit" id="submitBtn"
                                 class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-blue-200 disabled:bg-gray-400 disabled:shadow-none">
@@ -154,7 +155,7 @@
         const statusCheckbox = document.getElementById('statusCheckbox');
         const statusLabel = document.getElementById('statusLabel');
         const mainContent = document.getElementById('mainContent');
-        const formInputs = incomeForm.querySelectorAll('input, button');
+        const formInputs = incomeForm.querySelectorAll('input:not(#date), button'); // Don't touch #date as it is always disabled/readonly
 
         // --- Core Functions ---
 
@@ -179,9 +180,18 @@
             }
         }
 
+        // Function to always get current date in local ISO format (YYYY-MM-DD)
+        const setCurrentDate = () => {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            document.getElementById('date').value = `${year}-${month}-${day}`;
+        }
+
         // Initialize status and default date
         setStatusUI(isOnline, true);
-        document.getElementById('date').valueAsDate = new Date();
+        setCurrentDate();
 
         // Notification utility
         function showNotification(msg) {
@@ -224,7 +234,7 @@
             } else {
                 emptyState.classList.add('hidden');
                 // Sort by date descending
-                const sorted = [...incomes].sort((a, b) => new Date(b.date) - new Date(a.date));
+                const sorted = [...incomes].sort((a, b) => new Date(b.date) - new Date(a.date) || b.id - a.id);
                 sorted.forEach(item => {
                     const row = document.createElement('tr');
                     row.className = 'border-b border-gray-50 hover:bg-gray-50 transition-colors';
@@ -247,7 +257,6 @@
 
         const updateSummaries = () => {
             const now = new Date();
-            // Local date string in YYYY-MM-DD for strict matching
             const todayISO = now.toLocaleDateString('en-CA'); 
             
             // Weekly logic
@@ -263,17 +272,14 @@
             incomes.forEach(item => {
                 const itemDate = new Date(item.date);
                 
-                // TODAY MATCHING - Strictly reset if dates don't match
                 if (item.date === todayISO) {
                     today += item.amount;
                 }
 
-                // Weekly cumulative
                 if (itemDate >= sunday && itemDate <= now) {
                     week += item.amount;
                 }
 
-                // Monthly cumulative
                 if (itemDate.getFullYear() === currentYear && itemDate.getMonth() === currentMonth) {
                     month += item.amount;
                 }
@@ -341,16 +347,20 @@
             e.preventDefault();
             if (!isOnline) return;
 
+            // Always fetch fresh date on submit to ensure midnight accuracy
+            const now = new Date();
+            const currentISO = now.toLocaleDateString('en-CA');
+
             const entry = {
                 id: Date.now().toString(),
                 title: document.getElementById('title').value,
                 amount: parseFloat(document.getElementById('amount').value),
-                date: document.getElementById('date').value
+                date: currentISO 
             };
 
             incomes.push(entry);
             incomeForm.reset();
-            document.getElementById('date').valueAsDate = new Date();
+            setCurrentDate(); // Reset to today's date
             updateUI();
             showNotification('บันทึกเรียบร้อย');
         });
@@ -365,8 +375,11 @@
             showNotification('ลบรายการสำเร็จ');
         };
 
-        // Auto-Refresh daily reset every 60 seconds
-        setInterval(updateSummaries, 60000);
+        // Auto-Refresh daily reset and update date field every 60 seconds
+        setInterval(() => {
+            updateSummaries();
+            setCurrentDate();
+        }, 60000);
 
         // Initial Load
         updateUI();
