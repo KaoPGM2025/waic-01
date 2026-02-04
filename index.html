@@ -11,6 +11,7 @@
         body {
             font-family: 'Kanit', sans-serif;
             background-color: #f8fafc;
+            transition: all 0.3s ease;
         }
         .glass-card {
             background: rgba(255, 255, 255, 0.95);
@@ -18,94 +19,118 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
         }
+        /* Offline Style */
+        .system-offline {
+            filter: grayscale(0.5);
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        .status-toggle {
+            pointer-events: auto !important;
+            filter: none !important;
+            opacity: 1 !important;
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
     <div class="max-w-6xl mx-auto">
-        <!-- Header -->
-        <header class="mb-8 text-center">
-            <h1 class="text-3xl font-bold text-blue-600">ระบบบันทึกรายได้</h1>
-            <p class="text-gray-500">ติดตามรายรับรายวัน รายสัปดาห์ และรายเดือน</p>
-        </header>
-
-        <!-- Summary Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="glass-card p-6 rounded-2xl border-l-4 border-green-500">
-                <p class="text-sm text-gray-500 mb-1">รายได้วันนี้</p>
-                <h2 id="totalToday" class="text-2xl font-bold text-gray-800">฿0.00</h2>
+        <!-- Header & Status Toggle -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+            <div class="text-center md:text-left">
+                <h1 class="text-3xl font-bold text-blue-600">ระบบบันทึกรายได้</h1>
+                <p class="text-gray-500">ติดตามรายรับรายวัน รายสัปดาห์ และรายเดือน</p>
             </div>
-            <div class="glass-card p-6 rounded-2xl border-l-4 border-blue-500">
-                <p class="text-sm text-gray-500 mb-1">รายได้สัปดาห์นี้</p>
-                <h2 id="totalWeek" class="text-2xl font-bold text-gray-800">฿0.00</h2>
-            </div>
-            <div class="glass-card p-6 rounded-2xl border-l-4 border-purple-500">
-                <p class="text-sm text-gray-500 mb-1">รายได้เดือนนี้</p>
-                <h2 id="totalMonth" class="text-2xl font-bold text-gray-800">฿0.00</h2>
+            
+            <!-- Online/Offline Switch -->
+            <div class="status-toggle flex items-center bg-white p-3 rounded-2xl shadow-sm border border-gray-100">
+                <span id="statusLabel" class="mr-3 font-medium text-green-600">ออนไลน์</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="statusCheckbox" class="sr-only peer" checked>
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                </label>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Form Section -->
-            <div class="lg:col-span-1">
-                <div class="glass-card p-6 rounded-2xl sticky top-8">
-                    <h3 class="text-lg font-semibold mb-4 text-gray-700">เพิ่มรายการใหม่</h3>
-                    <form id="incomeForm" class="space-y-4">
-                        <div>
-                            <label class="block text-sm text-gray-600 mb-1">ชื่อรายการ</label>
-                            <input type="text" id="title" required placeholder="เช่น เงินเดือน, ขายของ" 
-                                class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition">
-                        </div>
-                        <div>
-                            <label class="block text-sm text-gray-600 mb-1">จำนวนเงิน (บาท)</label>
-                            <input type="number" id="amount" required placeholder="0.00" step="0.01"
-                                class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition">
-                        </div>
-                        <div>
-                            <label class="block text-sm text-gray-600 mb-1">วันที่</label>
-                            <input type="date" id="date" required
-                                class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition">
-                        </div>
-                        <button type="submit" 
-                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl transition shadow-lg shadow-blue-200">
-                            บันทึกข้อมูล
-                        </button>
-                    </form>
+        <div id="mainContent">
+            <!-- Summary Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="glass-card p-6 rounded-2xl border-l-4 border-green-500">
+                    <p class="text-sm text-gray-500 mb-1">รายได้วันนี้</p>
+                    <h2 id="totalToday" class="text-2xl font-bold text-gray-800">฿0.00</h2>
+                </div>
+                <div class="glass-card p-6 rounded-2xl border-l-4 border-blue-500">
+                    <p class="text-sm text-gray-500 mb-1">รายได้สัปดาห์นี้</p>
+                    <h2 id="totalWeek" class="text-2xl font-bold text-gray-800">฿0.00</h2>
+                </div>
+                <div class="glass-card p-6 rounded-2xl border-l-4 border-purple-500">
+                    <p class="text-sm text-gray-500 mb-1">รายได้เดือนนี้</p>
+                    <h2 id="totalMonth" class="text-2xl font-bold text-gray-800">฿0.00</h2>
                 </div>
             </div>
 
-            <!-- Visualization & List Section -->
-            <div class="lg:col-span-2 space-y-8">
-                <!-- Chart -->
-                <div class="glass-card p-6 rounded-2xl">
-                    <h3 class="text-lg font-semibold mb-4 text-gray-700">กราฟแนวโน้มรายได้</h3>
-                    <div class="h-64">
-                        <canvas id="incomeChart"></canvas>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Form Section -->
+                <div class="lg:col-span-1">
+                    <div class="glass-card p-6 rounded-2xl sticky top-8">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-700">เพิ่มรายการใหม่</h3>
+                        <form id="incomeForm" class="space-y-4">
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">ชื่อรายการ</label>
+                                <input type="text" id="title" required placeholder="เช่น เงินเดือน, ขายของ" 
+                                    class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition disabled:bg-gray-100">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">จำนวนเงิน (บาท)</label>
+                                <input type="number" id="amount" required placeholder="0.00" step="0.01"
+                                    class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition disabled:bg-gray-100">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">วันที่</label>
+                                <input type="date" id="date" required
+                                    class="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition disabled:bg-gray-100">
+                            </div>
+                            <button type="submit" id="submitBtn"
+                                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl transition shadow-lg shadow-blue-200 disabled:bg-gray-400 disabled:shadow-none">
+                                บันทึกข้อมูล
+                            </button>
+                        </form>
                     </div>
                 </div>
 
-                <!-- History Table -->
-                <div class="glass-card rounded-2xl overflow-hidden">
-                    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-                        <h3 class="text-lg font-semibold text-gray-700">ประวัติรายการ</h3>
-                        <span class="text-xs bg-gray-100 px-3 py-1 rounded-full text-gray-500" id="itemCount">0 รายการ</span>
+                <!-- Visualization & List Section -->
+                <div class="lg:col-span-2 space-y-8">
+                    <!-- Chart -->
+                    <div class="glass-card p-6 rounded-2xl">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-700">กราฟแนวโน้มรายได้</h3>
+                        <div class="h-64">
+                            <canvas id="incomeChart"></canvas>
+                        </div>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-gray-50 text-gray-500 text-sm uppercase">
-                                    <th class="p-4 font-medium">วันที่</th>
-                                    <th class="p-4 font-medium">รายการ</th>
-                                    <th class="p-4 font-medium text-right">จำนวนเงิน</th>
-                                    <th class="p-4 font-medium text-center">จัดการ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="incomeTableBody">
-                                <!-- Data will be inserted here -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="emptyState" class="p-12 text-center text-gray-400">
-                        ยังไม่มีข้อมูลบันทึกในขณะนี้
+
+                    <!-- History Table -->
+                    <div class="glass-card rounded-2xl overflow-hidden">
+                        <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-gray-700">ประวัติรายการ</h3>
+                            <span class="text-xs bg-gray-100 px-3 py-1 rounded-full text-gray-500" id="itemCount">0 รายการ</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-50 text-gray-500 text-sm uppercase">
+                                        <th class="p-4 font-medium">วันที่</th>
+                                        <th class="p-4 font-medium">รายการ</th>
+                                        <th class="p-4 font-medium text-right">จำนวนเงิน</th>
+                                        <th class="p-4 font-medium text-center">จัดการ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="incomeTableBody">
+                                    <!-- Data will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="emptyState" class="p-12 text-center text-gray-400">
+                            ยังไม่มีข้อมูลบันทึกในขณะนี้
+                        </div>
                     </div>
                 </div>
             </div>
@@ -119,11 +144,34 @@
         // State Management
         let incomes = JSON.parse(localStorage.getItem('incomes')) || [];
         let chartInstance = null;
+        let isOnline = true;
 
-        // Form Elements
+        // Elements
         const incomeForm = document.getElementById('incomeForm');
         const incomeTableBody = document.getElementById('incomeTableBody');
         const emptyState = document.getElementById('emptyState');
+        const statusCheckbox = document.getElementById('statusCheckbox');
+        const statusLabel = document.getElementById('statusLabel');
+        const mainContent = document.getElementById('mainContent');
+        const formInputs = incomeForm.querySelectorAll('input, button');
+
+        // Toggle System Status
+        statusCheckbox.addEventListener('change', (e) => {
+            isOnline = e.target.checked;
+            if (isOnline) {
+                statusLabel.textContent = 'ออนไลน์';
+                statusLabel.className = 'mr-3 font-medium text-green-600';
+                mainContent.classList.remove('system-offline');
+                formInputs.forEach(el => el.disabled = false);
+                showToast('ระบบกลับมาออนไลน์แล้ว');
+            } else {
+                statusLabel.textContent = 'ออฟไลน์';
+                statusLabel.className = 'mr-3 font-medium text-red-500';
+                mainContent.classList.add('system-offline');
+                formInputs.forEach(el => el.disabled = true);
+                showToast('ระบบเข้าสู่โหมดออฟไลน์ (ระงับการบันทึก)');
+            }
+        });
 
         // Set default date to today
         document.getElementById('date').valueAsDate = new Date();
@@ -150,17 +198,11 @@
             }, 3000);
         };
 
-        // Main logic: Calculate and Update UI
+        // Main logic
         const updateUI = () => {
             localStorage.setItem('incomes', JSON.stringify(incomes));
-            
-            // 1. Update Table
             renderTable();
-            
-            // 2. Update Summary Cards
             updateSummaries();
-            
-            // 3. Update Chart
             updateChart();
         };
 
@@ -172,10 +214,7 @@
                 emptyState.classList.remove('hidden');
             } else {
                 emptyState.classList.add('hidden');
-                
-                // Sort by date descending
                 const sortedIncomes = [...incomes].sort((a, b) => new Date(b.date) - new Date(a.date));
-                
                 sortedIncomes.forEach(item => {
                     const row = document.createElement('tr');
                     row.className = 'border-b border-gray-50 hover:bg-gray-50 transition';
@@ -184,7 +223,7 @@
                         <td class="p-4 font-medium text-gray-800">${item.title}</td>
                         <td class="p-4 text-right text-green-600 font-semibold">${formatCurrency(item.amount)}</td>
                         <td class="p-4 text-center">
-                            <button onclick="deleteItem('${item.id}')" class="text-red-400 hover:text-red-600 p-2 rounded-lg hover:bg-red-50 transition">
+                            <button onclick="deleteItem('${item.id}')" class="delete-btn text-red-400 hover:text-red-600 p-2 rounded-lg hover:bg-red-50 transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>
@@ -197,19 +236,13 @@
         };
 
         const updateSummaries = () => {
-            // Get current date and set to start of day for accurate comparison
             const now = new Date();
             const todayStr = now.toISOString().split('T')[0];
-            
-            // Calculate start of current week (Sunday)
             const startOfWeek = new Date(now);
             startOfWeek.setDate(now.getDate() - now.getDay());
             startOfWeek.setHours(0, 0, 0, 0);
-            
-            // Calculate start of current month
             const currentYear = now.getFullYear();
             const currentMonth = now.getMonth();
-            const startOfMonth = new Date(currentYear, currentMonth, 1);
 
             let todayTotal = 0;
             let weekTotal = 0;
@@ -217,22 +250,10 @@
 
             incomes.forEach(item => {
                 const itemDate = new Date(item.date);
-                const itemDateStr = item.date; // Use the raw date string "YYYY-MM-DD"
-
-                // 1. Check Today
-                if (itemDateStr === todayStr) {
-                    todayTotal += item.amount;
-                }
-
-                // 2. Check Week (Item is between start of week and now)
-                if (itemDate >= startOfWeek && itemDate <= now) {
-                    weekTotal += item.amount;
-                }
-
-                // 3. Check Month (Item is in current year and current month)
-                if (itemDate.getFullYear() === currentYear && itemDate.getMonth() === currentMonth) {
-                    monthTotal += item.amount;
-                }
+                const itemDateStr = item.date;
+                if (itemDateStr === todayStr) todayTotal += item.amount;
+                if (itemDate >= startOfWeek && itemDate <= now) weekTotal += item.amount;
+                if (itemDate.getFullYear() === currentYear && itemDate.getMonth() === currentMonth) monthTotal += item.amount;
             });
 
             document.getElementById('totalToday').textContent = formatCurrency(todayTotal);
@@ -242,8 +263,6 @@
 
         const updateChart = () => {
             const ctx = document.getElementById('incomeChart').getContext('2d');
-            
-            // Process data for chart: sum by date
             const dataMap = {};
             incomes.forEach(item => {
                 dataMap[item.date] = (dataMap[item.date] || 0) + item.amount;
@@ -253,9 +272,7 @@
             const labels = sortedDates.map(d => new Date(d).toLocaleDateString('th-TH', {day:'numeric', month:'short'}));
             const values = sortedDates.map(d => dataMap[d]);
 
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
+            if (chartInstance) chartInstance.destroy();
 
             chartInstance = new Chart(ctx, {
                 type: 'line',
@@ -276,17 +293,10 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: 'rgba(0,0,0,0.05)' }
-                        },
-                        x: {
-                            grid: { display: false }
-                        }
+                        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                        x: { grid: { display: false } }
                     }
                 }
             });
@@ -295,6 +305,8 @@
         // Actions
         incomeForm.addEventListener('submit', (e) => {
             e.preventDefault();
+            if (!isOnline) return;
+
             const newItem = {
                 id: Date.now().toString(),
                 title: document.getElementById('title').value,
@@ -310,6 +322,10 @@
         });
 
         window.deleteItem = (id) => {
+            if (!isOnline) {
+                showToast('ไม่สามารถลบรายการได้ในโหมดออฟไลน์');
+                return;
+            }
             incomes = incomes.filter(item => item.id !== id);
             updateUI();
             showToast('ลบรายการแล้ว');
