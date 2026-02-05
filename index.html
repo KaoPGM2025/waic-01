@@ -216,6 +216,12 @@
     <div id="toastContainer" class="fixed bottom-4 right-4 z-50"></div>
 
     <script>
+        /**
+         * VERSION 3.1.3 - PERSISTENCE GUARANTEE
+         * ข้อมูลจะถูกเก็บไว้ที่คีย์ 'incomes_v313' ใน LocalStorage
+         * การโหลดโค้ดใหม่จะไม่ทำให้ข้อมูลที่อยู่ในคีย์นี้หายไป
+         */
+
         // --- Core Application State ---
         let incomes = JSON.parse(localStorage.getItem('incomes_v313')) || [];
         let chartInstance = null;
@@ -307,6 +313,7 @@
         // --- Core Application Logic ---
 
         const updateUI = () => {
+            // บันทึกลง LocalStorage ทุกครั้งที่มีการเปลี่ยนแปลง
             localStorage.setItem('incomes_v313', JSON.stringify(incomes));
             renderTable();
             updateSummaries();
