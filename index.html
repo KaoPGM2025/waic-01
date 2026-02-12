@@ -3,326 +3,458 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบบันทึกรายได้ - Version 3.1.5 (Fixed)</title>
+    <title>ระบบบันทึกรายได้ - Income Tracker V3.2.0</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Kanit', sans-serif; background-color: #f1f5f9; }
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #f1f5f9;
+            transition: all 0.3s ease;
+        }
         .glass-card {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 1);
             border: 1px solid #e2e8f0;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border-radius: 1.5rem;
         }
-        .pin-input {
-            -webkit-text-security: disc;
-            text-align: center;
-            letter-spacing: 1em;
-            font-size: 2rem;
+        .system-offline {
+            filter: grayscale(0.8);
+            pointer-events: none;
+            opacity: 0.7;
+            user-select: none;
         }
-        .system-locked { display: none; }
-        .category-badge { font-size: 0.65rem; padding: 2px 10px; border-radius: 9999px; font-weight: 600; }
-        .progress-bar { height: 8px; border-radius: 4px; background: #e2e8f0; overflow: hidden; }
-        .progress-fill { height: 100%; transition: width 1s ease-in-out; }
+        .status-toggle {
+            pointer-events: auto !important;
+            filter: none !important;
+            opacity: 1 !important;
+        }
+        .category-badge {
+            font-size: 0.7rem;
+            padding: 2px 10px;
+            border-radius: 9999px;
+            font-weight: 600;
+        }
+        .yearly-progress-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .yearly-progress-fill {
+            height: 100%;
+            background: #2563eb;
+            transition: width 1s ease-in-out;
+        }
     </style>
 </head>
-<body class="p-2 md:p-8">
-
-    <!-- Auth Layer: PIN Screen -->
-    <div id="authScreen" class="fixed inset-0 z-[100] bg-slate-900 flex items-center justify-center p-4">
-        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm text-center">
-            <div class="mb-6">
-                <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                </div>
-                <h2 id="pinTitle" class="text-xl font-bold text-slate-800">กรุณาตั้งรหัสผ่าน 4 หลัก</h2>
-                <p id="pinSub" class="text-slate-400 text-sm">เพื่อความปลอดภัยของข้อมูลคุณ</p>
-            </div>
-            <input type="password" id="pinInput" maxlength="4" class="w-full p-4 rounded-2xl border-2 border-slate-100 outline-none focus:border-blue-500 pin-input mb-6" placeholder="••••">
-            <button onclick="handlePinSubmit()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl transition shadow-lg">ยืนยันรหัสผ่าน</button>
-            <p id="pinError" class="text-red-500 text-xs mt-4 hidden">รหัสผ่านไม่ถูกต้อง ลองใหม่อีกครั้ง</p>
-        </div>
-    </div>
-
-    <!-- Main Content -->
-    <div id="appContent" class="system-locked max-w-6xl mx-auto">
-        <!-- Header -->
+<body class="p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header Section -->
         <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-            <div>
-                <h1 class="text-3xl font-bold text-slate-800">Income <span class="text-blue-600">Tracker</span></h1>
-                <p class="text-gray-500 text-sm">V3.1.5 • ระบบความปลอดภัยและวิเคราะห์ขั้นสูง</p>
+            <div class="text-center md:text-left">
+                <h1 class="text-3xl font-bold text-slate-800">Financial <span class="text-blue-600">Assistant</span></h1>
+                <p class="text-slate-500">V3.2.0 • ระบบวิเคราะห์รายปีและจัดการข้อมูลขั้นสูง</p>
             </div>
-            <div class="flex items-center gap-4">
-                <button onclick="lockSystem()" class="p-2 bg-white rounded-xl border border-slate-200 text-slate-400 hover:text-red-500 transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" /></svg>
-                </button>
+            
+            <div class="flex gap-3">
+                <!-- Status Toggle -->
+                <div class="status-toggle flex items-center bg-white p-3 rounded-2xl shadow-sm border border-slate-200">
+                    <span id="statusLabel" class="mr-3 text-xs font-bold text-green-600 uppercase">Online</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="statusCheckbox" class="sr-only peer">
+                        <div class="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+                    </label>
+                </div>
             </div>
         </div>
 
-        <!-- Top Row -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="glass-card p-6 rounded-2xl border-b-4 border-emerald-500">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">วันนี้</p>
+        <div id="mainContent">
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="glass-card p-6 border-l-4 border-emerald-500">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">รายได้วันนี้</p>
                     <h2 id="totalToday" class="text-2xl font-bold text-slate-800">฿0.00</h2>
                 </div>
-                <div class="glass-card p-6 rounded-2xl border-b-4 border-blue-500">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">เฉลี่ยต่อวัน (เดือนนี้)</p>
-                    <h2 id="avgDaily" class="text-2xl font-bold text-slate-800">฿0.00</h2>
-                </div>
-                <div class="glass-card p-6 rounded-2xl border-b-4 border-indigo-500">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">รวมเดือนนี้</p>
+                <div class="glass-card p-6 border-l-4 border-blue-500">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">รายได้เดือนนี้</p>
                     <h2 id="totalMonth" class="text-2xl font-bold text-slate-800">฿0.00</h2>
                 </div>
-            </div>
-            <div class="glass-card p-6 rounded-2xl flex flex-col justify-center">
-                <div class="flex justify-between items-end mb-2">
-                    <p class="text-xs font-bold text-slate-500">เป้าหมายเดือนนี้</p>
-                    <span id="goalPercent" class="text-xs font-bold text-blue-600">0%</span>
+                <div class="glass-card p-6 border-l-4 border-indigo-500">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">รายได้ปีนี้ (${new Date().getFullYear()})</p>
+                    <h2 id="totalYear" class="text-2xl font-bold text-blue-600">฿0.00</h2>
                 </div>
-                <div class="progress-bar mb-2">
-                    <div id="goalFill" class="progress-fill bg-blue-600" style="width: 0%"></div>
-                </div>
-                <p class="text-[10px] text-slate-400">เป้าหมาย: ฿<span id="goalText">50,000</span></p>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div class="lg:col-span-4 space-y-6">
-                <div class="glass-card p-6 rounded-3xl">
-                    <h3 class="font-bold text-slate-700 mb-5 flex items-center gap-2">
-                        <span class="w-1.5 h-4 bg-blue-600 rounded-full"></span> บันทึกใหม่
-                    </h3>
-                    <form id="incomeForm" class="space-y-4">
-                        <input type="text" id="title" required placeholder="รายการ" class="w-full p-3 rounded-xl border border-slate-100 outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-100 transition">
-                        <div class="grid grid-cols-2 gap-3">
-                            <input type="number" id="amount" required placeholder="จำนวนเงิน" step="0.01" class="w-full p-3 rounded-xl border border-slate-100 outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-100 font-bold text-blue-600">
-                            <select id="category" class="w-full p-3 rounded-xl border border-slate-100 outline-none bg-slate-50 text-sm">
-                                <option>ทั่วไป</option><option>งานประจำ</option><option>งานเสริม</option><option>ค้าขาย</option><option>อื่นๆ</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-bold text-slate-400 ml-1 uppercase">วันที่บันทึก</label>
-                            <input type="date" id="dateInput" class="w-full p-3 rounded-xl border border-slate-100 outline-none bg-slate-50 text-sm">
-                        </div>
-                        <button type="submit" class="w-full bg-slate-900 text-white font-bold py-3.5 rounded-xl hover:bg-black transition shadow-lg">บันทึกรายการ</button>
-                    </form>
-                </div>
-
-                <div class="glass-card p-6 rounded-3xl">
-                    <h3 class="font-bold text-slate-700 mb-4 text-sm uppercase tracking-tight">รายการทำเงินสูงสุด</h3>
-                    <div id="topEarnersList" class="space-y-3"></div>
+                <div class="glass-card p-6 border-l-4 border-slate-800">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">มั่งคั่งสุทธิสะสม</p>
+                    <h2 id="totalAllTime" class="text-2xl font-bold text-slate-800">฿0.00</h2>
                 </div>
             </div>
 
-            <div class="lg:col-span-8 space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="glass-card p-6 rounded-3xl h-64">
-                        <canvas id="incomeChart"></canvas>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Sidebar -->
+                <div class="lg:col-span-4 space-y-6">
+                    <!-- Form Card -->
+                    <div class="glass-card p-6">
+                        <h3 class="font-bold text-slate-700 mb-6 flex items-center gap-2 text-sm uppercase">
+                            <span class="w-1.5 h-4 bg-blue-600 rounded-full"></span> เพิ่มรายการใหม่
+                        </h3>
+                        <form id="incomeForm" class="space-y-4">
+                            <input type="text" id="title" required placeholder="ชื่อรายการ" 
+                                class="w-full p-4 rounded-2xl border border-slate-100 bg-slate-50 outline-none focus:bg-white focus:ring-2 focus:ring-blue-100 transition disabled:bg-slate-200">
+                            
+                            <div class="grid grid-cols-2 gap-3">
+                                <input type="number" id="amount" required placeholder="0.00" step="0.01"
+                                    class="w-full p-4 rounded-2xl border border-slate-100 bg-slate-50 outline-none font-bold text-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100 transition disabled:bg-slate-200">
+                                <select id="category" class="w-full p-4 rounded-2xl border border-slate-100 bg-slate-50 text-sm outline-none transition disabled:bg-slate-200">
+                                    <option>ทั่วไป</option>
+                                    <option>งานประจำ</option>
+                                    <option>งานเสริม</option>
+                                    <option>ค้าขาย</option>
+                                    <option>อื่นๆ</option>
+                                </select>
+                            </div>
+
+                            <div class="flex flex-col gap-1">
+                                <label class="text-[10px] font-bold text-slate-400 ml-2 uppercase">วันที่</label>
+                                <input type="date" id="date" required
+                                    class="w-full p-4 rounded-2xl border border-slate-100 bg-slate-50 outline-none text-sm transition disabled:bg-slate-200">
+                            </div>
+
+                            <input type="text" id="note" placeholder="หมายเหตุ (ถ้ามี)" 
+                                class="w-full p-4 rounded-2xl border border-slate-100 bg-slate-50 outline-none text-xs transition disabled:bg-slate-200">
+
+                            <button type="submit" id="submitBtn"
+                                class="w-full bg-slate-900 text-white font-bold py-4 rounded-2xl hover:bg-black transition-all shadow-lg disabled:bg-slate-400">
+                                บันทึกข้อมูล
+                            </button>
+                        </form>
                     </div>
-                    <div class="glass-card p-6 rounded-3xl h-64">
-                        <canvas id="categoryChart"></canvas>
+
+                    <!-- Yearly Performance -->
+                    <div class="glass-card p-6">
+                        <h3 class="font-bold text-slate-700 mb-4 text-sm uppercase tracking-tight">ประสิทธิภาพรายปี</h3>
+                        <div id="yearlyStats" class="space-y-4">
+                            <!-- JS will inject monthly bars here -->
+                        </div>
                     </div>
                 </div>
 
-                <div class="glass-card rounded-3xl overflow-hidden">
-                    <div class="p-5 border-b border-slate-50 bg-white flex justify-between items-center">
-                        <input type="text" id="searchInput" placeholder="ค้นหารายการ..." class="bg-slate-50 border-none rounded-xl px-4 py-2 text-xs w-48 outline-none">
-                        <div class="flex gap-2 items-center">
-                            <span id="itemCount" class="text-[10px] font-bold text-slate-400 mr-2">0 รายการ</span>
-                            <button onclick="setFilter('all')" class="text-[10px] font-bold px-3 py-1.5 rounded-lg bg-slate-100 text-slate-500" id="btnAll">ทั้งหมด</button>
-                            <button onclick="setFilter('month')" class="text-[10px] font-bold px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600" id="btnMonth">เดือนนี้</button>
+                <!-- Main Content Area -->
+                <div class="lg:col-span-8 space-y-6">
+                    <!-- Charts -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="glass-card p-6 h-72">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase mb-4">แนวโน้ม (15 วันล่าสุด)</h4>
+                            <canvas id="incomeChart"></canvas>
+                        </div>
+                        <div class="glass-card p-6 h-72">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase mb-4">สัดส่วนหมวดหมู่</h4>
+                            <canvas id="categoryChart"></canvas>
                         </div>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left">
-                            <thead class="bg-slate-50/50 text-[10px] text-slate-400 uppercase tracking-widest">
-                                <tr>
-                                    <th class="p-4">วันที่</th>
-                                    <th class="p-4 text-center">หมวดหมู่</th>
-                                    <th class="p-4">รายการ</th>
-                                    <th class="p-4 text-right">จำนวน</th>
-                                    <th class="p-4"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="tableBody" class="text-sm"></tbody>
-                        </table>
+
+                    <!-- Table Section -->
+                    <div class="glass-card overflow-hidden">
+                        <div class="p-6 border-b border-slate-50 flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div class="flex items-center bg-slate-50 rounded-2xl px-4 py-2 w-full md:w-64">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                                <input type="text" id="searchInput" placeholder="ค้นหารายการ..." class="bg-transparent border-none outline-none text-sm w-full">
+                            </div>
+                            <div class="flex gap-2">
+                                <span id="itemCount" class="text-[10px] font-bold text-slate-400 mr-2 self-center">0 รายการ</span>
+                                <button onclick="setFilter('month')" id="btnMonth" class="px-4 py-2 rounded-xl text-xs font-bold bg-blue-50 text-blue-600 transition">เดือนนี้</button>
+                                <button onclick="setFilter('all')" id="btnAll" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-500 transition">ทั้งหมด</button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-slate-50/50 text-[10px] text-slate-400 uppercase tracking-widest font-black">
+                                    <tr>
+                                        <th class="p-5">วันที่</th>
+                                        <th class="p-5">หมวดหมู่</th>
+                                        <th class="p-5">รายการ</th>
+                                        <th class="p-5 text-right">จำนวนเงิน</th>
+                                        <th class="p-5"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="incomeTableBody" class="text-sm"></tbody>
+                            </table>
+                        </div>
+                        <div id="emptyState" class="p-12 text-center text-slate-400 text-xs italic hidden">
+                            ไม่พบข้อมูลรายการที่ค้นหา
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        const STORAGE_KEY = 'incomes_v313';
-        const PIN_KEY = 'app_pin_v315';
-        const GOAL_KEY = 'app_goal_v315';
+    <!-- Toast container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
 
-        let incomes = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-        let appPin = localStorage.getItem(PIN_KEY);
-        let monthlyGoal = parseFloat(localStorage.getItem(GOAL_KEY)) || 50000;
-        
-        let chartLine = null, chartPie = null;
+    <script>
+        // Core State
+        let incomes = JSON.parse(localStorage.getItem('incomes')) || [];
+        let isOnline = localStorage.getItem('system_status') !== 'offline';
         let currentFilter = 'month';
         let searchQuery = '';
+        let chartLine = null;
+        let chartPie = null;
 
-        window.onload = () => {
-            document.getElementById('dateInput').value = new Date().toISOString().split('T')[0];
-            if (appPin) {
-                document.getElementById('pinTitle').textContent = "ยืนยันรหัสผ่านเข้าใช้งาน";
-                document.getElementById('pinSub').textContent = "ใส่ PIN 4 หลักของคุณ";
+        const incomeForm = document.getElementById('incomeForm');
+        const incomeTableBody = document.getElementById('incomeTableBody');
+        const emptyState = document.getElementById('emptyState');
+        const statusCheckbox = document.getElementById('statusCheckbox');
+        const statusLabel = document.getElementById('statusLabel');
+        const mainContent = document.getElementById('mainContent');
+        const formInputs = incomeForm.querySelectorAll('input, select, button');
+
+        // Initial setup
+        document.getElementById('date').valueAsDate = new Date();
+
+        // Status Management
+        const setStatusUI = (online, silent = false) => {
+            isOnline = online;
+            statusCheckbox.checked = online;
+            localStorage.setItem('system_status', online ? 'online' : 'offline');
+
+            if (online) {
+                statusLabel.textContent = 'Online';
+                statusLabel.classList.replace('text-red-500', 'text-green-600');
+                mainContent.classList.remove('system-offline');
+                formInputs.forEach(el => el.disabled = false);
+                if (!silent) showToast('ระบบกลับมาออนไลน์แล้ว');
+            } else {
+                statusLabel.textContent = 'Offline';
+                statusLabel.classList.replace('text-green-600', 'text-red-500');
+                mainContent.classList.add('system-offline');
+                formInputs.forEach(el => el.disabled = true);
+                if (!silent) showToast('เข้าสู่โหมดออฟไลน์: ระงับการบันทึก');
             }
         };
 
-        function handlePinSubmit() {
-            const input = document.getElementById('pinInput').value;
-            if (input.length !== 4) return;
+        statusCheckbox.addEventListener('change', (e) => setStatusUI(e.target.checked));
+        setStatusUI(isOnline, true);
 
-            if (!appPin) {
-                localStorage.setItem(PIN_KEY, input);
-                appPin = input;
-                unlockApp();
-            } else {
-                if (input === appPin) {
-                    unlockApp();
-                } else {
-                    document.getElementById('pinError').classList.remove('hidden');
-                    document.getElementById('pinInput').value = '';
-                }
-            }
-        }
+        // Utilities
+        const formatCurrency = (num) => new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB' }).format(num);
 
-        function unlockApp() {
-            document.getElementById('authScreen').style.display = 'none';
-            document.getElementById('appContent').classList.remove('system-locked');
-            updateUI();
-        }
+        const showToast = (message) => {
+            const toast = document.createElement('div');
+            toast.className = 'bg-slate-800 text-white px-5 py-3 rounded-2xl shadow-xl text-xs font-medium transition-all duration-300 opacity-0 translate-y-2';
+            toast.textContent = message;
+            document.getElementById('toastContainer').appendChild(toast);
+            setTimeout(() => { toast.classList.remove('opacity-0', 'translate-y-2'); }, 10);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        };
 
-        function lockSystem() { location.reload(); }
-
-        function updateUI() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(incomes));
-            renderSummaries();
+        // Data Rendering
+        const updateUI = () => {
+            localStorage.setItem('incomes', JSON.stringify(incomes));
             renderTable();
+            renderStats();
             renderCharts();
-            renderTopEarners();
-        }
+            renderYearlyProgress();
+        };
 
-        const formatCurrency = (n) => new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB' }).format(n);
-
-        function renderSummaries() {
+        const renderStats = () => {
             const now = new Date();
-            const todayStr = now.toISOString().split('T')[0];
-            let tToday = 0, tMonth = 0;
+            const todayStr = now.toLocaleDateString('en-CA');
+            const curMonth = now.getMonth();
+            const curYear = now.getFullYear();
+
+            let today = 0, month = 0, year = 0, allTime = 0;
 
             incomes.forEach(i => {
                 const iDate = new Date(i.date);
-                if (i.date === todayStr) tToday += i.amount;
-                if (iDate.getMonth() === now.getMonth() && iDate.getFullYear() === now.getFullYear()) tMonth += i.amount;
+                allTime += i.amount;
+                if (i.date === todayStr) today += i.amount;
+                if (iDate.getFullYear() === curYear) {
+                    year += i.amount;
+                    if (iDate.getMonth() === curMonth) month += i.amount;
+                }
             });
 
-            document.getElementById("totalToday").textContent = formatCurrency(tToday);
-            document.getElementById("totalMonth").textContent = formatCurrency(tMonth);
-            
-            const daysInMonth = now.getDate();
-            const avg = tMonth / (daysInMonth || 1);
-            document.getElementById('avgDaily').textContent = formatCurrency(avg);
+            document.getElementById('totalToday').textContent = formatCurrency(today);
+            document.getElementById('totalMonth').textContent = formatCurrency(month);
+            document.getElementById('totalYear').textContent = formatCurrency(year);
+            document.getElementById('totalAllTime').textContent = formatCurrency(allTime);
+        };
 
-            const perc = Math.min((tMonth / monthlyGoal) * 100, 100).toFixed(0);
-            document.getElementById('goalPercent').textContent = perc + '%';
-            document.getElementById('goalFill').style.width = perc + '%';
-            document.getElementById('goalText').textContent = monthlyGoal.toLocaleString();
-        }
+        const renderYearlyProgress = () => {
+            const container = document.getElementById('yearlyStats');
+            const now = new Date();
+            const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+            const monthlyTotals = new Array(12).fill(0);
 
-        function renderTopEarners() {
-            const container = document.getElementById('topEarnersList');
-            container.innerHTML = '';
-            const sorted = [...incomes].sort((a,b) => b.amount - a.amount).slice(0, 5);
-            sorted.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = 'flex justify-between items-center p-3 rounded-2xl bg-slate-50 border border-slate-100';
-                div.innerHTML = `<div class="flex items-center gap-3"><span class="text-xs font-black text-slate-300">#${index+1}</span><div class="text-xs font-bold text-slate-700">${item.title}</div></div><div class="text-xs font-black text-blue-600">${formatCurrency(item.amount)}</div>`;
-                container.appendChild(div);
+            incomes.forEach(i => {
+                const d = new Date(i.date);
+                if (d.getFullYear() === now.getFullYear()) monthlyTotals[d.getMonth()] += i.amount;
             });
-        }
 
-        function renderTable() {
-            const tbody = document.getElementById('tableBody');
-            const countEl = document.getElementById('itemCount');
-            tbody.innerHTML = '';
+            const max = Math.max(...monthlyTotals, 1);
+            container.innerHTML = monthlyTotals.map((val, idx) => {
+                const p = (val / max) * 100;
+                return `
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[10px] font-bold text-slate-500 uppercase">
+                            <span>${months[idx]}</span>
+                            <span>${formatCurrency(val)}</span>
+                        </div>
+                        <div class="yearly-progress-bar"><div class="yearly-progress-fill" style="width: ${p}%"></div></div>
+                    </div>
+                `;
+            }).join('');
+        };
+
+        const renderTable = () => {
+            incomeTableBody.innerHTML = '';
             const now = new Date();
 
             let filtered = incomes.filter(i => {
-                const matchesSearch = i.title.toLowerCase().includes(searchQuery.toLowerCase());
+                const matchesSearch = i.title.toLowerCase().includes(searchQuery.toLowerCase()) || (i.note && i.note.toLowerCase().includes(searchQuery.toLowerCase()));
                 if (currentFilter === 'all') return matchesSearch;
                 const d = new Date(i.date);
                 return matchesSearch && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
             });
 
-            if(countEl) countEl.textContent = `${filtered.length} รายการ`;
+            document.getElementById('itemCount').textContent = `${filtered.length} รายการ`;
+            
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                filtered.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(item => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-slate-50 group hover:bg-slate-50 transition-all';
+                    row.innerHTML = `
+                        <td class="p-5 text-[10px] text-slate-400 font-bold">${new Date(item.date).toLocaleDateString('th-TH')}</td>
+                        <td class="p-5"><span class="category-badge bg-blue-50 text-blue-600">${item.category || 'ทั่วไป'}</span></td>
+                        <td class="p-5">
+                            <div class="font-bold text-slate-700">${item.title}</div>
+                            ${item.note ? `<div class="text-[10px] text-slate-400 italic font-medium">${item.note}</div>` : ''}
+                        </td>
+                        <td class="p-5 text-right font-black text-slate-900">${formatCurrency(item.amount)}</td>
+                        <td class="p-5 text-center">
+                            <button onclick="deleteItem('${item.id}')" class="text-slate-200 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </td>
+                    `;
+                    incomeTableBody.appendChild(row);
+                });
+            }
+        };
 
-            filtered.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(i => {
-                const row = document.createElement('tr');
-                row.className = 'border-b border-slate-50 group hover:bg-slate-50 transition-all';
-                row.innerHTML = `
-                    <td class="p-4 text-[10px] text-slate-400 font-bold">${new Date(i.date).toLocaleDateString('th-TH')}</td>
-                    <td class="p-4 text-center"><span class="category-badge bg-blue-50 text-blue-500">${i.category}</span></td>
-                    <td class="p-4 font-bold text-slate-700">${i.title}</td>
-                    <td class="p-4 text-right font-black text-slate-900">${formatCurrency(i.amount)}</td>
-                    <td class="p-4 text-center">
-                        <button onclick="deleteItem('${i.id}')" class="text-slate-200 hover:text-red-500 opacity-0 group-hover:opacity-100"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg></button>
-                    </td>`;
-                tbody.appendChild(row);
-            });
-        }
-
-        function renderCharts() {
-            const ctxLine = document.getElementById('incomeChart').getContext('2d');
-            const daily = {};
-            incomes.slice(-15).forEach(i => daily[i.date] = (daily[i.date] || 0) + i.amount);
-            const keys = Object.keys(daily).sort();
+        const renderCharts = () => {
+            // Line Chart
+            const ctxL = document.getElementById('incomeChart').getContext('2d');
+            const dailyData = {};
+            incomes.slice(-15).forEach(i => dailyData[i.date] = (dailyData[i.date] || 0) + i.amount);
+            const keys = Object.keys(dailyData).sort();
+            
             if (chartLine) chartLine.destroy();
-            chartLine = new Chart(ctxLine, {
+            chartLine = new Chart(ctxL, {
                 type: 'line',
                 data: {
-                    labels: keys.map(k => new Date(k).toLocaleDateString('th-TH', {day:'numeric', month:'short'})),
-                    datasets: [{ data: keys.map(k => daily[k]), borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)', fill: true, tension: 0.4 }]
+                    labels: keys.map(d => new Date(d).toLocaleDateString('th-TH', {day:'numeric', month:'short'})),
+                    datasets: [{
+                        data: keys.map(d => dailyData[d]),
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.05)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 0
+                    }]
                 },
-                options: { maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { legend: { display: false } },
+                    scales: { y: { display: false }, x: { grid: { display: false }, ticks: { font: { size: 9 } } } }
+                }
             });
 
-            const ctxPie = document.getElementById('categoryChart').getContext('2d');
-            const cats = {};
-            incomes.forEach(i => cats[i.category] = (cats[i.category] || 0) + i.amount);
+            // Pie Chart
+            const ctxP = document.getElementById('categoryChart').getContext('2d');
+            const catData = {};
+            incomes.forEach(i => {
+                const c = i.category || 'ทั่วไป';
+                catData[c] = (catData[c] || 0) + i.amount;
+            });
+
             if (chartPie) chartPie.destroy();
-            chartPie = new Chart(ctxPie, {
+            chartPie = new Chart(ctxP, {
                 type: 'doughnut',
                 data: {
-                    labels: Object.keys(cats),
-                    datasets: [{ data: Object.values(cats), backgroundColor: ['#3b82f6', '#6366f1', '#10b981', '#f59e0b', '#94a3b8'] }]
+                    labels: Object.keys(catData),
+                    datasets: [{
+                        data: Object.values(catData),
+                        backgroundColor: ['#3b82f6', '#6366f1', '#10b981', '#f59e0b', '#94a3b8', '#ec4899'],
+                        borderWidth: 0
+                    }]
                 },
-                options: { maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%',
+                    plugins: { legend: { position: 'bottom', labels: { font: { size: 9, family: 'Kanit' }, boxWidth: 10 } } }
+                }
             });
-        }
+        };
 
-        document.getElementById('incomeForm').addEventListener('submit', (e) => {
+        // Actions
+        incomeForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const entry = { id: Date.now().toString(), title: document.getElementById('title').value, amount: parseFloat(document.getElementById('amount').value), category: document.getElementById('category').value, date: document.getElementById('dateInput').value };
-            incomes.push(entry);
-            document.getElementById('incomeForm').reset();
-            document.getElementById('dateInput').value = new Date().toISOString().split('T')[0];
+            if (!isOnline) return;
+
+            const newItem = {
+                id: Date.now().toString(),
+                title: document.getElementById('title').value,
+                amount: parseFloat(document.getElementById('amount').value),
+                category: document.getElementById('category').value,
+                date: document.getElementById('date').value,
+                note: document.getElementById('note').value
+            };
+
+            incomes.push(newItem);
+            incomeForm.reset();
+            document.getElementById('date').valueAsDate = new Date();
             updateUI();
+            showToast('บันทึกรายได้สำเร็จ');
         });
 
-        window.deleteItem = (id) => { incomes = incomes.filter(i => i.id !== id); updateUI(); };
+        window.deleteItem = (id) => {
+            if (!isOnline) return;
+            incomes = incomes.filter(i => i.id !== id);
+            updateUI();
+            showToast('ลบรายการเรียบร้อย');
+        };
+
         window.setFilter = (f) => {
             currentFilter = f;
-            document.getElementById('btnAll').className = f === 'all' ? 'text-[10px] font-bold px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600' : 'text-[10px] font-bold px-3 py-1.5 rounded-lg bg-slate-100 text-slate-500';
-            document.getElementById('btnMonth').className = f === 'month' ? 'text-[10px] font-bold px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600' : 'text-[10px] font-bold px-3 py-1.5 rounded-lg bg-slate-100 text-slate-500';
+            document.getElementById('btnMonth').className = f === 'month' ? 'px-4 py-2 rounded-xl text-xs font-bold bg-blue-50 text-blue-600 transition' : 'px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-500 transition';
+            document.getElementById('btnAll').className = f === 'all' ? 'px-4 py-2 rounded-xl text-xs font-bold bg-blue-50 text-blue-600 transition' : 'px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-500 transition';
             renderTable();
         };
-        document.getElementById('searchInput').addEventListener('input', (e) => { searchQuery = e.target.value; renderTable(); });
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderTable();
+        });
+
+        // Initial Load
+        updateUI();
+        setInterval(renderStats, 60000); // Update stats every minute for date rollover
     </script>
 </body>
 </html>
