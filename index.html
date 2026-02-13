@@ -3,27 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบบันทึกรายได้ - Income Tracker V3.2.0</title>
+    <title>Financial Assistant Pro - V4.0.0</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Kanit', sans-serif;
-            background-color: #f1f5f9;
+            background-color: #f8fafc;
             transition: all 0.3s ease;
         }
         .glass-card {
-            background: rgba(255, 255, 255, 1);
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            background: #ffffff;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
             border-radius: 1.5rem;
         }
         .system-offline {
-            filter: grayscale(0.8);
+            filter: grayscale(1);
             pointer-events: none;
-            opacity: 0.7;
-            user-select: none;
+            opacity: 0.6;
         }
         .status-toggle {
             pointer-events: auto !important;
@@ -32,159 +31,199 @@
         }
         .category-badge {
             font-size: 0.7rem;
-            padding: 2px 10px;
-            border-radius: 9999px;
+            padding: 4px 12px;
+            border-radius: 12px;
             font-weight: 600;
         }
-        .yearly-progress-bar {
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 4px;
+        .budget-progress {
+            height: 10px;
+            background: #f1f5f9;
+            border-radius: 5px;
             overflow: hidden;
         }
-        .yearly-progress-fill {
+        .budget-fill {
             height: 100%;
-            background: #2563eb;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
             transition: width 1s ease-in-out;
+        }
+        .btn-action {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-action:active {
+            transform: scale(0.95);
         }
     </style>
 </head>
 <body class="p-4 md:p-8">
     <div class="max-w-7xl mx-auto">
         <!-- Header Section -->
-        <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
             <div class="text-center md:text-left">
-                <h1 class="text-3xl font-bold text-slate-800">Financial <span class="text-blue-600">Assistant</span></h1>
-                <p class="text-slate-500">V3.2.0 • ระบบวิเคราะห์รายปีและจัดการข้อมูลขั้นสูง</p>
+                <div class="flex items-center justify-center md:justify-start gap-2 mb-1">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">F</div>
+                    <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Financial <span class="text-blue-600">Pro</span></h1>
+                </div>
+                <p class="text-slate-500 font-medium">Version 4.0.0 • ระบบบริหารความมั่งคั่งอัจฉริยะ</p>
             </div>
             
-            <div class="flex gap-3">
-                <!-- Status Toggle -->
-                <div class="status-toggle flex items-center bg-white p-3 rounded-2xl shadow-sm border border-slate-200">
-                    <span id="statusLabel" class="mr-3 text-xs font-bold text-green-600 uppercase">Online</span>
+            <div class="flex items-center gap-4">
+                <button onclick="exportToCSV()" class="flex items-center gap-2 bg-white border border-slate-200 px-4 py-2.5 rounded-2xl text-sm font-semibold text-slate-600 hover:bg-slate-50 transition btn-action">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Export CSV
+                </button>
+                
+                <div class="status-toggle flex items-center bg-white p-2.5 rounded-2xl shadow-sm border border-slate-200">
+                    <span id="statusLabel" class="mx-3 text-[10px] font-black text-green-600 uppercase tracking-tighter">Online</span>
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" id="statusCheckbox" class="sr-only peer">
-                        <div class="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+                        <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
                     </label>
                 </div>
             </div>
         </div>
 
         <div id="mainContent">
-            <!-- Stats Grid -->
+            <!-- Stats Dashboard -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="glass-card p-6 border-l-4 border-emerald-500">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">รายได้วันนี้</p>
-                    <h2 id="totalToday" class="text-2xl font-bold text-slate-800">฿0.00</h2>
+                <div class="glass-card p-6 bg-gradient-to-br from-white to-emerald-50/30 border-b-4 border-emerald-500">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">รายได้วันนี้</p>
+                    <h2 id="totalToday" class="text-2xl font-black text-slate-800 tracking-tight">฿0.00</h2>
+                    <div class="mt-2 text-[10px] text-emerald-600 font-bold" id="todayCount">0 รายการ</div>
                 </div>
-                <div class="glass-card p-6 border-l-4 border-blue-500">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">รายได้เดือนนี้</p>
-                    <h2 id="totalMonth" class="text-2xl font-bold text-slate-800">฿0.00</h2>
+                <div class="glass-card p-6 bg-gradient-to-br from-white to-blue-50/30 border-b-4 border-blue-500">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">รายได้เดือนนี้</p>
+                    <h2 id="totalMonth" class="text-2xl font-black text-slate-800 tracking-tight">฿0.00</h2>
+                    <div class="mt-3">
+                        <div class="flex justify-between text-[10px] font-bold mb-1">
+                            <span class="text-slate-400 uppercase">เป้าหมาย (Budget)</span>
+                            <span id="budgetPercent" class="text-blue-600">0%</span>
+                        </div>
+                        <div class="budget-progress"><div id="budgetFill" class="budget-fill" style="width: 0%"></div></div>
+                    </div>
                 </div>
-                <div class="glass-card p-6 border-l-4 border-indigo-500">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">รายได้ปีนี้ (${new Date().getFullYear()})</p>
-                    <h2 id="totalYear" class="text-2xl font-bold text-blue-600">฿0.00</h2>
+                <div class="glass-card p-6 bg-gradient-to-br from-white to-indigo-50/30 border-b-4 border-indigo-600">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">รายได้ปีนี้ (${new Date().getFullYear()})</p>
+                    <h2 id="totalYear" class="text-2xl font-black text-indigo-600 tracking-tight">฿0.00</h2>
+                    <p class="text-[10px] text-slate-400 mt-2 font-medium" id="yearlyAvg">เฉลี่ย ฿0/เดือน</p>
                 </div>
-                <div class="glass-card p-6 border-l-4 border-slate-800">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">มั่งคั่งสุทธิสะสม</p>
-                    <h2 id="totalAllTime" class="text-2xl font-bold text-slate-800">฿0.00</h2>
+                <div class="glass-card p-6 bg-slate-900 border-b-4 border-blue-400">
+                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">มั่งคั่งสุทธิสะสม</p>
+                    <h2 id="totalAllTime" class="text-2xl font-black text-white tracking-tight">฿0.00</h2>
+                    <button onclick="setBudget()" class="mt-2 text-[10px] text-blue-400 hover:text-blue-300 font-bold underline cursor-pointer">ตั้งค่าเป้าหมาย</button>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <!-- Sidebar -->
+                <!-- Left Control Panel -->
                 <div class="lg:col-span-4 space-y-6">
-                    <!-- Form Card -->
                     <div class="glass-card p-6">
-                        <h3 class="font-bold text-slate-700 mb-6 flex items-center gap-2 text-sm uppercase">
-                            <span class="w-1.5 h-4 bg-blue-600 rounded-full"></span> เพิ่มรายการใหม่
+                        <h3 class="font-bold text-slate-800 mb-6 flex items-center gap-2 text-sm uppercase">
+                            <span class="w-2 h-5 bg-blue-600 rounded-sm"></span> บันทึกธุรกรรม
                         </h3>
                         <form id="incomeForm" class="space-y-4">
-                            <input type="text" id="title" required placeholder="ชื่อรายการ" 
-                                class="w-full p-4 rounded-2xl border border-slate-100 bg-slate-50 outline-none focus:bg-white focus:ring-2 focus:ring-blue-100 transition disabled:bg-slate-200">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-400 ml-1 uppercase mb-1 block">ชื่อรายการ</label>
+                                <input type="text" id="title" required placeholder="เช่น เงินเดือน, ค่าโปรเจกต์" 
+                                    class="w-full p-4 rounded-2xl border border-slate-100 bg-slate-50 outline-none focus:bg-white focus:ring-4 focus:ring-blue-50 transition disabled:bg-slate-200">
+                            </div>
                             
-                            <div class="grid grid-cols-2 gap-3">
-                                <input type="number" id="amount" required placeholder="0.00" step="0.01"
-                                    class="w-full p-4 rounded-2xl border border-slate-100 bg-slate-50 outline-none font-bold text-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100 transition disabled:bg-slate-200">
-                                <select id="category" class="w-full p-4 rounded-2xl border border-slate-100 bg-slate-50 text-sm outline-none transition disabled:bg-slate-200">
-                                    <option>ทั่วไป</option>
-                                    <option>งานประจำ</option>
-                                    <option>งานเสริม</option>
-                                    <option>ค้าขาย</option>
-                                    <option>อื่นๆ</option>
-                                </select>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-400 ml-1 uppercase mb-1 block">จำนวนเงิน</label>
+                                    <input type="number" id="amount" required placeholder="0.00" step="0.01"
+                                        class="w-full p-4 rounded-2xl border border-slate-100 bg-slate-50 outline-none font-bold text-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-50 transition disabled:bg-slate-200">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-400 ml-1 uppercase mb-1 block">หมวดหมู่</label>
+                                    <select id="category" class="w-full p-4 rounded-2xl border border-slate-100 bg-slate-50 text-sm outline-none transition appearance-none focus:bg-white">
+                                        <option>ทั่วไป</option>
+                                        <option>งานประจำ</option>
+                                        <option>งานเสริม</option>
+                                        <option>ปันผล/ดอกเบี้ย</option>
+                                        <option>ค้าขายออนไลน์</option>
+                                        <option>อื่นๆ</option>
+                                    </select>
+                                </div>
                             </div>
 
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[10px] font-bold text-slate-400 ml-2 uppercase">วันที่</label>
-                                <input type="date" id="date" required
-                                    class="w-full p-4 rounded-2xl border border-slate-100 bg-slate-50 outline-none text-sm transition disabled:bg-slate-200">
+                            <div class="grid grid-cols-1 gap-4">
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-400 ml-1 uppercase mb-1 block">วันที่ทำรายการ</label>
+                                    <input type="date" id="date" required
+                                        class="w-full p-4 rounded-2xl border border-slate-100 bg-slate-50 outline-none text-sm transition focus:bg-white">
+                                </div>
                             </div>
 
-                            <input type="text" id="note" placeholder="หมายเหตุ (ถ้ามี)" 
-                                class="w-full p-4 rounded-2xl border border-slate-100 bg-slate-50 outline-none text-xs transition disabled:bg-slate-200">
+                            <textarea id="note" rows="2" placeholder="เพิ่มหมายเหตุ..." 
+                                class="w-full p-4 rounded-2xl border border-slate-100 bg-slate-50 outline-none text-xs transition focus:bg-white resize-none"></textarea>
 
                             <button type="submit" id="submitBtn"
-                                class="w-full bg-slate-900 text-white font-bold py-4 rounded-2xl hover:bg-black transition-all shadow-lg disabled:bg-slate-400">
-                                บันทึกข้อมูล
+                                class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 btn-action">
+                                ยืนยันการบันทึก
                             </button>
                         </form>
                     </div>
 
-                    <!-- Yearly Performance -->
+                    <!-- Visual Insight -->
                     <div class="glass-card p-6">
-                        <h3 class="font-bold text-slate-700 mb-4 text-sm uppercase tracking-tight">ประสิทธิภาพรายปี</h3>
-                        <div id="yearlyStats" class="space-y-4">
-                            <!-- JS will inject monthly bars here -->
+                        <h3 class="font-bold text-slate-800 mb-4 text-sm uppercase tracking-tight">สรุปรายเดือนปีนี้</h3>
+                        <div id="yearlyStats" class="space-y-4 max-h-[300px] overflow-y-auto pr-2">
+                            <!-- JS injections -->
                         </div>
                     </div>
                 </div>
 
-                <!-- Main Content Area -->
+                <!-- Right Data Panel -->
                 <div class="lg:col-span-8 space-y-6">
-                    <!-- Charts -->
+                    <!-- Analytics Grid -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="glass-card p-6 h-72">
-                            <h4 class="text-xs font-bold text-slate-400 uppercase mb-4">แนวโน้ม (15 วันล่าสุด)</h4>
-                            <canvas id="incomeChart"></canvas>
+                        <div class="glass-card p-6 h-80">
+                            <h4 class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">Growth Trend (30 Days)</h4>
+                            <div class="h-60"><canvas id="incomeChart"></canvas></div>
                         </div>
-                        <div class="glass-card p-6 h-72">
-                            <h4 class="text-xs font-bold text-slate-400 uppercase mb-4">สัดส่วนหมวดหมู่</h4>
-                            <canvas id="categoryChart"></canvas>
+                        <div class="glass-card p-6 h-80">
+                            <h4 class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">Revenue Allocation</h4>
+                            <div class="h-60"><canvas id="categoryChart"></canvas></div>
                         </div>
                     </div>
 
-                    <!-- Table Section -->
+                    <!-- Transaction List -->
                     <div class="glass-card overflow-hidden">
                         <div class="p-6 border-b border-slate-50 flex flex-col md:flex-row justify-between items-center gap-4">
-                            <div class="flex items-center bg-slate-50 rounded-2xl px-4 py-2 w-full md:w-64">
+                            <div class="flex items-center bg-slate-50 rounded-2xl px-4 py-2.5 w-full md:w-80 border border-slate-100">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
-                                <input type="text" id="searchInput" placeholder="ค้นหารายการ..." class="bg-transparent border-none outline-none text-sm w-full">
+                                <input type="text" id="searchInput" placeholder="ค้นหาตามชื่อรายการหรือหมายเหตุ..." class="bg-transparent border-none outline-none text-sm w-full font-medium">
                             </div>
-                            <div class="flex gap-2">
-                                <span id="itemCount" class="text-[10px] font-bold text-slate-400 mr-2 self-center">0 รายการ</span>
-                                <button onclick="setFilter('month')" id="btnMonth" class="px-4 py-2 rounded-xl text-xs font-bold bg-blue-50 text-blue-600 transition">เดือนนี้</button>
-                                <button onclick="setFilter('all')" id="btnAll" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-500 transition">ทั้งหมด</button>
+                            <div class="flex bg-slate-100 p-1 rounded-xl">
+                                <button onclick="setFilter('month')" id="btnMonth" class="px-5 py-2 rounded-lg text-xs font-bold transition-all">เดือนนี้</button>
+                                <button onclick="setFilter('all')" id="btnAll" class="px-5 py-2 rounded-lg text-xs font-bold transition-all">ทั้งหมด</button>
                             </div>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left">
-                                <thead class="bg-slate-50/50 text-[10px] text-slate-400 uppercase tracking-widest font-black">
+                                <thead class="bg-slate-50/80 text-[10px] text-slate-400 uppercase tracking-widest font-black border-b border-slate-100">
                                     <tr>
-                                        <th class="p-5">วันที่</th>
+                                        <th class="p-5">วัน/เดือน/ปี</th>
                                         <th class="p-5">หมวดหมู่</th>
-                                        <th class="p-5">รายการ</th>
-                                        <th class="p-5 text-right">จำนวนเงิน</th>
+                                        <th class="p-5">รายการข้อมูล</th>
+                                        <th class="p-5 text-right">จำนวนเงิน (บาท)</th>
                                         <th class="p-5"></th>
                                     </tr>
                                 </thead>
                                 <tbody id="incomeTableBody" class="text-sm"></tbody>
                             </table>
                         </div>
-                        <div id="emptyState" class="p-12 text-center text-slate-400 text-xs italic hidden">
-                            ไม่พบข้อมูลรายการที่ค้นหา
+                        <div id="emptyState" class="p-20 text-center hidden">
+                            <div class="text-slate-300 mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                            <span class="text-slate-400 text-xs font-medium uppercase tracking-widest">ไม่มีข้อมูลในขณะนี้</span>
                         </div>
                     </div>
                 </div>
@@ -192,12 +231,13 @@
         </div>
     </div>
 
-    <!-- Toast container -->
-    <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
+    <!-- Toast UI -->
+    <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3"></div>
 
     <script>
-        // Core State
+        // Version 4.0.0 Core Logic
         let incomes = JSON.parse(localStorage.getItem('incomes')) || [];
+        let monthlyBudget = parseFloat(localStorage.getItem('monthly_budget')) || 50000;
         let isOnline = localStorage.getItem('system_status') !== 'offline';
         let currentFilter = 'month';
         let searchQuery = '';
@@ -210,12 +250,12 @@
         const statusCheckbox = document.getElementById('statusCheckbox');
         const statusLabel = document.getElementById('statusLabel');
         const mainContent = document.getElementById('mainContent');
-        const formInputs = incomeForm.querySelectorAll('input, select, button');
+        const formInputs = incomeForm.querySelectorAll('input, select, textarea, button');
 
-        // Initial setup
+        // Setup Init
         document.getElementById('date').valueAsDate = new Date();
 
-        // Status Management
+        // System Control
         const setStatusUI = (online, silent = false) => {
             isOnline = online;
             statusCheckbox.checked = online;
@@ -223,38 +263,43 @@
 
             if (online) {
                 statusLabel.textContent = 'Online';
-                statusLabel.classList.replace('text-red-500', 'text-green-600');
+                statusLabel.classList.remove('text-red-500');
+                statusLabel.classList.add('text-green-600');
                 mainContent.classList.remove('system-offline');
                 formInputs.forEach(el => el.disabled = false);
-                if (!silent) showToast('ระบบกลับมาออนไลน์แล้ว');
+                if (!silent) showToast('ระบบเชื่อมต่อสำเร็จ');
             } else {
                 statusLabel.textContent = 'Offline';
-                statusLabel.classList.replace('text-green-600', 'text-red-500');
+                statusLabel.classList.remove('text-green-600');
+                statusLabel.classList.add('text-red-500');
                 mainContent.classList.add('system-offline');
                 formInputs.forEach(el => el.disabled = true);
-                if (!silent) showToast('เข้าสู่โหมดออฟไลน์: ระงับการบันทึก');
+                if (!silent) showToast('โหมดออฟไลน์เปิดใช้งาน');
             }
         };
 
         statusCheckbox.addEventListener('change', (e) => setStatusUI(e.target.checked));
         setStatusUI(isOnline, true);
 
-        // Utilities
-        const formatCurrency = (num) => new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB' }).format(num);
+        // Core Functions
+        const formatCurrency = (num) => new Intl.NumberFormat('th-TH', { 
+            style: 'decimal', 
+            minimumFractionDigits: 2, 
+            maximumFractionDigits: 2 
+        }).format(num);
 
         const showToast = (message) => {
             const toast = document.createElement('div');
-            toast.className = 'bg-slate-800 text-white px-5 py-3 rounded-2xl shadow-xl text-xs font-medium transition-all duration-300 opacity-0 translate-y-2';
-            toast.textContent = message;
+            toast.className = 'bg-slate-900 text-white px-6 py-4 rounded-2xl shadow-2xl text-xs font-bold transition-all duration-300 opacity-0 translate-y-4 border border-slate-800';
+            toast.innerHTML = `<div class="flex items-center gap-3"><span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>${message}</div>`;
             document.getElementById('toastContainer').appendChild(toast);
-            setTimeout(() => { toast.classList.remove('opacity-0', 'translate-y-2'); }, 10);
+            setTimeout(() => { toast.classList.remove('opacity-0', 'translate-y-4'); }, 10);
             setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-2');
+                toast.classList.add('opacity-0', 'translate-y-4');
                 setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            }, 3500);
         };
 
-        // Data Rendering
         const updateUI = () => {
             localStorage.setItem('incomes', JSON.stringify(incomes));
             renderTable();
@@ -269,45 +314,56 @@
             const curMonth = now.getMonth();
             const curYear = now.getFullYear();
 
-            let today = 0, month = 0, year = 0, allTime = 0;
+            let today = 0, month = 0, year = 0, allTime = 0, tCount = 0;
 
             incomes.forEach(i => {
                 const iDate = new Date(i.date);
-                allTime += i.amount;
-                if (i.date === todayStr) today += i.amount;
+                const amt = parseFloat(i.amount);
+                allTime += amt;
+                if (i.date === todayStr) { today += amt; tCount++; }
                 if (iDate.getFullYear() === curYear) {
-                    year += i.amount;
-                    if (iDate.getMonth() === curMonth) month += i.amount;
+                    year += amt;
+                    if (iDate.getMonth() === curMonth) month += amt;
                 }
             });
 
-            document.getElementById('totalToday').textContent = formatCurrency(today);
-            document.getElementById('totalMonth').textContent = formatCurrency(month);
-            document.getElementById('totalYear').textContent = formatCurrency(year);
-            document.getElementById('totalAllTime').textContent = formatCurrency(allTime);
+            document.getElementById('totalToday').textContent = `฿${formatCurrency(today)}`;
+            document.getElementById('totalMonth').textContent = `฿${formatCurrency(month)}`;
+            document.getElementById('totalYear').textContent = `฿${formatCurrency(year)}`;
+            document.getElementById('totalAllTime').textContent = `฿${formatCurrency(allTime)}`;
+            document.getElementById('todayCount').textContent = `${tCount} รายการวันนี้`;
+            document.getElementById('yearlyAvg').textContent = `เฉลี่ย ฿${formatCurrency(year/12)}/เดือน`;
+
+            // Budget Update
+            const bPercent = Math.min(Math.round((month / monthlyBudget) * 100), 100);
+            document.getElementById('budgetPercent').textContent = `${bPercent}%`;
+            document.getElementById('budgetFill').style.width = `${bPercent}%`;
         };
 
         const renderYearlyProgress = () => {
             const container = document.getElementById('yearlyStats');
             const now = new Date();
-            const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+            const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
             const monthlyTotals = new Array(12).fill(0);
 
             incomes.forEach(i => {
                 const d = new Date(i.date);
-                if (d.getFullYear() === now.getFullYear()) monthlyTotals[d.getMonth()] += i.amount;
+                if (d.getFullYear() === now.getFullYear()) monthlyTotals[d.getMonth()] += parseFloat(i.amount);
             });
 
             const max = Math.max(...monthlyTotals, 1);
             container.innerHTML = monthlyTotals.map((val, idx) => {
+                if(idx > now.getMonth() && val === 0) return ''; // Hide future months with no data
                 const p = (val / max) * 100;
                 return `
-                    <div class="space-y-1">
-                        <div class="flex justify-between text-[10px] font-bold text-slate-500 uppercase">
+                    <div class="group">
+                        <div class="flex justify-between text-[10px] font-bold text-slate-500 mb-1.5 uppercase">
                             <span>${months[idx]}</span>
-                            <span>${formatCurrency(val)}</span>
+                            <span class="text-slate-800">฿${formatCurrency(val)}</span>
                         </div>
-                        <div class="yearly-progress-bar"><div class="yearly-progress-fill" style="width: ${p}%"></div></div>
+                        <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-blue-500 rounded-full transition-all duration-1000 group-hover:bg-indigo-500" style="width: ${p}%"></div>
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -318,31 +374,33 @@
             const now = new Date();
 
             let filtered = incomes.filter(i => {
-                const matchesSearch = i.title.toLowerCase().includes(searchQuery.toLowerCase()) || (i.note && i.note.toLowerCase().includes(searchQuery.toLowerCase()));
+                const searchStr = searchQuery.toLowerCase();
+                const matchesSearch = i.title.toLowerCase().includes(searchStr) || (i.note && i.note.toLowerCase().includes(searchStr));
                 if (currentFilter === 'all') return matchesSearch;
                 const d = new Date(i.date);
                 return matchesSearch && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
             });
 
-            document.getElementById('itemCount').textContent = `${filtered.length} รายการ`;
-            
+            document.getElementById('btnMonth').className = currentFilter === 'month' ? 'px-5 py-2 rounded-lg text-xs font-bold bg-white text-blue-600 shadow-sm' : 'px-5 py-2 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-800';
+            document.getElementById('btnAll').className = currentFilter === 'all' ? 'px-5 py-2 rounded-lg text-xs font-bold bg-white text-blue-600 shadow-sm' : 'px-5 py-2 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-800';
+
             if (filtered.length === 0) {
                 emptyState.classList.remove('hidden');
             } else {
                 emptyState.classList.add('hidden');
                 filtered.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(item => {
                     const row = document.createElement('tr');
-                    row.className = 'border-b border-slate-50 group hover:bg-slate-50 transition-all';
+                    row.className = 'border-b border-slate-50 group hover:bg-slate-50/50 transition-all';
                     row.innerHTML = `
-                        <td class="p-5 text-[10px] text-slate-400 font-bold">${new Date(item.date).toLocaleDateString('th-TH')}</td>
-                        <td class="p-5"><span class="category-badge bg-blue-50 text-blue-600">${item.category || 'ทั่วไป'}</span></td>
+                        <td class="p-5 text-xs text-slate-400 font-semibold">${new Date(item.date).toLocaleDateString('th-TH', {day:'2-digit', month:'short', year:'2-digit'})}</td>
+                        <td class="p-5"><span class="category-badge ${getCategoryColor(item.category)}">${item.category || 'ทั่วไป'}</span></td>
                         <td class="p-5">
-                            <div class="font-bold text-slate-700">${item.title}</div>
-                            ${item.note ? `<div class="text-[10px] text-slate-400 italic font-medium">${item.note}</div>` : ''}
+                            <div class="font-bold text-slate-800">${item.title}</div>
+                            ${item.note ? `<div class="text-[10px] text-slate-400 mt-0.5">${item.note}</div>` : ''}
                         </td>
-                        <td class="p-5 text-right font-black text-slate-900">${formatCurrency(item.amount)}</td>
+                        <td class="p-5 text-right font-black text-slate-900">฿${formatCurrency(item.amount)}</td>
                         <td class="p-5 text-center">
-                            <button onclick="deleteItem('${item.id}')" class="text-slate-200 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all">
+                            <button onclick="deleteItem('${item.id}')" class="p-2 rounded-xl text-slate-300 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>
@@ -354,11 +412,22 @@
             }
         };
 
+        const getCategoryColor = (cat) => {
+            const colors = {
+                'งานประจำ': 'bg-blue-50 text-blue-600',
+                'งานเสริม': 'bg-emerald-50 text-emerald-600',
+                'ปันผล/ดอกเบี้ย': 'bg-indigo-50 text-indigo-600',
+                'ค้าขายออนไลน์': 'bg-orange-50 text-orange-600',
+                'อื่นๆ': 'bg-slate-100 text-slate-600'
+            };
+            return colors[cat] || 'bg-slate-50 text-slate-500';
+        };
+
         const renderCharts = () => {
-            // Line Chart
+            // Line Chart (30 Days)
             const ctxL = document.getElementById('incomeChart').getContext('2d');
             const dailyData = {};
-            incomes.slice(-15).forEach(i => dailyData[i.date] = (dailyData[i.date] || 0) + i.amount);
+            incomes.slice(-30).forEach(i => dailyData[i.date] = (dailyData[i.date] || 0) + parseFloat(i.amount));
             const keys = Object.keys(dailyData).sort();
             
             if (chartLine) chartLine.destroy();
@@ -368,19 +437,24 @@
                     labels: keys.map(d => new Date(d).toLocaleDateString('th-TH', {day:'numeric', month:'short'})),
                     datasets: [{
                         data: keys.map(d => dailyData[d]),
-                        borderColor: '#2563eb',
-                        backgroundColor: 'rgba(37, 99, 235, 0.05)',
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.08)',
                         fill: true,
-                        tension: 0.4,
+                        tension: 0.45,
                         borderWidth: 3,
-                        pointRadius: 0
+                        pointRadius: 4,
+                        pointBackgroundColor: '#fff',
+                        pointBorderWidth: 2
                     }]
                 },
                 options: { 
                     responsive: true, 
                     maintainAspectRatio: false, 
                     plugins: { legend: { display: false } },
-                    scales: { y: { display: false }, x: { grid: { display: false }, ticks: { font: { size: 9 } } } }
+                    scales: { 
+                        y: { display: false }, 
+                        x: { border: {display:false}, grid: { display: false }, ticks: { font: { size: 9, family: 'Kanit' } } } 
+                    }
                 }
             });
 
@@ -389,7 +463,7 @@
             const catData = {};
             incomes.forEach(i => {
                 const c = i.category || 'ทั่วไป';
-                catData[c] = (catData[c] || 0) + i.amount;
+                catData[c] = (catData[c] || 0) + parseFloat(i.amount);
             });
 
             if (chartPie) chartPie.destroy();
@@ -399,52 +473,83 @@
                     labels: Object.keys(catData),
                     datasets: [{
                         data: Object.values(catData),
-                        backgroundColor: ['#3b82f6', '#6366f1', '#10b981', '#f59e0b', '#94a3b8', '#ec4899'],
-                        borderWidth: 0
+                        backgroundColor: ['#3b82f6', '#10b981', '#6366f1', '#f59e0b', '#94a3b8', '#ec4899'],
+                        hoverOffset: 15,
+                        borderRadius: 8,
+                        spacing: 4
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    cutout: '75%',
-                    plugins: { legend: { position: 'bottom', labels: { font: { size: 9, family: 'Kanit' }, boxWidth: 10 } } }
+                    cutout: '70%',
+                    plugins: { 
+                        legend: { position: 'bottom', labels: { font: { size: 10, family: 'Kanit', weight: '500' }, boxWidth: 8, padding: 20 } } 
+                    }
                 }
             });
         };
 
-        // Actions
+        // UI Interactions
         incomeForm.addEventListener('submit', (e) => {
             e.preventDefault();
             if (!isOnline) return;
 
             const newItem = {
-                id: Date.now().toString(),
+                id: 'TX' + Date.now(),
                 title: document.getElementById('title').value,
                 amount: parseFloat(document.getElementById('amount').value),
                 category: document.getElementById('category').value,
                 date: document.getElementById('date').value,
-                note: document.getElementById('note').value
+                note: document.getElementById('note').value,
+                timestamp: new Date().toISOString()
             };
 
             incomes.push(newItem);
             incomeForm.reset();
             document.getElementById('date').valueAsDate = new Date();
             updateUI();
-            showToast('บันทึกรายได้สำเร็จ');
+            showToast('บันทึกข้อมูลสำเร็จ');
         });
 
         window.deleteItem = (id) => {
             if (!isOnline) return;
             incomes = incomes.filter(i => i.id !== id);
             updateUI();
-            showToast('ลบรายการเรียบร้อย');
+            showToast('ลบรายการแล้ว');
         };
 
         window.setFilter = (f) => {
             currentFilter = f;
-            document.getElementById('btnMonth').className = f === 'month' ? 'px-4 py-2 rounded-xl text-xs font-bold bg-blue-50 text-blue-600 transition' : 'px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-500 transition';
-            document.getElementById('btnAll').className = f === 'all' ? 'px-4 py-2 rounded-xl text-xs font-bold bg-blue-50 text-blue-600 transition' : 'px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-500 transition';
             renderTable();
+        };
+
+        window.setBudget = () => {
+            const val = prompt("กำหนดเป้าหมายรายได้รายเดือน (บาท):", monthlyBudget);
+            if (val && !isNaN(val)) {
+                monthlyBudget = parseFloat(val);
+                localStorage.setItem('monthly_budget', monthlyBudget);
+                updateUI();
+                showToast(`อัปเดตเป้าหมายเป็น ฿${formatCurrency(monthlyBudget)}`);
+            }
+        };
+
+        window.exportToCSV = () => {
+            if (incomes.length === 0) return showToast('ไม่มีข้อมูลที่จะส่งออก');
+            
+            let csv = 'Date,Category,Title,Amount,Note\n';
+            incomes.forEach(i => {
+                csv += `${i.date},"${i.category}","${i.title}",${i.amount},"${i.note || ''}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute('download', `financial_report_${new Date().toLocaleDateString()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('สร้างไฟล์ CSV สำเร็จ');
         };
 
         document.getElementById('searchInput').addEventListener('input', (e) => {
@@ -452,9 +557,8 @@
             renderTable();
         });
 
-        // Initial Load
+        // Initialize App
         updateUI();
-        setInterval(renderStats, 60000); // Update stats every minute for date rollover
     </script>
 </body>
 </html>
