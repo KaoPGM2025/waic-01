@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Assistant Pro - V4.0.0</title>
+    <title>Financial Assistant Pro - V4.5.0</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -11,12 +11,11 @@
         body {
             font-family: 'Kanit', sans-serif;
             background-color: #f8fafc;
-            transition: all 0.3s ease;
         }
         .glass-card {
             background: #ffffff;
             border: 1px solid #f1f5f9;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
             border-radius: 1.5rem;
         }
         .system-offline {
@@ -43,7 +42,7 @@
         }
         .budget-fill {
             height: 100%;
-            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            background: linear-gradient(90deg, #2563eb, #60a5fa);
             transition: width 1s ease-in-out;
         }
         .btn-action {
@@ -51,6 +50,15 @@
         }
         .btn-action:active {
             transform: scale(0.95);
+        }
+        .date-divider {
+            background: #f8fafc;
+            padding: 8px 20px;
+            font-size: 10px;
+            font-weight: bold;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
     </style>
 </head>
@@ -60,25 +68,36 @@
         <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
             <div class="text-center md:text-left">
                 <div class="flex items-center justify-center md:justify-start gap-2 mb-1">
-                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">F</div>
+                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-blue-200">F</div>
                     <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Financial <span class="text-blue-600">Pro</span></h1>
                 </div>
-                <p class="text-slate-500 font-medium">Version 4.0.0 • ระบบบริหารความมั่งคั่งอัจฉริยะ</p>
+                <p class="text-slate-500 font-medium">Version 4.5.0 • Intelligent Wealth Management</p>
             </div>
             
-            <div class="flex items-center gap-4">
-                <button onclick="exportToCSV()" class="flex items-center gap-2 bg-white border border-slate-200 px-4 py-2.5 rounded-2xl text-sm font-semibold text-slate-600 hover:bg-slate-50 transition btn-action">
+            <div class="flex flex-wrap justify-center items-center gap-3">
+                <button onclick="triggerImport()" class="bg-white border border-slate-200 p-2.5 rounded-xl hover:bg-slate-50 transition btn-action" title="นำเข้าข้อมูล JSON">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                </button>
+                <button onclick="backupJSON()" class="bg-white border border-slate-200 p-2.5 rounded-xl hover:bg-slate-50 transition btn-action" title="สำรองข้อมูล JSON">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                    </svg>
+                </button>
+                <div class="h-8 w-px bg-slate-200 mx-1 hidden md:block"></div>
+                <button onclick="exportToCSV()" class="flex items-center gap-2 bg-slate-900 px-5 py-2.5 rounded-xl text-sm font-semibold text-white hover:bg-black transition btn-action shadow-lg shadow-slate-200">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                     </svg>
                     Export CSV
                 </button>
                 
-                <div class="status-toggle flex items-center bg-white p-2.5 rounded-2xl shadow-sm border border-slate-200">
-                    <span id="statusLabel" class="mx-3 text-[10px] font-black text-green-600 uppercase tracking-tighter">Online</span>
+                <div class="status-toggle flex items-center bg-white p-2 rounded-xl shadow-sm border border-slate-200">
+                    <span id="statusLabel" class="mx-3 text-[10px] font-black text-green-600 uppercase">Online</span>
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" id="statusCheckbox" class="sr-only peer">
-                        <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+                        <div class="w-8 h-4 bg-slate-200 rounded-full peer peer-checked:bg-green-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:after:translate-x-4"></div>
                     </label>
                 </div>
             </div>
@@ -87,116 +106,95 @@
         <div id="mainContent">
             <!-- Stats Dashboard -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="glass-card p-6 bg-gradient-to-br from-white to-emerald-50/30 border-b-4 border-emerald-500">
+                <div class="glass-card p-6 border-l-4 border-emerald-500">
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">รายได้วันนี้</p>
                     <h2 id="totalToday" class="text-2xl font-black text-slate-800 tracking-tight">฿0.00</h2>
                     <div class="mt-2 text-[10px] text-emerald-600 font-bold" id="todayCount">0 รายการ</div>
                 </div>
-                <div class="glass-card p-6 bg-gradient-to-br from-white to-blue-50/30 border-b-4 border-blue-500">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">รายได้เดือนนี้</p>
+                <div class="glass-card p-6 border-l-4 border-blue-500">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">เป้าหมายเดือนนี้</p>
                     <h2 id="totalMonth" class="text-2xl font-black text-slate-800 tracking-tight">฿0.00</h2>
                     <div class="mt-3">
                         <div class="flex justify-between text-[10px] font-bold mb-1">
-                            <span class="text-slate-400 uppercase">เป้าหมาย (Budget)</span>
+                            <span class="text-slate-400 uppercase tracking-tighter">Budget Progress</span>
                             <span id="budgetPercent" class="text-blue-600">0%</span>
                         </div>
                         <div class="budget-progress"><div id="budgetFill" class="budget-fill" style="width: 0%"></div></div>
                     </div>
                 </div>
-                <div class="glass-card p-6 bg-gradient-to-br from-white to-indigo-50/30 border-b-4 border-indigo-600">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">รายได้ปีนี้ (${new Date().getFullYear()})</p>
+                <div class="glass-card p-6 border-l-4 border-indigo-600">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">สะสมปี ${new Date().getFullYear()}</p>
                     <h2 id="totalYear" class="text-2xl font-black text-indigo-600 tracking-tight">฿0.00</h2>
                     <p class="text-[10px] text-slate-400 mt-2 font-medium" id="yearlyAvg">เฉลี่ย ฿0/เดือน</p>
                 </div>
-                <div class="glass-card p-6 bg-slate-900 border-b-4 border-blue-400">
-                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">มั่งคั่งสุทธิสะสม</p>
-                    <h2 id="totalAllTime" class="text-2xl font-black text-white tracking-tight">฿0.00</h2>
-                    <button onclick="setBudget()" class="mt-2 text-[10px] text-blue-400 hover:text-blue-300 font-bold underline cursor-pointer">ตั้งค่าเป้าหมาย</button>
+                <div class="glass-card p-6 border-l-4 border-slate-900">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">มั่งคั่งสุทธิทั้งหมด</p>
+                    <h2 id="totalAllTime" class="text-2xl font-black text-slate-900 tracking-tight">฿0.00</h2>
+                    <button onclick="setBudget()" class="mt-2 text-[10px] text-blue-600 hover:underline font-bold">ตั้งเป้าหมาย</button>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <!-- Left Control Panel -->
+                <!-- Side Panel -->
                 <div class="lg:col-span-4 space-y-6">
                     <div class="glass-card p-6">
                         <h3 class="font-bold text-slate-800 mb-6 flex items-center gap-2 text-sm uppercase">
-                            <span class="w-2 h-5 bg-blue-600 rounded-sm"></span> บันทึกธุรกรรม
+                            <span class="w-1.5 h-4 bg-blue-600 rounded-full"></span> เพิ่มรายการ
                         </h3>
                         <form id="incomeForm" class="space-y-4">
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-400 ml-1 uppercase mb-1 block">ชื่อรายการ</label>
-                                <input type="text" id="title" required placeholder="เช่น เงินเดือน, ค่าโปรเจกต์" 
-                                    class="w-full p-4 rounded-2xl border border-slate-100 bg-slate-50 outline-none focus:bg-white focus:ring-4 focus:ring-blue-50 transition disabled:bg-slate-200">
-                            </div>
+                            <input type="text" id="title" required placeholder="ชื่อรายการ..." 
+                                class="w-full p-4 rounded-xl border border-slate-100 bg-slate-50 outline-none focus:bg-white focus:ring-4 focus:ring-blue-50 transition">
                             
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="text-[10px] font-bold text-slate-400 ml-1 uppercase mb-1 block">จำนวนเงิน</label>
-                                    <input type="number" id="amount" required placeholder="0.00" step="0.01"
-                                        class="w-full p-4 rounded-2xl border border-slate-100 bg-slate-50 outline-none font-bold text-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-50 transition disabled:bg-slate-200">
-                                </div>
-                                <div>
-                                    <label class="text-[10px] font-bold text-slate-400 ml-1 uppercase mb-1 block">หมวดหมู่</label>
-                                    <select id="category" class="w-full p-4 rounded-2xl border border-slate-100 bg-slate-50 text-sm outline-none transition appearance-none focus:bg-white">
-                                        <option>ทั่วไป</option>
-                                        <option>งานประจำ</option>
-                                        <option>งานเสริม</option>
-                                        <option>ปันผล/ดอกเบี้ย</option>
-                                        <option>ค้าขายออนไลน์</option>
-                                        <option>อื่นๆ</option>
-                                    </select>
-                                </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <input type="number" id="amount" required placeholder="จำนวนเงิน" step="0.01"
+                                    class="w-full p-4 rounded-xl border border-slate-100 bg-slate-50 outline-none font-bold text-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-50 transition">
+                                <select id="category" class="w-full p-4 rounded-xl border border-slate-100 bg-slate-50 text-sm outline-none focus:bg-white transition"></select>
                             </div>
 
-                            <div class="grid grid-cols-1 gap-4">
-                                <div>
-                                    <label class="text-[10px] font-bold text-slate-400 ml-1 uppercase mb-1 block">วันที่ทำรายการ</label>
-                                    <input type="date" id="date" required
-                                        class="w-full p-4 rounded-2xl border border-slate-100 bg-slate-50 outline-none text-sm transition focus:bg-white">
-                                </div>
-                            </div>
+                            <input type="date" id="date" required class="w-full p-4 rounded-xl border border-slate-100 bg-slate-50 outline-none text-sm transition focus:bg-white">
 
-                            <textarea id="note" rows="2" placeholder="เพิ่มหมายเหตุ..." 
-                                class="w-full p-4 rounded-2xl border border-slate-100 bg-slate-50 outline-none text-xs transition focus:bg-white resize-none"></textarea>
+                            <textarea id="note" rows="2" placeholder="หมายเหตุเพิ่มเติม..." 
+                                class="w-full p-4 rounded-xl border border-slate-100 bg-slate-50 outline-none text-xs transition focus:bg-white resize-none"></textarea>
 
                             <button type="submit" id="submitBtn"
-                                class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 btn-action">
-                                ยืนยันการบันทึก
+                                class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 btn-action">
+                                บันทึกรายการ
                             </button>
                         </form>
                     </div>
 
-                    <!-- Visual Insight -->
                     <div class="glass-card p-6">
-                        <h3 class="font-bold text-slate-800 mb-4 text-sm uppercase tracking-tight">สรุปรายเดือนปีนี้</h3>
-                        <div id="yearlyStats" class="space-y-4 max-h-[300px] overflow-y-auto pr-2">
-                            <!-- JS injections -->
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-slate-800 text-sm uppercase tracking-tight">หมวดหมู่ของฉัน</h3>
+                            <button onclick="addNewCategory()" class="text-[10px] font-bold text-blue-600 hover:text-blue-800">เพิ่มใหม่ +</button>
+                        </div>
+                        <div id="categorySummary" class="space-y-3">
+                            <!-- JS Injection -->
                         </div>
                     </div>
                 </div>
 
-                <!-- Right Data Panel -->
+                <!-- Main Panel -->
                 <div class="lg:col-span-8 space-y-6">
-                    <!-- Analytics Grid -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="glass-card p-6 h-80">
-                            <h4 class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">Growth Trend (30 Days)</h4>
-                            <div class="h-60"><canvas id="incomeChart"></canvas></div>
+                        <div class="glass-card p-6 h-72">
+                            <h4 class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">การเติบโตรายวัน</h4>
+                            <div class="h-56"><canvas id="incomeChart"></canvas></div>
                         </div>
-                        <div class="glass-card p-6 h-80">
-                            <h4 class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">Revenue Allocation</h4>
-                            <div class="h-60"><canvas id="categoryChart"></canvas></div>
+                        <div class="glass-card p-6 h-72">
+                            <h4 class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">สัดส่วนหมวดหมู่</h4>
+                            <div class="h-56"><canvas id="categoryChart"></canvas></div>
                         </div>
                     </div>
 
-                    <!-- Transaction List -->
+                    <!-- List Area -->
                     <div class="glass-card overflow-hidden">
                         <div class="p-6 border-b border-slate-50 flex flex-col md:flex-row justify-between items-center gap-4">
-                            <div class="flex items-center bg-slate-50 rounded-2xl px-4 py-2.5 w-full md:w-80 border border-slate-100">
+                            <div class="flex items-center bg-slate-50 rounded-xl px-4 py-2 w-full md:w-80 border border-slate-100">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
-                                <input type="text" id="searchInput" placeholder="ค้นหาตามชื่อรายการหรือหมายเหตุ..." class="bg-transparent border-none outline-none text-sm w-full font-medium">
+                                <input type="text" id="searchInput" placeholder="ค้นหา..." class="bg-transparent border-none outline-none text-sm w-full font-medium">
                             </div>
                             <div class="flex bg-slate-100 p-1 rounded-xl">
                                 <button onclick="setFilter('month')" id="btnMonth" class="px-5 py-2 rounded-lg text-xs font-bold transition-all">เดือนนี้</button>
@@ -205,25 +203,19 @@
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left">
-                                <thead class="bg-slate-50/80 text-[10px] text-slate-400 uppercase tracking-widest font-black border-b border-slate-100">
+                                <thead class="bg-slate-50 text-[10px] text-slate-400 uppercase tracking-widest font-black">
                                     <tr>
-                                        <th class="p-5">วัน/เดือน/ปี</th>
                                         <th class="p-5">หมวดหมู่</th>
-                                        <th class="p-5">รายการข้อมูล</th>
-                                        <th class="p-5 text-right">จำนวนเงิน (บาท)</th>
-                                        <th class="p-5"></th>
+                                        <th class="p-5">รายการ</th>
+                                        <th class="p-5 text-right">จำนวนเงิน</th>
+                                        <th class="p-5 w-20"></th>
                                     </tr>
                                 </thead>
                                 <tbody id="incomeTableBody" class="text-sm"></tbody>
                             </table>
                         </div>
                         <div id="emptyState" class="p-20 text-center hidden">
-                            <div class="text-slate-300 mb-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                            </div>
-                            <span class="text-slate-400 text-xs font-medium uppercase tracking-widest">ไม่มีข้อมูลในขณะนี้</span>
+                            <span class="text-slate-400 text-xs font-medium italic">ไม่มีข้อมูลแสดงผล</span>
                         </div>
                     </div>
                 </div>
@@ -231,18 +223,19 @@
         </div>
     </div>
 
-    <!-- Toast UI -->
+    <!-- Invisible elements -->
+    <input type="file" id="importInput" class="hidden" accept=".json" onchange="importJSON(event)">
     <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3"></div>
 
     <script>
-        // Version 4.0.0 Core Logic
+        // Core Logic V4.5.0
         let incomes = JSON.parse(localStorage.getItem('incomes')) || [];
+        let categories = JSON.parse(localStorage.getItem('user_categories')) || ['งานประจำ', 'งานเสริม', 'ปันผล/ดอกเบี้ย', 'ค้าขายออนไลน์', 'ทั่วไป'];
         let monthlyBudget = parseFloat(localStorage.getItem('monthly_budget')) || 50000;
         let isOnline = localStorage.getItem('system_status') !== 'offline';
         let currentFilter = 'month';
         let searchQuery = '';
-        let chartLine = null;
-        let chartPie = null;
+        let chartLine = null, chartPie = null;
 
         const incomeForm = document.getElementById('incomeForm');
         const incomeTableBody = document.getElementById('incomeTableBody');
@@ -250,54 +243,48 @@
         const statusCheckbox = document.getElementById('statusCheckbox');
         const statusLabel = document.getElementById('statusLabel');
         const mainContent = document.getElementById('mainContent');
-        const formInputs = incomeForm.querySelectorAll('input, select, textarea, button');
+        const categorySelect = document.getElementById('category');
 
-        // Setup Init
+        // Initial setup
         document.getElementById('date').valueAsDate = new Date();
 
-        // System Control
+        const updateCategoryDropdown = () => {
+            categorySelect.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
+            localStorage.setItem('user_categories', JSON.stringify(categories));
+        };
+
         const setStatusUI = (online, silent = false) => {
             isOnline = online;
             statusCheckbox.checked = online;
             localStorage.setItem('system_status', online ? 'online' : 'offline');
-
             if (online) {
                 statusLabel.textContent = 'Online';
-                statusLabel.classList.remove('text-red-500');
-                statusLabel.classList.add('text-green-600');
+                statusLabel.classList.replace('text-red-500', 'text-green-600');
                 mainContent.classList.remove('system-offline');
-                formInputs.forEach(el => el.disabled = false);
-                if (!silent) showToast('ระบบเชื่อมต่อสำเร็จ');
+                if (!silent) showToast('ระบบกลับมาออนไลน์แล้ว');
             } else {
                 statusLabel.textContent = 'Offline';
-                statusLabel.classList.remove('text-green-600');
-                statusLabel.classList.add('text-red-500');
+                statusLabel.classList.replace('text-green-600', 'text-red-500');
                 mainContent.classList.add('system-offline');
-                formInputs.forEach(el => el.disabled = true);
-                if (!silent) showToast('โหมดออฟไลน์เปิดใช้งาน');
+                if (!silent) showToast('โหมดออฟไลน์ทำงาน: ระงับการเขียนข้อมูล');
             }
         };
 
         statusCheckbox.addEventListener('change', (e) => setStatusUI(e.target.checked));
         setStatusUI(isOnline, true);
 
-        // Core Functions
-        const formatCurrency = (num) => new Intl.NumberFormat('th-TH', { 
-            style: 'decimal', 
-            minimumFractionDigits: 2, 
-            maximumFractionDigits: 2 
-        }).format(num);
+        const formatCurrency = (num) => new Intl.NumberFormat('th-TH', { minimumFractionDigits: 2 }).format(num);
 
         const showToast = (message) => {
             const toast = document.createElement('div');
-            toast.className = 'bg-slate-900 text-white px-6 py-4 rounded-2xl shadow-2xl text-xs font-bold transition-all duration-300 opacity-0 translate-y-4 border border-slate-800';
-            toast.innerHTML = `<div class="flex items-center gap-3"><span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>${message}</div>`;
+            toast.className = 'bg-slate-900 text-white px-6 py-3.5 rounded-2xl shadow-2xl text-xs font-bold transition-all duration-300 opacity-0 translate-y-4 border border-slate-700';
+            toast.textContent = message;
             document.getElementById('toastContainer').appendChild(toast);
-            setTimeout(() => { toast.classList.remove('opacity-0', 'translate-y-4'); }, 10);
+            setTimeout(() => toast.classList.remove('opacity-0', 'translate-y-4'), 10);
             setTimeout(() => {
                 toast.classList.add('opacity-0', 'translate-y-4');
                 setTimeout(() => toast.remove(), 300);
-            }, 3500);
+            }, 3000);
         };
 
         const updateUI = () => {
@@ -305,20 +292,18 @@
             renderTable();
             renderStats();
             renderCharts();
-            renderYearlyProgress();
+            renderCategorySummary();
         };
 
         const renderStats = () => {
             const now = new Date();
             const todayStr = now.toLocaleDateString('en-CA');
-            const curMonth = now.getMonth();
-            const curYear = now.getFullYear();
+            const curMonth = now.getMonth(), curYear = now.getFullYear();
 
             let today = 0, month = 0, year = 0, allTime = 0, tCount = 0;
-
             incomes.forEach(i => {
-                const iDate = new Date(i.date);
                 const amt = parseFloat(i.amount);
+                const iDate = new Date(i.date);
                 allTime += amt;
                 if (i.date === todayStr) { today += amt; tCount++; }
                 if (iDate.getFullYear() === curYear) {
@@ -334,35 +319,26 @@
             document.getElementById('todayCount').textContent = `${tCount} รายการวันนี้`;
             document.getElementById('yearlyAvg').textContent = `เฉลี่ย ฿${formatCurrency(year/12)}/เดือน`;
 
-            // Budget Update
             const bPercent = Math.min(Math.round((month / monthlyBudget) * 100), 100);
             document.getElementById('budgetPercent').textContent = `${bPercent}%`;
             document.getElementById('budgetFill').style.width = `${bPercent}%`;
         };
 
-        const renderYearlyProgress = () => {
-            const container = document.getElementById('yearlyStats');
-            const now = new Date();
-            const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
-            const monthlyTotals = new Array(12).fill(0);
-
+        const renderCategorySummary = () => {
+            const summary = {};
             incomes.forEach(i => {
-                const d = new Date(i.date);
-                if (d.getFullYear() === now.getFullYear()) monthlyTotals[d.getMonth()] += parseFloat(i.amount);
+                const c = i.category || 'ทั่วไป';
+                summary[c] = (summary[c] || 0) + parseFloat(i.amount);
             });
 
-            const max = Math.max(...monthlyTotals, 1);
-            container.innerHTML = monthlyTotals.map((val, idx) => {
-                if(idx > now.getMonth() && val === 0) return ''; // Hide future months with no data
-                const p = (val / max) * 100;
+            document.getElementById('categorySummary').innerHTML = categories.map(cat => {
+                const val = summary[cat] || 0;
                 return `
-                    <div class="group">
-                        <div class="flex justify-between text-[10px] font-bold text-slate-500 mb-1.5 uppercase">
-                            <span>${months[idx]}</span>
-                            <span class="text-slate-800">฿${formatCurrency(val)}</span>
-                        </div>
-                        <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                            <div class="h-full bg-blue-500 rounded-full transition-all duration-1000 group-hover:bg-indigo-500" style="width: ${p}%"></div>
+                    <div class="flex justify-between items-center group">
+                        <div class="text-[10px] font-bold text-slate-500 uppercase">${cat}</div>
+                        <div class="flex items-center gap-2">
+                            <div class="text-[10px] font-black text-slate-800">฿${formatCurrency(val)}</div>
+                            <button onclick="removeCategory('${cat}')" class="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 transition">×</button>
                         </div>
                     </div>
                 `;
@@ -381,29 +357,36 @@
                 return matchesSearch && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
             });
 
-            document.getElementById('btnMonth').className = currentFilter === 'month' ? 'px-5 py-2 rounded-lg text-xs font-bold bg-white text-blue-600 shadow-sm' : 'px-5 py-2 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-800';
-            document.getElementById('btnAll').className = currentFilter === 'all' ? 'px-5 py-2 rounded-lg text-xs font-bold bg-white text-blue-600 shadow-sm' : 'px-5 py-2 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-800';
+            document.getElementById('btnMonth').className = currentFilter === 'month' ? 'px-5 py-2 rounded-lg text-xs font-bold bg-white text-blue-600 shadow-sm' : 'px-5 py-2 rounded-lg text-xs font-bold text-slate-500';
+            document.getElementById('btnAll').className = currentFilter === 'all' ? 'px-5 py-2 rounded-lg text-xs font-bold bg-white text-blue-600 shadow-sm' : 'px-5 py-2 rounded-lg text-xs font-bold text-slate-500';
 
             if (filtered.length === 0) {
                 emptyState.classList.remove('hidden');
             } else {
                 emptyState.classList.add('hidden');
-                filtered.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(item => {
+                filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                let lastDate = '';
+                filtered.forEach(item => {
+                    if (item.date !== lastDate) {
+                        const divider = document.createElement('tr');
+                        divider.innerHTML = `<td colspan="4" class="date-divider">${new Date(item.date).toLocaleDateString('th-TH', {day:'numeric', month:'long', year:'numeric'})}</td>`;
+                        incomeTableBody.appendChild(divider);
+                        lastDate = item.date;
+                    }
+
                     const row = document.createElement('tr');
-                    row.className = 'border-b border-slate-50 group hover:bg-slate-50/50 transition-all';
+                    row.className = 'border-b border-slate-50 group hover:bg-slate-50 transition-all';
                     row.innerHTML = `
-                        <td class="p-5 text-xs text-slate-400 font-semibold">${new Date(item.date).toLocaleDateString('th-TH', {day:'2-digit', month:'short', year:'2-digit'})}</td>
-                        <td class="p-5"><span class="category-badge ${getCategoryColor(item.category)}">${item.category || 'ทั่วไป'}</span></td>
+                        <td class="p-5 w-32"><span class="category-badge bg-blue-50 text-blue-600">${item.category}</span></td>
                         <td class="p-5">
                             <div class="font-bold text-slate-800">${item.title}</div>
                             ${item.note ? `<div class="text-[10px] text-slate-400 mt-0.5">${item.note}</div>` : ''}
                         </td>
                         <td class="p-5 text-right font-black text-slate-900">฿${formatCurrency(item.amount)}</td>
                         <td class="p-5 text-center">
-                            <button onclick="deleteItem('${item.id}')" class="p-2 rounded-xl text-slate-300 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
+                            <button onclick="deleteItem('${item.id}')" class="p-2 rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                             </button>
                         </td>
                     `;
@@ -412,19 +395,7 @@
             }
         };
 
-        const getCategoryColor = (cat) => {
-            const colors = {
-                'งานประจำ': 'bg-blue-50 text-blue-600',
-                'งานเสริม': 'bg-emerald-50 text-emerald-600',
-                'ปันผล/ดอกเบี้ย': 'bg-indigo-50 text-indigo-600',
-                'ค้าขายออนไลน์': 'bg-orange-50 text-orange-600',
-                'อื่นๆ': 'bg-slate-100 text-slate-600'
-            };
-            return colors[cat] || 'bg-slate-50 text-slate-500';
-        };
-
         const renderCharts = () => {
-            // Line Chart (30 Days)
             const ctxL = document.getElementById('incomeChart').getContext('2d');
             const dailyData = {};
             incomes.slice(-30).forEach(i => dailyData[i.date] = (dailyData[i.date] || 0) + parseFloat(i.amount));
@@ -435,81 +406,39 @@
                 type: 'line',
                 data: {
                     labels: keys.map(d => new Date(d).toLocaleDateString('th-TH', {day:'numeric', month:'short'})),
-                    datasets: [{
-                        data: keys.map(d => dailyData[d]),
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.08)',
-                        fill: true,
-                        tension: 0.45,
-                        borderWidth: 3,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#fff',
-                        pointBorderWidth: 2
-                    }]
+                    datasets: [{ data: keys.map(d => dailyData[d]), borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.05)', fill: true, tension: 0.4, borderWidth: 2, pointRadius: 3 }]
                 },
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false, 
-                    plugins: { legend: { display: false } },
-                    scales: { 
-                        y: { display: false }, 
-                        x: { border: {display:false}, grid: { display: false }, ticks: { font: { size: 9, family: 'Kanit' } } } 
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, ticks: { font: { size: 9 } } } } }
             });
 
-            // Pie Chart
             const ctxP = document.getElementById('categoryChart').getContext('2d');
             const catData = {};
-            incomes.forEach(i => {
-                const c = i.category || 'ทั่วไป';
-                catData[c] = (catData[c] || 0) + parseFloat(i.amount);
-            });
+            incomes.forEach(i => catData[i.category] = (catData[i.category] || 0) + parseFloat(i.amount));
 
             if (chartPie) chartPie.destroy();
             chartPie = new Chart(ctxP, {
                 type: 'doughnut',
-                data: {
-                    labels: Object.keys(catData),
-                    datasets: [{
-                        data: Object.values(catData),
-                        backgroundColor: ['#3b82f6', '#10b981', '#6366f1', '#f59e0b', '#94a3b8', '#ec4899'],
-                        hoverOffset: 15,
-                        borderRadius: 8,
-                        spacing: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '70%',
-                    plugins: { 
-                        legend: { position: 'bottom', labels: { font: { size: 10, family: 'Kanit', weight: '500' }, boxWidth: 8, padding: 20 } } 
-                    }
-                }
+                data: { labels: Object.keys(catData), datasets: [{ data: Object.values(catData), backgroundColor: ['#2563eb', '#10b981', '#6366f1', '#f59e0b', '#94a3b8', '#ec4899'], borderWidth: 0 }] },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom', labels: { font: { size: 9, family: 'Kanit' }, boxWidth: 6 } } } }
             });
         };
 
-        // UI Interactions
         incomeForm.addEventListener('submit', (e) => {
             e.preventDefault();
             if (!isOnline) return;
-
             const newItem = {
                 id: 'TX' + Date.now(),
                 title: document.getElementById('title').value,
                 amount: parseFloat(document.getElementById('amount').value),
                 category: document.getElementById('category').value,
                 date: document.getElementById('date').value,
-                note: document.getElementById('note').value,
-                timestamp: new Date().toISOString()
+                note: document.getElementById('note').value
             };
-
             incomes.push(newItem);
             incomeForm.reset();
             document.getElementById('date').valueAsDate = new Date();
             updateUI();
-            showToast('บันทึกข้อมูลสำเร็จ');
+            showToast('บันทึกสำเร็จ');
         });
 
         window.deleteItem = (id) => {
@@ -519,45 +448,74 @@
             showToast('ลบรายการแล้ว');
         };
 
-        window.setFilter = (f) => {
-            currentFilter = f;
-            renderTable();
-        };
-
-        window.setBudget = () => {
-            const val = prompt("กำหนดเป้าหมายรายได้รายเดือน (บาท):", monthlyBudget);
-            if (val && !isNaN(val)) {
-                monthlyBudget = parseFloat(val);
-                localStorage.setItem('monthly_budget', monthlyBudget);
+        window.addNewCategory = () => {
+            const name = prompt("ชื่อหมวดหมู่ใหม่:");
+            if (name && !categories.includes(name)) {
+                categories.push(name);
+                updateCategoryDropdown();
                 updateUI();
-                showToast(`อัปเดตเป้าหมายเป็น ฿${formatCurrency(monthlyBudget)}`);
+                showToast('เพิ่มหมวดหมู่สำเร็จ');
             }
         };
 
-        window.exportToCSV = () => {
-            if (incomes.length === 0) return showToast('ไม่มีข้อมูลที่จะส่งออก');
-            
-            let csv = 'Date,Category,Title,Amount,Note\n';
-            incomes.forEach(i => {
-                csv += `${i.date},"${i.category}","${i.title}",${i.amount},"${i.note || ''}"\n`;
-            });
-
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute('download', `financial_report_${new Date().toLocaleDateString()}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            showToast('สร้างไฟล์ CSV สำเร็จ');
+        window.removeCategory = (cat) => {
+            if (confirm(`คุณแน่ใจหรือไม่ที่จะลบหมวดหมู่ "${cat}"?`)) {
+                categories = categories.filter(c => c !== cat);
+                updateCategoryDropdown();
+                updateUI();
+            }
         };
 
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            searchQuery = e.target.value;
-            renderTable();
-        });
+        window.setFilter = (f) => { currentFilter = f; renderTable(); };
+        window.setBudget = () => {
+            const val = prompt("เป้าหมายรายได้รายเดือน:", monthlyBudget);
+            if (val) { monthlyBudget = parseFloat(val); localStorage.setItem('monthly_budget', monthlyBudget); updateUI(); }
+        };
 
-        // Initialize App
+        window.backupJSON = () => {
+            const data = { incomes, categories, monthlyBudget, version: "4.5.0" };
+            const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `finance_backup_${new Date().toLocaleDateString()}.json`;
+            a.click();
+            showToast('สำรองข้อมูลเรียบร้อย');
+        };
+
+        window.triggerImport = () => document.getElementById('importInput').click();
+        window.importJSON = (event) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.incomes) incomes = data.incomes;
+                    if (data.categories) categories = data.categories;
+                    if (data.monthlyBudget) monthlyBudget = data.monthlyBudget;
+                    updateCategoryDropdown();
+                    updateUI();
+                    showToast('นำเข้าข้อมูลสำเร็จ');
+                } catch (err) {
+                    showToast('ไฟล์ข้อมูลไม่ถูกต้อง');
+                }
+            };
+            reader.readAsText(event.target.files[0]);
+        };
+
+        window.exportToCSV = () => {
+            let csv = 'Date,Category,Title,Amount,Note\n';
+            incomes.forEach(i => csv += `${i.date},"${i.category}","${i.title}",${i.amount},"${i.note || ''}"\n`);
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `report_${new Date().toLocaleDateString()}.csv`;
+            a.click();
+        };
+
+        document.getElementById('searchInput').addEventListener('input', (e) => { searchQuery = e.target.value; renderTable(); });
+
+        // First Run
+        updateCategoryDropdown();
         updateUI();
     </script>
 </body>
