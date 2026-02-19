@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Zen 6.9.0</title>
+    <title>Finance Zen 7.2.1</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Kanit:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #2563eb;
-            --bg-body: #f1f5f9;
+            --primary: #0f172a;
+            --accent: #3b82f6;
+            --bg-body: #f8fafc;
         }
         body {
             font-family: 'Sarabun', sans-serif;
             background-color: var(--bg-body);
-            color: #334155;
+            color: #1e293b;
             -webkit-tap-highlight-color: transparent;
         }
         h1, h2, h3, .font-kanit {
@@ -23,391 +24,446 @@
         }
         .app-card {
             background: #ffffff;
-            border-radius: 1rem;
+            border-radius: 1.25rem;
             border: 1px solid #e2e8f0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 0.5rem;
-            color: #94a3b8;
-            transition: all 0.2s;
+            padding: 0.6rem;
+            color: #64748b;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
-            border-radius: 0.5rem;
+            border-radius: 0.75rem;
         }
         .nav-item.active {
-            color: var(--primary);
+            color: var(--accent);
             background: #eff6ff;
+            transform: translateY(-2px);
         }
         .desktop-nav .nav-item {
             flex-direction: row;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
+            gap: 0.75rem;
+            padding: 0.5rem 1.25rem;
         }
         .pin-dot {
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            background: #e2e8f0;
-            transition: 0.2s;
+            background: #cbd5e1;
+            transition: 0.3s;
         }
         .pin-dot.fill {
-            background: var(--primary);
-            transform: scale(1.1);
+            background: var(--accent);
+            transform: scale(1.2);
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
         }
-        /* Utility */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .category-tag {
+            background: #f1f5f9;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #64748b;
+        }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="pb-20 md:pb-0 md:pt-16">
+<body class="pb-24 md:pb-0 md:pt-20">
 
-    <!-- Auth Layer -->
+    <!-- Authentication Overlay -->
     <div id="authScreen" class="fixed inset-0 z-[100] bg-white flex items-center justify-center">
-        <div class="w-full max-w-xs text-center px-6">
-            <div class="mb-6 flex justify-center">
-                <div class="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg">Z</div>
+        <div class="w-full max-w-sm text-center px-8">
+            <div class="mb-8 flex justify-center">
+                <div class="w-20 h-20 bg-slate-900 rounded-3xl flex items-center justify-center text-white text-3xl font-bold shadow-2xl rotate-3">Z</div>
             </div>
-            <h1 class="text-xl font-bold mb-1">ยินดีต้อนรับ</h1>
-            <p class="text-sm text-slate-400 mb-8">กรุณาระบุรหัส PIN 4 หลัก</p>
-            <div class="flex justify-center gap-4 mb-10">
+            <h1 class="text-2xl font-bold mb-2">Finance Zen 7.2</h1>
+            <p class="text-sm text-slate-500 mb-10">กรุณายืนยันตัวตนด้วยรหัส PIN</p>
+            <div class="flex justify-center gap-6 mb-12">
                 <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
             </div>
             <input type="password" id="pinInput" maxlength="4" inputmode="numeric" class="absolute opacity-0 pointer-events-none" autofocus>
-            <p id="pinError" class="text-xs text-red-500 hidden">รหัสผ่านไม่ถูกต้อง ลองอีกครั้ง</p>
+            <p id="pinError" class="text-sm text-red-500 hidden font-bold">รหัสผ่านไม่ถูกต้อง</p>
         </div>
     </div>
 
-    <!-- Desktop Menu Bar -->
-    <nav class="hidden md:flex fixed top-0 left-0 right-0 bg-white border-b border-slate-200 h-16 z-50 px-6 items-center justify-between">
-        <div class="flex items-center gap-2">
-            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">Z</div>
-            <span class="font-bold text-slate-800">Finance Zen <span class="text-blue-500 text-xs">6.9.0</span></span>
+    <!-- Enhanced Menu Bar (Desktop) -->
+    <nav class="hidden md:flex fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-slate-200 h-20 z-50 px-10 items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white font-bold text-lg">Z</div>
+            <div>
+                <span class="block font-bold text-slate-900 leading-tight">Finance Zen</span>
+                <span class="text-blue-600 text-[10px] font-bold uppercase tracking-wider">v7.2.1 Stable</span>
+            </div>
         </div>
-        <div class="flex gap-2 desktop-nav">
+        <div class="flex gap-4 desktop-nav">
             <div onclick="showView('home')" id="d-nav-home" class="nav-item active">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" /></svg>
-                <span class="text-sm font-medium">ภาพรวม</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" /></svg>
+                <span class="text-sm font-bold">แดชบอร์ด</span>
             </div>
             <div onclick="showView('history')" id="d-nav-history" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" /></svg>
-                <span class="text-sm font-medium">ประวัติ</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>
+                <span class="text-sm font-bold">ประวัติ</span>
             </div>
             <div onclick="showView('settings')" id="d-nav-settings" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.533 1.533 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.533 1.533 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" /></svg>
-                <span class="text-sm font-medium">ตั้งค่า</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>
+                <span class="text-sm font-bold">ตั้งค่า</span>
             </div>
         </div>
     </nav>
 
-    <!-- Mobile Menu Bar -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 h-16 flex justify-around items-center z-50">
-        <div onclick="showView('home')" id="m-nav-home" class="nav-item active">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-            <span class="text-[10px] font-bold uppercase mt-1">หน้าหลัก</span>
+    <!-- Optimized Bottom Bar (Mobile) -->
+    <nav class="md:hidden fixed bottom-6 left-6 right-6 bg-slate-900 rounded-2xl h-16 flex justify-around items-center z-50 shadow-2xl">
+        <div onclick="showView('home')" id="m-nav-home" class="nav-item active !text-white !bg-transparent">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
         </div>
-        <div onclick="showView('history')" id="m-nav-history" class="nav-item">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <span class="text-[10px] font-bold uppercase mt-1">รายการ</span>
+        <div onclick="showView('history')" id="m-nav-history" class="nav-item !text-slate-400 !bg-transparent">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
         </div>
-        <div onclick="showView('settings')" id="m-nav-settings" class="nav-item">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 002.572-1.065z" /></svg>
-            <span class="text-[10px] font-bold uppercase mt-1">ตั้งค่า</span>
+        <div onclick="showView('settings')" id="m-nav-settings" class="nav-item !text-slate-400 !bg-transparent">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main class="max-w-4xl mx-auto p-4 md:p-8">
+    <!-- Main Workspace -->
+    <main class="max-w-5xl mx-auto p-5 md:p-10 fade-in">
         
-        <!-- Dashboard -->
-        <div id="view-home" class="space-y-6 active-view">
-            <!-- Header Summary -->
-            <div class="app-card bg-gradient-to-br from-blue-600 to-indigo-700 p-6 text-white overflow-hidden relative">
-                <div class="relative z-10">
-                    <p class="text-blue-100 text-xs font-bold uppercase tracking-widest mb-1">ยอดเงินรวมทั้งหมด</p>
-                    <h2 id="totalBalance" class="text-4xl font-bold mb-4">฿0.00</h2>
-                    <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/20">
-                        <div>
-                            <p class="text-blue-200 text-[10px] font-bold uppercase">เดือนนี้</p>
-                            <p id="monthBalance" class="text-lg font-bold">฿0.00</p>
+        <!-- Dashboard View -->
+        <div id="view-home" class="space-y-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Summary Card -->
+                <div class="lg:col-span-2 app-card bg-slate-900 p-8 text-white relative overflow-hidden">
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start mb-6">
+                            <div>
+                                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">ยอดเงินสะสมทั้งหมด</p>
+                                <h2 id="totalBalance" class="text-5xl font-bold tracking-tight">฿0.00</h2>
+                            </div>
+                            <div class="bg-white/10 px-3 py-1 rounded-full text-[10px] font-bold">Active v7.2</div>
                         </div>
-                        <div class="text-right">
-                            <p class="text-blue-200 text-[10px] font-bold uppercase">ปีนี้</p>
-                            <p id="yearBalance" class="text-lg font-bold">฿0.00</p>
+                        <div class="grid grid-cols-2 gap-8 pt-8 border-t border-white/10">
+                            <div>
+                                <p class="text-slate-500 text-[10px] font-bold uppercase mb-1">เดือนนี้</p>
+                                <p id="monthBalance" class="text-2xl font-bold text-blue-400">฿0.00</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-500 text-[10px] font-bold uppercase mb-1">ปีนี้</p>
+                                <p id="yearBalance" class="text-2xl font-bold">฿0.00</p>
+                            </div>
                         </div>
                     </div>
+                    <div class="absolute -right-20 -top-20 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl"></div>
                 </div>
-                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
-            </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Add Form -->
-                <div class="app-card p-6">
-                    <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                        <span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span> เพิ่มรายการใหม่
+                <!-- Simple Add Card -->
+                <div class="app-card p-6 border-2 border-slate-100">
+                    <h3 class="font-bold text-slate-800 mb-6 flex items-center justify-between">
+                        <span>รายการด่วน</span>
+                        <span class="text-[10px] bg-slate-100 px-2 py-1 rounded">Quick Add</span>
                     </h3>
-                    <form id="addForm" class="space-y-4">
-                        <div>
-                            <label class="text-[10px] font-bold text-slate-400 uppercase">ชื่อรายการ</label>
-                            <input type="text" id="in-title" required class="w-full mt-1 p-2.5 bg-slate-50 border border-slate-100 rounded-lg text-sm outline-none focus:border-blue-300">
+                    <form id="addForm" class="space-y-5">
+                        <input type="text" id="in-title" placeholder="ซื้ออะไร/เงินจากไหน?" required class="w-full p-3 bg-slate-50 rounded-xl text-sm outline-none focus:ring-2 ring-blue-100 transition-all border border-slate-200">
+                        <div class="grid grid-cols-2 gap-3">
+                            <input type="number" id="in-amount" placeholder="0.00" required step="0.01" class="w-full p-3 bg-slate-50 rounded-xl text-sm outline-none font-bold text-slate-900 border border-slate-200">
+                            <select id="in-category" class="w-full p-3 bg-slate-50 rounded-xl text-sm outline-none border border-slate-200"></select>
                         </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-400 uppercase">จำนวนเงิน (บาท)</label>
-                                <input type="number" id="in-amount" required step="0.01" class="w-full mt-1 p-2.5 bg-slate-50 border border-slate-100 rounded-lg text-sm outline-none font-bold text-blue-600 focus:border-blue-300">
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-400 uppercase">หมวดหมู่</label>
-                                <select id="in-category" class="w-full mt-1 p-2.5 bg-slate-50 border border-slate-100 rounded-lg text-sm outline-none focus:border-blue-300"></select>
-                            </div>
-                        </div>
-                        <button type="submit" class="w-full bg-slate-800 text-white font-bold py-3 rounded-lg text-sm hover:bg-slate-700 transition-colors shadow-lg active:scale-95">บันทึกข้อมูล</button>
+                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl text-sm hover:bg-blue-700 transition-all shadow-lg active:scale-95">บันทึกลงสมุด</button>
                     </form>
                 </div>
-
-                <!-- Chart -->
-                <div class="app-card p-6 flex flex-col items-center justify-center">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">สัดส่วนหมวดหมู่</p>
-                    <div class="w-full max-w-[200px]">
-                        <canvas id="balanceChart"></canvas>
-                    </div>
-                </div>
             </div>
 
-            <!-- Recent -->
-            <div class="app-card overflow-hidden">
-                <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-                    <h3 class="text-xs font-bold text-slate-500 uppercase">รายการล่าสุด</h3>
-                    <button onclick="showView('history')" class="text-[10px] font-bold text-blue-600">ดูทั้งหมด</button>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Analytics -->
+                <div class="app-card p-8">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">ภาพรวมหมวดหมู่</p>
+                    <div class="flex items-center gap-8">
+                        <div class="w-1/2">
+                            <canvas id="balanceChart"></canvas>
+                        </div>
+                        <div id="chartLegend" class="w-1/2 space-y-2"></div>
+                    </div>
                 </div>
-                <div id="recentList" class="divide-y divide-slate-50"></div>
+
+                <!-- Recent -->
+                <div class="app-card overflow-hidden">
+                    <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                        <h3 class="text-xs font-bold text-slate-500 uppercase">5 รายการล่าสุด</h3>
+                        <button onclick="showView('history')" class="text-[10px] font-bold text-blue-600 px-3 py-1 bg-blue-50 rounded-full">ดูประวัติ</button>
+                    </div>
+                    <div id="recentList" class="divide-y divide-slate-50"></div>
+                </div>
             </div>
         </div>
 
-        <!-- History -->
-        <div id="view-history" class="space-y-4 hidden">
-            <div class="app-card p-4 flex flex-col sm:flex-row gap-4 items-center">
-                <div class="relative flex-1 w-full">
-                    <input type="text" id="searchBox" placeholder="ค้นหาตามชื่อหรือหมวดหมู่..." class="w-full pl-9 pr-4 py-2.5 bg-slate-100 rounded-xl text-sm outline-none border border-transparent focus:border-blue-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 absolute left-3 top-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+        <!-- History View -->
+        <div id="view-history" class="hidden space-y-6">
+            <div class="app-card p-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+                <div class="relative w-full md:max-w-md">
+                    <input type="text" id="searchBox" placeholder="ค้นหาชื่อรายการ หรือ หมวดหมู่..." class="w-full pl-10 pr-4 py-3 bg-slate-100 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 ring-blue-50 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute left-3.5 top-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 </div>
-                <button onclick="exportJSON()" class="w-full sm:w-auto px-4 py-2.5 bg-blue-50 text-blue-600 font-bold rounded-xl text-xs uppercase tracking-wider">Export Data</button>
+                <div class="flex gap-2 w-full md:w-auto">
+                    <select id="filterMonth" class="flex-1 md:flex-none p-3 bg-slate-100 rounded-xl text-xs font-bold"></select>
+                    <button onclick="exportJSON()" class="p-3 bg-slate-900 text-white rounded-xl text-xs font-bold flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        Export
+                    </button>
+                </div>
             </div>
-            <div id="fullHistory" class="space-y-2"></div>
+            <div id="fullHistory" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
 
-        <!-- Settings -->
-        <div id="view-settings" class="space-y-6 hidden">
-            <div class="app-card p-6">
-                <h3 class="font-bold text-slate-800 mb-4 text-sm">จัดการหมวดหมู่</h3>
-                <div class="flex gap-2 mb-6">
-                    <input type="text" id="newCatInput" placeholder="หมวดหมู่ใหม่..." class="flex-1 p-2.5 bg-slate-50 border border-slate-100 rounded-lg text-sm outline-none">
-                    <button onclick="addCategory()" class="px-6 py-2 bg-blue-600 text-white font-bold rounded-lg text-sm">เพิ่ม</button>
+        <!-- Settings View -->
+        <div id="view-settings" class="hidden space-y-8">
+            <div class="app-card p-8">
+                <h3 class="font-bold text-slate-800 mb-6 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7a1 1 0 011.414-1.414L10 14.586l6.293-6.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                    จัดการคลังข้อมูล
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">แก้ไขหมวดหมู่</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="newCatInput" placeholder="เพิ่มใหม่..." class="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none">
+                            <button onclick="addCategory()" class="px-5 bg-blue-600 text-white font-bold rounded-xl text-sm">เพิ่ม</button>
+                        </div>
+                        <div id="catList" class="flex flex-wrap gap-2 pt-2"></div>
+                    </div>
+                    <div class="space-y-4 border-l border-slate-100 pl-0 md:pl-8">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">เกี่ยวกับแอป</label>
+                        <div class="p-4 bg-slate-50 rounded-2xl space-y-2">
+                            <div class="flex justify-between text-xs">
+                                <span class="text-slate-500">สถานะข้อมูล</span>
+                                <span class="text-green-600 font-bold">เข้ารหัสแล้ว</span>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-slate-500">เวอร์ชันระบบ</span>
+                                <span class="text-slate-800 font-bold">7.2.1-stable</span>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-slate-500">จำนวนรายการ</span>
+                                <span id="itemCount" class="text-slate-800 font-bold">0 รายการ</span>
+                            </div>
+                        </div>
+                        <button onclick="resetPin()" class="w-full p-3 bg-white border border-slate-200 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50">เปลี่ยนรหัส PIN</button>
+                    </div>
                 </div>
-                <div id="catList" class="flex flex-wrap gap-2"></div>
             </div>
 
-            <div class="app-card p-6">
-                <h3 class="font-bold text-slate-800 mb-4 text-sm">ความปลอดภัย</h3>
-                <div class="space-y-3">
-                    <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
-                        <span class="text-sm">รหัส PIN (4 หลัก)</span>
-                        <button onclick="resetPin()" class="text-blue-600 font-bold text-xs uppercase">เปลี่ยนรหัส</button>
-                    </div>
-                    <div class="flex justify-between items-center p-3 bg-red-50 rounded-lg">
-                        <span class="text-sm text-red-600">ล้างข้อมูลระบบ</span>
-                        <button onclick="clearData()" class="bg-red-600 text-white px-3 py-1 rounded text-[10px] font-bold uppercase">Clear All</button>
-                    </div>
+            <div class="app-card p-8 border-red-100">
+                <h3 class="font-bold text-red-600 mb-2">พื้นที่อันตราย</h3>
+                <p class="text-xs text-slate-400 mb-6">การกระทำเหล่านี้ไม่สามารถย้อนกลับได้ โปรดระมัดระวัง</p>
+                <div class="flex gap-4">
+                    <button onclick="clearData()" class="flex-1 p-4 bg-red-50 text-red-600 rounded-2xl text-xs font-bold border border-red-100 hover:bg-red-600 hover:text-white transition-all">ลบข้อมูลถาวร</button>
+                    <button onclick="location.reload()" class="flex-1 p-4 bg-slate-100 text-slate-600 rounded-2xl text-xs font-bold hover:bg-slate-200 transition-all">รีสตาร์ทแอป</button>
                 </div>
-            </div>
-
-            <div class="text-center">
-                <p class="text-[10px] text-slate-300 font-bold uppercase">Finance Zen Version 6.9.0 (Stable)</p>
             </div>
         </div>
     </main>
 
-    <!-- Toast UI -->
-    <div id="toast" class="fixed bottom-20 md:bottom-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-2xl text-xs font-bold shadow-2xl opacity-0 translate-y-4 transition-all pointer-events-none z-[100]"></div>
+    <!-- UI Notification -->
+    <div id="toast" class="fixed bottom-28 md:bottom-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-8 py-4 rounded-2xl text-xs font-bold shadow-2xl opacity-0 translate-y-8 transition-all pointer-events-none z-[101] flex items-center gap-3">
+        <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+        <span id="toastMsg">บันทึกเรียบร้อย</span>
+    </div>
 
     <script>
-        // Data Keys
-        const KEYS = {
-            main: 'finance_zen_7', // Unified Key
-            legacy: ['incomes', 'incomes_v313'],
-            cats: 'zen_categories_v7',
-            pin: 'zen_pin_v7'
+        // Storage Configuration - v7.2.1 uses a unified key for integrity
+        const CONFIG = {
+            mainKey: 'finance_zen_intelligence_v72',
+            legacyKeys: ['finance_zen_7', 'finance_zen_690', 'incomes_v313', 'incomes'],
+            catKey: 'zen_cats_v72',
+            pinKey: 'zen_pin_v72'
         };
 
-        let state = {
+        let appState = {
             data: [],
-            categories: ["งานหลัก", "งานเสริม", "เงินโอน", "อื่นๆ"],
-            view: 'home',
-            pin: localStorage.getItem(KEYS.pin),
+            categories: ["งานหลัก", "งานเสริม", "ปันผล", "อื่นๆ"],
+            pin: localStorage.getItem(CONFIG.pinKey),
             chart: null
         };
 
-        // --- Data Migration & Management ---
-        const syncData = () => {
-            let combined = [];
-            let uniqueIds = new Set();
+        // --- Intelligence Migration Engine ---
+        const migrateAndSync = () => {
+            let consolidated = [];
+            let seen = new Set();
 
-            // Check and Merge all potential storage keys
-            [KEYS.main, ...KEYS.legacy].forEach(key => {
-                const raw = localStorage.getItem(key);
-                if (raw) {
+            // 1. Try to load from current version first
+            const currentRaw = localStorage.getItem(CONFIG.mainKey);
+            if (currentRaw) {
+                try { consolidated = JSON.parse(currentRaw); } catch(e) {}
+            }
+
+            // 2. Scan legacy keys for missing data (Safety First)
+            CONFIG.legacyKeys.forEach(key => {
+                const legacyRaw = localStorage.getItem(key);
+                if (legacyRaw) {
                     try {
-                        const parsed = JSON.parse(raw);
+                        const parsed = JSON.parse(legacyRaw);
                         if (Array.isArray(parsed)) {
                             parsed.forEach(item => {
-                                // Validate/Standardize format
-                                const clean = {
-                                    id: item.id || Date.now() + Math.random(),
-                                    title: item.title || "ไม่มีชื่อ",
-                                    amount: parseFloat(item.amount) || 0,
-                                    category: item.category || "อื่นๆ",
-                                    date: item.date || new Date().toISOString().split('T')[0]
-                                };
-                                const fingerprint = `${clean.title}-${clean.amount}-${clean.date}`;
-                                if (!uniqueIds.has(clean.id) && !uniqueIds.has(fingerprint)) {
-                                    combined.push(clean);
-                                    uniqueIds.add(clean.id);
-                                    uniqueIds.add(fingerprint);
+                                // Create a unique hash for deduplication
+                                const hash = `${item.title}-${item.amount}-${item.date}`;
+                                if (!seen.has(hash)) {
+                                    // Add if not in current consolidated list
+                                    const existsInMain = consolidated.some(m => `${m.title}-${m.amount}-${m.date}` === hash);
+                                    if (!existsInMain) consolidated.push(item);
+                                    seen.add(hash);
                                 }
                             });
                         }
-                    } catch (e) { console.warn("Load error on key: " + key); }
+                    } catch(e) {}
                 }
             });
 
-            state.data = combined;
+            // 3. Update State & UI
+            appState.data = consolidated.sort((a,b) => new Date(b.date) - new Date(a.date));
             
-            // Sync categories
-            const savedCats = localStorage.getItem(KEYS.cats);
-            if (savedCats) state.categories = JSON.parse(savedCats);
-            
-            saveToStorage();
+            const savedCats = localStorage.getItem(CONFIG.catKey);
+            if (savedCats) appState.categories = JSON.parse(savedCats);
+
+            saveData();
         };
 
-        const saveToStorage = () => {
-            localStorage.setItem(KEYS.main, JSON.stringify(state.data));
-            localStorage.setItem(KEYS.cats, JSON.stringify(state.categories));
-            // Keep one legacy key updated for extra safety
-            localStorage.setItem('incomes', JSON.stringify(state.data));
+        const saveData = () => {
+            localStorage.setItem(CONFIG.mainKey, JSON.stringify(appState.data));
+            localStorage.setItem(CONFIG.catKey, JSON.stringify(appState.categories));
         };
 
-        // --- UI Logic ---
+        // --- Core Application Logic ---
         const showView = (view) => {
-            state.view = view;
             document.querySelectorAll('main > div').forEach(el => el.classList.add('hidden'));
             document.getElementById(`view-${view}`).classList.remove('hidden');
 
-            // Nav Highlight
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById(`m-nav-${view}`).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active', '!text-white'));
+            document.getElementById(`m-nav-${view}`).classList.add('active', '!text-white');
             document.getElementById(`d-nav-${view}`).classList.add('active');
 
-            if (view === 'home') renderHome();
+            if (view === 'home') renderDashboard();
             if (view === 'history') renderHistory();
             if (view === 'settings') renderSettings();
         };
 
-        const renderHome = () => {
+        const renderDashboard = () => {
             const now = new Date();
-            let total = 0, mTotal = 0, yTotal = 0;
-            const cats = {};
+            let total = 0, mSum = 0, ySum = 0;
+            const catMap = {};
 
-            state.data.forEach(i => {
-                const d = new Date(i.date);
-                total += i.amount;
+            appState.data.forEach(item => {
+                const d = new Date(item.date);
+                const amt = parseFloat(item.amount);
+                total += amt;
                 if (d.getFullYear() === now.getFullYear()) {
-                    yTotal += i.amount;
-                    if (d.getMonth() === now.getMonth()) mTotal += i.amount;
+                    ySum += amt;
+                    if (d.getMonth() === now.getMonth()) mSum += amt;
                 }
-                cats[i.category] = (cats[i.category] || 0) + i.amount;
+                catMap[item.category] = (catMap[item.category] || 0) + amt;
             });
 
-            const fmt = (v) => new Intl.NumberFormat('th-TH', { minimumFractionDigits: 2 }).format(v);
-            document.getElementById('totalBalance').textContent = `฿${fmt(total)}`;
-            document.getElementById('monthBalance').textContent = `฿${fmt(mTotal)}`;
-            document.getElementById('yearBalance').textContent = `฿${fmt(yTotal)}`;
+            const f = (n) => new Intl.NumberFormat('th-TH', { minimumFractionDigits: 2 }).format(n);
+            document.getElementById('totalBalance').innerText = `฿${f(total)}`;
+            document.getElementById('monthBalance').innerText = `฿${f(mSum)}`;
+            document.getElementById('yearBalance').innerText = `฿${f(ySum)}`;
 
-            // Recent List
-            const recent = [...state.data].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+            // Recent Items
+            const recent = appState.data.slice(0, 5);
             document.getElementById('recentList').innerHTML = recent.map(i => `
-                <div class="p-4 flex justify-between items-center hover:bg-slate-50 transition-colors">
-                    <div>
-                        <p class="text-sm font-bold text-slate-700">${i.title}</p>
-                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">${i.category} • ${new Date(i.date).toLocaleDateString('th-TH')}</p>
+                <div class="p-5 flex justify-between items-center hover:bg-slate-50 transition-all">
+                    <div class="flex flex-col">
+                        <span class="text-sm font-bold text-slate-800">${i.title}</span>
+                        <div class="flex gap-2 items-center mt-1">
+                            <span class="category-tag">${i.category}</span>
+                            <span class="text-[9px] text-slate-400 font-bold uppercase">${new Date(i.date).toLocaleDateString('th-TH')}</span>
+                        </div>
                     </div>
-                    <span class="text-sm font-black text-slate-800">฿${i.amount.toLocaleString()}</span>
+                    <span class="font-black text-slate-900">฿${i.amount.toLocaleString()}</span>
                 </div>
-            `).join('') || '<div class="p-8 text-center text-xs text-slate-300">ไม่มีข้อมูล</div>';
+            `).join('') || '<div class="p-10 text-center text-slate-300 text-xs font-bold italic">ยังไม่มีข้อมูลในระบบ</div>';
 
-            // Chart
+            // Chart Generation
             const ctx = document.getElementById('balanceChart').getContext('2d');
-            if (state.chart) state.chart.destroy();
-            state.chart = new Chart(ctx, {
+            const colors = ['#3b82f6', '#1e293b', '#6366f1', '#10b981', '#f59e0b', '#ef4444'];
+            if (appState.chart) appState.chart.destroy();
+            
+            const labels = Object.keys(catMap);
+            const values = Object.values(catMap);
+
+            appState.chart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: Object.keys(cats),
+                    labels: labels,
                     datasets: [{
-                        data: Object.values(cats),
-                        backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'],
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
+                        data: values,
+                        backgroundColor: colors,
+                        hoverOffset: 10,
+                        borderWidth: 0
                     }]
                 },
                 options: {
-                    cutout: '75%',
+                    cutout: '80%',
                     plugins: { legend: { display: false } }
                 }
             });
 
-            // Update Input Category Select
+            document.getElementById('chartLegend').innerHTML = labels.map((l, i) => `
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full" style="background:${colors[i % colors.length]}"></div>
+                        <span class="text-[10px] font-bold text-slate-500">${l}</span>
+                    </div>
+                    <span class="text-[10px] font-bold text-slate-900">${((values[i]/total)*100 || 0).toFixed(1)}%</span>
+                </div>
+            `).join('');
+
+            // Setup Form Select
             const sel = document.getElementById('in-category');
-            sel.innerHTML = state.categories.map(c => `<option value="${c}">${c}</option>`).join('');
+            sel.innerHTML = appState.categories.map(c => `<option value="${c}">${c}</option>`).join('');
         };
 
         const renderHistory = () => {
             const query = document.getElementById('searchBox').value.toLowerCase();
-            const filtered = state.data.filter(i => 
+            const filtered = appState.data.filter(i => 
                 i.title.toLowerCase().includes(query) || i.category.toLowerCase().includes(query)
-            ).sort((a,b) => new Date(b.date) - new Date(a.date));
+            );
 
             document.getElementById('fullHistory').innerHTML = filtered.map(i => `
-                <div class="app-card p-4 flex justify-between items-center">
+                <div class="app-card p-5 flex justify-between items-center group">
                     <div>
-                        <p class="text-[9px] font-bold text-blue-500 uppercase">${new Date(i.date).toLocaleDateString('th-TH')}</p>
-                        <p class="text-sm font-bold text-slate-700">${i.title}</p>
-                        <p class="text-[10px] text-slate-400">${i.category}</p>
+                        <p class="text-[10px] font-black text-blue-600 uppercase tracking-tighter mb-1">${new Date(i.date).toLocaleDateString('th-TH', {year:'numeric', month:'short', day:'numeric'})}</p>
+                        <p class="text-sm font-bold text-slate-800">${i.title}</p>
+                        <p class="text-[10px] text-slate-400 font-medium">${i.category}</p>
                     </div>
                     <div class="flex items-center gap-4">
-                        <span class="font-black text-slate-900">฿${i.amount.toLocaleString()}</span>
-                        <button onclick="deleteItem(${i.id})" class="text-slate-200 hover:text-red-500 transition-colors">
+                        <div class="text-right">
+                            <span class="block text-sm font-black text-slate-900">฿${i.amount.toLocaleString()}</span>
+                        </div>
+                        <button onclick="deleteItem(${i.id})" class="text-slate-200 hover:text-red-500 transition-colors p-2 bg-slate-50 rounded-lg group-hover:bg-red-50">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                         </button>
                     </div>
                 </div>
-            `).join('');
+            `).join('') || '<div class="col-span-full py-20 text-center text-slate-300 font-bold">ไม่พบรายการที่ค้นหา</div>';
         };
 
         const renderSettings = () => {
-            document.getElementById('catList').innerHTML = state.categories.map(c => `
-                <div class="bg-slate-100 px-3 py-1.5 rounded-lg flex items-center gap-2">
-                    <span class="text-xs font-medium">${c}</span>
-                    <button onclick="removeCategory('${c}')" class="text-slate-400 hover:text-red-500 font-bold">×</button>
+            document.getElementById('catList').innerHTML = appState.categories.map(c => `
+                <div class="bg-white border border-slate-200 px-3 py-2 rounded-xl flex items-center gap-3">
+                    <span class="text-xs font-bold text-slate-700">${c}</span>
+                    <button onclick="removeCategory('${c}')" class="text-slate-300 hover:text-red-500 font-bold">×</button>
                 </div>
             `).join('');
+            document.getElementById('itemCount').innerText = `${appState.data.length} รายการ`;
         };
 
-        // --- Event Handlers ---
+        // --- Interaction Handlers ---
         const deleteItem = (id) => {
-            if (confirm("ยืนยันการลบรายการนี้?")) {
-                state.data = state.data.filter(i => i.id !== id);
-                saveToStorage();
+            if (confirm("คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้ออกจากระบบ?")) {
+                appState.data = appState.data.filter(i => i.id !== id);
+                saveData();
                 renderHistory();
                 notify("ลบรายการแล้ว");
             }
@@ -415,81 +471,74 @@
 
         const addCategory = () => {
             const val = document.getElementById('newCatInput').value.trim();
-            if (val && !state.categories.includes(val)) {
-                state.categories.push(val);
-                saveToStorage();
+            if (val && !appState.categories.includes(val)) {
+                appState.categories.push(val);
+                saveData();
                 renderSettings();
                 document.getElementById('newCatInput').value = '';
-                notify("เพิ่มหมวดหมู่สำเร็จ");
+                notify("เพิ่มหมวดหมู่เรียบร้อย");
             }
         };
 
         const removeCategory = (c) => {
-            if (state.categories.length > 1) {
-                state.categories = state.categories.filter(cat => cat !== c);
-                saveToStorage();
+            if (appState.categories.length > 1) {
+                appState.categories = appState.categories.filter(cat => cat !== c);
+                saveData();
                 renderSettings();
             }
         };
 
         const exportJSON = () => {
-            const dataStr = JSON.stringify(state.data, null, 2);
-            const blob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
+            const blob = new Blob([JSON.stringify(appState.data, null, 2)], { type: 'application/json' });
             const link = document.createElement('a');
-            link.href = url;
-            link.download = `finance_backup_${new Date().toISOString().split('T')[0]}.json`;
+            link.href = URL.createObjectURL(blob);
+            link.download = `finance_zen_intelligence_${new Date().getTime()}.json`;
             link.click();
-            notify("ดาวน์โหลดข้อมูลสำเร็จ");
+            notify("ส่งออกข้อมูลสำเร็จ");
         };
 
         const resetPin = () => {
-            const current = prompt("กรุณากรอก PIN เดิม:");
-            if (current === state.pin) {
-                const next = prompt("กรอก PIN ใหม่ (4 หลัก):");
-                if (next && next.length === 4) {
-                    state.pin = next;
-                    localStorage.setItem(KEYS.pin, next);
-                    notify("เปลี่ยนรหัสสำเร็จ");
+            const cur = prompt("กรอกรหัส PIN เดิม:");
+            if (cur === appState.pin) {
+                const n1 = prompt("กรอกรหัส PIN ใหม่ (4 หลัก):");
+                if (n1 && n1.length === 4) {
+                    appState.pin = n1;
+                    localStorage.setItem(CONFIG.pinKey, n1);
+                    notify("อัปเดตรหัส PIN แล้ว");
                 }
-            } else {
-                alert("รหัสไม่ถูกต้อง");
-            }
+            } else { alert("รหัสเดิมไม่ถูกต้อง"); }
         };
 
         const clearData = () => {
-            if (confirm("ระวัง! ข้อมูลทั้งหมดจะถูกลบ และไม่สามารถกู้คืนได้ ยืนยันการล้างเครื่อง?")) {
+            if (confirm("คำเตือน: ข้อมูลทั้งหมดรวมถึงรหัสผ่านจะถูกล้างทิ้ง ยืนยันการดำเนินการ?")) {
                 localStorage.clear();
                 location.reload();
             }
         };
 
         const notify = (msg) => {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.classList.remove('opacity-0', 'translate-y-4');
-            setTimeout(() => toast.classList.add('opacity-0', 'translate-y-4'), 2500);
+            const t = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            t.classList.remove('opacity-0', 'translate-y-8');
+            setTimeout(() => t.classList.add('opacity-0', 'translate-y-8'), 3000);
         };
 
-        // --- Auth System ---
+        // --- Intelligence PIN System ---
         const initAuth = () => {
             const input = document.getElementById('pinInput');
             const dots = document.querySelectorAll('.pin-dot');
 
             input.addEventListener('input', (e) => {
                 const val = e.target.value;
-                dots.forEach((dot, i) => {
-                    dot.classList.toggle('fill', i < val.length);
-                });
+                dots.forEach((dot, i) => dot.classList.toggle('fill', i < val.length));
 
                 if (val.length === 4) {
-                    if (!state.pin) {
-                        // First time setup
-                        state.pin = val;
-                        localStorage.setItem(KEYS.pin, val);
+                    if (!appState.pin) {
+                        appState.pin = val;
+                        localStorage.setItem(CONFIG.pinKey, val);
                         unlock();
-                        notify("ตั้งรหัส PIN เริ่มต้นแล้ว");
-                    } else if (val === state.pin) {
+                        notify("ตั้งค่า PIN ครั้งแรกสำเร็จ");
+                    } else if (val === appState.pin) {
                         unlock();
                     } else {
                         document.getElementById('pinError').classList.remove('hidden');
@@ -498,22 +547,23 @@
                     }
                 }
             });
-
-            // Re-focus input on click anywhere on auth screen
             document.getElementById('authScreen').onclick = () => input.focus();
         };
 
         const unlock = () => {
-            document.getElementById('authScreen').style.display = 'none';
-            showView('home');
+            document.getElementById('authScreen').classList.add('opacity-0');
+            setTimeout(() => {
+                document.getElementById('authScreen').style.display = 'none';
+                showView('home');
+            }, 500);
         };
 
-        // --- App Initialization ---
+        // --- Application Bootstrap ---
         window.onload = () => {
-            syncData();
+            migrateAndSync();
             initAuth();
-            if (!state.pin) {
-                document.querySelector('#authScreen p').textContent = "กรุณาตั้งรหัส PIN 4 หลักเพื่อเริ่มต้นใช้งาน";
+            if (!appState.pin) {
+                document.querySelector('#authScreen p').innerHTML = "<b>ยินดีต้อนรับสู่ v7.2.1</b><br>กรุณาตั้งรหัส PIN 4 หลักเพื่อเริ่มใช้งาน";
             }
         };
 
@@ -526,10 +576,10 @@
                 category: document.getElementById('in-category').value,
                 date: new Date().toISOString().split('T')[0]
             };
-            state.data.push(newItem);
-            saveToStorage();
+            appState.data.unshift(newItem);
+            saveData();
             e.target.reset();
-            renderHome();
+            renderDashboard();
             notify("บันทึกรายการสำเร็จ");
         };
 
