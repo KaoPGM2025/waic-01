@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Finance Zen 7.8.0</title>
+    <title>Finance Zen 8.1.0</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Kanit:wght@400;600&display=swap" rel="stylesheet">
@@ -11,584 +11,553 @@
         :root {
             --primary: #0f172a;
             --accent: #6366f1;
-            --bg-glass: rgba(255, 255, 255, 0.85);
+            --bg-glass: rgba(255, 255, 255, 0.9);
         }
         body {
             font-family: 'Sarabun', sans-serif;
-            background-color: #f8fafc;
+            background-color: #f1f5f9;
             color: #1e293b;
-            overflow-x: hidden;
         }
-        h1, h2, h3, .font-kanit { font-family: 'Kanit', sans-serif; }
+        .font-kanit { font-family: 'Kanit', sans-serif; }
         
         .glass-card {
             background: var(--bg-glass);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            border-radius: 2rem;
-            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
         }
-
-        .refresh-btn {
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .refresh-btn:active { transform: rotate(180deg) scale(0.9); }
-        .spinning { animation: spin 0.8s ease-in-out; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        .neo-button {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .neo-button:active { transform: scale(0.97); }
 
         .nav-active {
             color: var(--accent) !important;
-            background: rgba(99, 102, 241, 0.08);
+            background: rgba(99, 102, 241, 0.1);
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade { animation: fadeIn 0.4s ease-out forwards; }
+        .refresh-btn.spinning svg {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .animate-enter { animation: enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes enter { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="pb-24 md:pb-0 md:pt-24">
 
-    <!-- Auth System (Safe-Guard) -->
-    <div id="authOverlay" class="fixed inset-0 z-[100] bg-white flex flex-col items-center justify-center p-6 transition-opacity duration-500">
-        <div class="w-full max-w-xs text-center">
-            <div class="mb-8 inline-block p-5 bg-indigo-600 rounded-[2.5rem] shadow-2xl">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 00-2 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+    <!-- Authentication Layer -->
+    <div id="authOverlay" class="fixed inset-0 z-[100] bg-slate-50 flex flex-col items-center justify-center p-6 transition-all duration-700">
+        <div class="w-full max-w-sm text-center">
+            <div class="mb-6 inline-block p-6 bg-indigo-600 rounded-[32px] shadow-xl shadow-indigo-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 00-2 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
             </div>
-            <h1 class="text-2xl font-bold text-slate-900 mb-2">Finance Zen 7.8</h1>
-            <p id="authHint" class="text-sm text-slate-400 mb-8">กรุณากรอกรหัสความปลอดภัย</p>
+            <h1 class="text-3xl font-bold text-slate-900 mb-2 font-kanit">Finance Zen 8.1</h1>
+            <p id="authHint" class="text-slate-400 mb-8">กรุณากรอกรหัส PIN เพื่อเข้าสู่ระบบ</p>
             
-            <div id="pinDots" class="flex justify-center gap-4 mb-10">
-                <div class="w-3 h-3 rounded-full border-2 border-slate-200"></div>
-                <div class="w-3 h-3 rounded-full border-2 border-slate-200"></div>
-                <div class="w-3 h-3 rounded-full border-2 border-slate-200"></div>
-                <div class="w-3 h-3 rounded-full border-2 border-slate-200"></div>
+            <div id="pinDots" class="flex justify-center gap-5 mb-12">
+                <div class="w-4 h-4 rounded-full border-2 border-slate-300 transition-all"></div>
+                <div class="w-4 h-4 rounded-full border-2 border-slate-300 transition-all"></div>
+                <div class="w-4 h-4 rounded-full border-2 border-slate-300 transition-all"></div>
+                <div class="w-4 h-4 rounded-full border-2 border-slate-300 transition-all"></div>
             </div>
 
-            <div class="grid grid-cols-3 gap-4 w-full max-w-[280px] mx-auto">
+            <div class="grid grid-cols-3 gap-4 mx-auto max-w-[300px]">
                 <script>
-                    const keys = ['1','2','3','4','5','6','7','8','9','','0','DEL'];
-                    keys.forEach(k => {
+                    ['1','2','3','4','5','6','7','8','9','','0','DEL'].forEach(k => {
                         if(k === '') { document.write('<div></div>'); return; }
-                        document.write(`<button onclick="pressKey('${k}')" class="h-16 flex items-center justify-center bg-slate-50 rounded-2xl text-xl font-bold active:bg-indigo-100 transition-colors">${k === 'DEL' ? '←' : k}</button>`);
+                        document.write(`<button onclick="pressKey('${k}')" class="h-16 flex items-center justify-center bg-white rounded-2xl text-xl font-bold active:scale-95 transition-transform shadow-sm border border-slate-100">${k === 'DEL' ? '←' : k}</button>`);
                     });
                 </script>
             </div>
         </div>
     </div>
 
-    <!-- Desktop Navigation -->
-    <nav class="hidden md:flex fixed top-0 left-0 right-0 h-20 bg-white/70 backdrop-blur-2xl border-b border-slate-100 z-50 px-12 items-center justify-between">
-        <div class="flex items-center gap-4">
-            <div class="w-10 h-10 bg-indigo-600 rounded-2xl flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-200">F</div>
-            <h2 class="font-bold text-lg text-slate-900">Finance Zen <span class="text-indigo-600">7.8 Aether</span></h2>
+    <!-- Desktop Menu -->
+    <nav class="hidden md:flex fixed top-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-md border-b border-slate-100 z-50 px-10 items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-100">Z</div>
+            <span class="font-bold text-xl font-kanit">Finance <span class="text-indigo-600">Zen</span></span>
         </div>
-        <div class="flex gap-4 items-center">
-            <button onclick="refreshData()" id="refreshBtnD" class="refresh-btn p-3 bg-slate-50 hover:bg-white border border-slate-100 rounded-xl text-slate-500 hover:text-indigo-600 shadow-sm" title="Refresh Data (F5)">
+        <div class="flex items-center gap-2">
+            <button onclick="switchTab('home')" id="tab-home-d" class="px-5 py-2 rounded-xl font-bold text-sm nav-active tab-btn">หน้าหลัก</button>
+            <button onclick="switchTab('history')" id="tab-history-d" class="px-5 py-2 rounded-xl font-bold text-sm text-slate-400 hover:text-slate-600 transition-colors tab-btn">ประวัติ</button>
+            <button onclick="switchTab('settings')" id="tab-settings-d" class="px-5 py-2 rounded-xl font-bold text-sm text-slate-400 hover:text-slate-600 transition-colors tab-btn">ตั้งค่า</button>
+            <div class="w-[1px] h-6 bg-slate-200 mx-3"></div>
+            <button onclick="refreshData()" class="refresh-btn p-2 text-slate-400 hover:text-indigo-600 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
             </button>
-            <div class="h-8 w-[1px] bg-slate-100 mx-2"></div>
-            <button onclick="switchTab('home')" class="px-6 py-2.5 rounded-xl font-bold text-sm nav-active tab-btn-d" id="tab-home-d">สรุปผล</button>
-            <button onclick="switchTab('history')" class="px-6 py-2.5 rounded-xl font-bold text-sm text-slate-400 tab-btn-d" id="tab-history-d">ประวัติ</button>
-            <button onclick="switchTab('settings')" class="px-6 py-2.5 rounded-xl font-bold text-sm text-slate-400 tab-btn-d" id="tab-settings-d">ตั้งค่า</button>
         </div>
     </nav>
 
-    <!-- Mobile Navigation -->
-    <nav class="md:hidden fixed bottom-8 left-6 right-6 h-18 bg-white/80 backdrop-blur-2xl border border-white/50 shadow-2xl rounded-[2.5rem] z-50 flex items-center justify-around px-2">
-        <button onclick="switchTab('home')" class="flex flex-col items-center gap-1 p-3 rounded-full nav-active tab-btn-m" id="tab-home-m">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>
+    <!-- Mobile Menu -->
+    <nav class="md:hidden fixed bottom-6 left-6 right-6 h-20 bg-white/95 backdrop-blur-xl border border-white shadow-2xl rounded-[30px] z-50 flex items-center justify-around px-4">
+        <button onclick="switchTab('home')" id="tab-home-m" class="p-4 rounded-2xl nav-active tab-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
         </button>
-        <button onclick="refreshData()" class="refresh-btn flex items-center justify-center w-12 h-12 bg-indigo-600 text-white rounded-full shadow-lg shadow-indigo-200" id="refreshBtnM">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+        <button onclick="refreshData()" class="refresh-btn flex items-center justify-center w-14 h-14 bg-indigo-600 text-white rounded-full shadow-lg shadow-indigo-200 -mt-12 border-4 border-slate-50">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
         </button>
-        <button onclick="switchTab('history')" class="flex flex-col items-center gap-1 p-3 text-slate-400 tab-btn-m" id="tab-history-m">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+        <button onclick="switchTab('history')" id="tab-history-m" class="p-4 rounded-2xl text-slate-400 tab-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
         </button>
     </nav>
 
-    <main class="max-w-5xl mx-auto p-6 md:py-10">
-        <!-- Dashboard View -->
-        <div id="view-home" class="animate-fade space-y-8">
-            <div class="flex justify-between items-end">
-                <div>
-                    <h1 class="text-3xl font-bold tracking-tight">ยินดีต้อนรับคืนสู่ Aether Flow ✨</h1>
-                    <p class="text-slate-400 text-sm">ข้อมูลเดิมทั้งหมดถูกรักษาไว้ใน Vault แล้ว</p>
+    <main class="max-w-6xl mx-auto p-5 md:py-10">
+        <!-- Dashboard Section -->
+        <div id="view-home" class="animate-enter space-y-6">
+            <header class="flex justify-between items-center">
+                <h2 class="text-2xl font-bold font-kanit">ภาพรวมบัญชี</h2>
+                <div class="text-right">
+                    <p id="todayDate" class="text-xs text-slate-400 font-bold uppercase"></p>
                 </div>
-            </div>
+            </header>
 
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-                <!-- Main Balance -->
-                <div class="md:col-span-8 glass-card bg-slate-900 p-8 text-white relative overflow-hidden">
-                    <div class="relative z-10">
-                        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">สินทรัพย์รวมในระบบ</p>
-                        <h2 id="displayTotal" class="text-5xl font-bold tracking-tight mb-8">฿0.00</h2>
-                        <div class="flex gap-6">
-                            <div>
-                                <p class="text-slate-500 text-[10px] font-bold uppercase mb-1">รายการวันนี้</p>
-                                <p id="todayCount" class="text-xl font-bold text-indigo-400">0</p>
-                            </div>
-                            <div class="w-[1px] bg-slate-800 h-10"></div>
-                            <div>
-                                <p class="text-slate-500 text-[10px] font-bold uppercase mb-1">เฉลี่ย/รายการ</p>
-                                <p id="avgAmount" class="text-xl font-bold">฿0.00</p>
-                            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Balance Card -->
+                <div class="md:col-span-2 glass-card bg-slate-900 p-8 text-white flex flex-col justify-between min-h-[220px]">
+                    <div>
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">ยอดเงินคงเหลือทั้งหมด</p>
+                        <h3 id="mainBalance" class="text-5xl font-bold font-kanit tracking-tight">฿0.00</h3>
+                    </div>
+                    <div class="flex gap-10 mt-6">
+                        <div>
+                            <p class="text-slate-500 text-[10px] font-bold uppercase">เฉลี่ย/วัน</p>
+                            <p id="statAvg" class="text-xl font-bold">฿0.00</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-500 text-[10px] font-bold uppercase">รายการทั้งหมด</p>
+                            <p id="statCount" class="text-xl font-bold">0</p>
                         </div>
                     </div>
-                    <div class="absolute right-0 bottom-0 opacity-10">
-                        <svg width="200" height="200" viewBox="0 0 100 100"><circle cx="100" cy="100" r="80" fill="currentColor" /></svg>
-                    </div>
                 </div>
 
-                <!-- Action Panel -->
-                <div class="md:col-span-4 glass-card p-6 border-indigo-50">
-                    <h3 class="font-bold mb-4 flex items-center gap-2">
+                <!-- Add Form -->
+                <div class="glass-card p-6 border-indigo-100 border-2">
+                    <h4 class="font-bold mb-4 flex items-center gap-2">
                         <span class="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></span>
                         บันทึกรายการด่วน
-                    </h3>
-                    <form id="txForm" class="space-y-4">
-                        <input type="text" id="txTitle" placeholder="ชื่อรายการ..." required class="w-full p-4 bg-slate-50 rounded-2xl outline-none focus:ring-2 ring-indigo-100 transition-all font-medium">
+                    </h4>
+                    <form id="txForm" class="space-y-3">
+                        <input type="text" id="txTitle" placeholder="บันทึกช่วยจำ..." required class="w-full p-4 bg-slate-50 rounded-2xl outline-none focus:ring-2 ring-indigo-200 transition-all font-medium">
                         <input type="number" id="txAmount" placeholder="0.00" step="0.01" required class="w-full p-4 bg-slate-50 rounded-2xl outline-none text-xl font-bold text-indigo-600">
-                        <select id="txCat" class="w-full p-4 bg-slate-50 rounded-2xl outline-none text-sm font-bold border-r-8 border-transparent"></select>
-                        <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-2xl neo-button shadow-lg shadow-indigo-100">บันทึกลงระบบ</button>
+                        <select id="txCat" class="w-full p-4 bg-slate-50 rounded-2xl outline-none font-bold text-sm appearance-none cursor-pointer"></select>
+                        <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-2xl hover:bg-indigo-700 active:scale-95 transition-all shadow-lg shadow-indigo-100">บันทึก</button>
                     </form>
-                </div>
-
-                <!-- Chart & Stats -->
-                <div class="md:col-span-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="lg:col-span-2 glass-card p-6 h-[320px]">
-                        <canvas id="mainChart"></canvas>
-                    </div>
-                    <div class="lg:col-span-1 glass-card p-6 overflow-y-auto">
-                        <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">สัดส่วนตามหมวดหมู่</h4>
-                        <div id="catLegend" class="space-y-4"></div>
-                    </div>
                 </div>
             </div>
 
-            <!-- Recent -->
-            <div class="space-y-4">
-                <div class="flex justify-between items-center px-2">
-                    <h3 class="font-bold">รายการล่าสุด</h3>
-                    <button onclick="switchTab('history')" class="text-xs font-bold text-indigo-600">ดูทั้งหมด</button>
+            <!-- Chart & Categories -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 glass-card p-6">
+                    <div class="h-[300px]">
+                        <canvas id="balanceChart"></canvas>
+                    </div>
                 </div>
-                <div id="recentList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                <div class="glass-card p-6 flex flex-col">
+                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">สถิติแยกตามหมวดหมู่</h4>
+                    <div id="categoryStats" class="space-y-4 flex-1"></div>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="space-y-4">
+                <h3 class="font-bold font-kanit px-2">รายการล่าสุด</h3>
+                <div id="recentGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
             </div>
         </div>
 
-        <!-- History View -->
-        <div id="view-history" class="hidden animate-fade space-y-6">
-            <div class="glass-card p-4 flex gap-4 items-center">
-                <input type="text" id="searchBox" placeholder="ค้นหารายการ..." class="flex-1 p-4 bg-slate-50 rounded-2xl outline-none">
-                <button onclick="exportData()" class="p-4 bg-indigo-50 text-indigo-600 rounded-2xl font-bold neo-button">
+        <!-- History Section -->
+        <div id="view-history" class="hidden animate-enter space-y-6">
+            <div class="glass-card p-4 flex gap-4">
+                <div class="flex-1 relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    <input type="text" id="searchBox" placeholder="ค้นหาชื่อรายการหรือหมวดหมู่..." class="w-full pl-12 pr-4 py-4 bg-slate-50 rounded-2xl outline-none focus:ring-2 ring-indigo-200">
+                </div>
+                <button onclick="exportJSON()" class="p-4 bg-indigo-50 text-indigo-600 rounded-2xl hover:bg-indigo-100 transition-colors" title="Export Data">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                 </button>
             </div>
-            <div id="historyList" class="space-y-6"></div>
+            <div id="fullHistory" class="space-y-6"></div>
         </div>
 
-        <!-- Settings View -->
-        <div id="view-settings" class="hidden animate-fade space-y-6">
+        <!-- Settings Section -->
+        <div id="view-settings" class="hidden animate-enter max-w-2xl mx-auto space-y-6">
             <div class="glass-card p-8">
-                <h3 class="font-bold text-xl mb-6">ความปลอดภัยและความสมบูรณ์ของข้อมูล</h3>
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                <h3 class="text-xl font-bold font-kanit mb-6">ตั้งค่าแอปพลิเคชัน</h3>
+                
+                <div class="space-y-6">
+                    <div class="p-4 bg-indigo-50 rounded-2xl flex items-center justify-between border border-indigo-100">
                         <div>
-                            <p class="text-emerald-800 font-bold text-sm">Aether Vault Protected</p>
-                            <p class="text-emerald-600 text-xs">ข้อมูลของคุณถูกสำรองและล็อคด้วยเข้ารหัสส่วนตัว</p>
+                            <p class="font-bold text-indigo-900 text-sm">Security Vault 8.1</p>
+                            <p class="text-xs text-indigo-600">ข้อมูลของคุณถูกเข้ารหัสและเก็บไว้ในเครื่องเท่านั้น</p>
                         </div>
-                        <div class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2.166 4.9L9.03 9.103c.4.245.94.245 1.34 0L17.236 4.9a2.001 2.001 0 00-1.236-1.542l-5.4-1.8a2.002 2.002 0 00-1.2 0l-5.4 1.8a2.001 2.001 0 00-1.234 1.542zm15.634 1.543l-6.8 4.161c-.4.245-.94.245-1.34 0l-6.8-4.161A2 2 0 002 8.162V13a2 2 0 002 2h12a2 2 0 002-2V8.162a2 2 0 00-.2-1.719z" clip-rule="evenodd" /></svg>
+                        <div class="h-10 w-10 bg-indigo-600 rounded-full flex items-center justify-center text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2.166 4.9L9.03 9.103c.4.245.94.245 1.34 0L17.236 4.9a2.001 2.001 0 00-1.236-1.542l-5.4-1.8a2.002 2.002 0 00-1.2 0l-5.4 1.8a2.001 2.001 0 00-1.234 1.542zm15.634 1.543l-6.8 4.161c-.4.245-.94.245-1.34 0l-6.8-4.161A2 2 0 002 8.162V13a2 2 0 002 2h12a2 2 0 002-2V8.162a2 2 0 00-.2-1.719z" clip-rule="evenodd" /></svg>
                         </div>
                     </div>
-                    <div class="p-6 bg-slate-50 rounded-2xl">
-                        <label class="text-xs font-black text-slate-400 uppercase block mb-3">จัดการหมวดหมู่</label>
-                        <div class="flex gap-2 mb-4">
-                            <input type="text" id="newCatInput" placeholder="หมวดหมู่ใหม่..." class="flex-1 p-3 rounded-xl border border-slate-200 outline-none">
-                            <button onclick="addCategory()" class="px-6 bg-indigo-600 text-white font-bold rounded-xl text-sm">เพิ่ม</button>
+
+                    <div class="space-y-3">
+                        <label class="text-xs font-black text-slate-400 uppercase">จัดการหมวดหมู่</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="newCatInput" placeholder="เพิ่มหมวดหมู่ใหม่..." class="flex-1 p-4 bg-slate-50 rounded-2xl outline-none">
+                            <button onclick="addCategory()" class="px-6 bg-slate-900 text-white font-bold rounded-2xl">เพิ่ม</button>
                         </div>
-                        <div id="catTags" class="flex flex-wrap gap-2"></div>
+                        <div id="settingsCats" class="flex flex-wrap gap-2 pt-2"></div>
                     </div>
-                    <div class="flex gap-4">
-                        <button onclick="resetPin()" class="flex-1 p-4 border border-slate-200 rounded-2xl font-bold text-sm hover:bg-slate-50 transition-colors">เปลี่ยนรหัส PIN</button>
-                        <button onclick="factoryReset()" class="flex-1 p-4 border border-red-100 text-red-600 bg-red-50/30 rounded-2xl font-bold text-sm hover:bg-red-600 hover:text-white transition-colors">ล้างข้อมูลทั้งหมด</button>
+
+                    <div class="pt-6 border-t border-slate-100 flex gap-4">
+                        <button onclick="changePIN()" class="flex-1 p-4 bg-slate-100 rounded-2xl font-bold text-sm hover:bg-slate-200 transition-colors">เปลี่ยนรหัส PIN</button>
+                        <button onclick="factoryReset()" class="flex-1 p-4 bg-red-50 text-red-600 rounded-2xl font-bold text-sm hover:bg-red-600 hover:text-white transition-all">ล้างข้อมูลแอป</button>
                     </div>
                 </div>
             </div>
-            <p class="text-center text-[10px] text-slate-300 font-bold uppercase tracking-widest">Finance Zen Version 7.8.0 Aether Flow Engine</p>
+            <p class="text-center text-[10px] text-slate-300 font-bold uppercase tracking-widest">Aether Flow Engine v8.1.0 • Stable Build</p>
         </div>
     </main>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-24 md:bottom-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-8 py-4 rounded-full text-xs font-bold shadow-2xl opacity-0 translate-y-10 transition-all z-[200]">
-        บันทึกข้อมูลสำเร็จ
+    <!-- Global Toast -->
+    <div id="toast" class="fixed bottom-28 md:bottom-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-8 py-4 rounded-full text-sm font-bold shadow-2xl transition-all duration-500 opacity-0 translate-y-20 z-[200]">
+        บันทึกสำเร็จ
     </div>
 
     <script>
-        // --- Storage Keys Configuration ---
-        const KEYS = {
-            main: 'finance_zen_aether_v78',
-            cats: 'finance_zen_cats_v78',
-            pin: 'finance_zen_pin_v78',
-            legacy: ['finance_zen_quantum_v74', 'finance_zen_intelligence_v72', 'finance_zen_7', 'finance_zen_690', 'incomes_v313', 'incomes']
+        // --- System State & Configuration ---
+        const APP_KEYS = {
+            main: 'finance_zen_aether_v81', // New Version Key
+            cats: 'finance_zen_cats_v81',
+            pin: 'finance_zen_pin_v81',
+            vaults: ['finance_zen_aether_v78', 'finance_zen_quantum_v74', 'finance_zen_intelligence_v72', 'finance_zen_7', 'finance_zen_690', 'incomes_v313', 'incomes']
         };
 
         let state = {
-            data: [],
-            cats: ["เงินเดือน", "โบนัส", "ลงทุน", "ของขวัญ", "อื่นๆ"],
-            pin: localStorage.getItem(KEYS.pin),
-            pinInput: '',
+            transactions: [],
+            categories: ["เงินเดือน", "โบนัส", "ลงทุน", "ของกิน", "เดินทาง", "ช้อปปิ้ง", "อื่นๆ"],
+            pin: localStorage.getItem(APP_KEYS.pin),
+            tempPin: '',
             chart: null
         };
 
-        // --- Core: Data Migration & Safety ---
-        const bootSystem = () => {
-            let core = [];
-            const current = localStorage.getItem(KEYS.main);
-            if (current) core = JSON.parse(current);
+        // --- Data Migration & Initialization ---
+        const initApp = () => {
+            // 1. Data Recovery (Migration)
+            let masterData = [];
+            const current = localStorage.getItem(APP_KEYS.main);
+            if (current) masterData = JSON.parse(current);
 
-            KEYS.legacy.forEach(key => {
-                const legacyData = localStorage.getItem(key);
-                if (legacyData) {
+            // Scan all old vaults to prevent data loss
+            APP_KEYS.vaults.forEach(key => {
+                const legacy = localStorage.getItem(key);
+                if (legacy) {
                     try {
-                        const parsed = JSON.parse(legacyData);
+                        const parsed = JSON.parse(legacy);
                         if (Array.isArray(parsed)) {
                             parsed.forEach(item => {
-                                const exists = core.some(c => c.id === item.id || (c.title === item.title && c.amount === item.amount && c.date === item.date));
-                                if (!exists) core.push(item);
+                                // Check for duplicates based on content & timestamp
+                                const isDup = masterData.some(m => m.id === item.id || (m.title === item.title && m.amount === item.amount && m.date === item.date));
+                                if (!isDup) masterData.push(item);
                             });
                         }
-                    } catch(e) {}
+                    } catch (e) { console.error("Migration Error:", e); }
                 }
             });
 
-            state.data = core.sort((a,b) => new Date(b.date) - new Date(a.date));
-            const savedCats = localStorage.getItem(KEYS.cats);
-            if (savedCats) state.cats = JSON.parse(savedCats);
+            state.transactions = masterData.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+            // 2. Categories Init
+            const savedCats = localStorage.getItem(APP_KEYS.cats);
+            if (savedCats) state.categories = JSON.parse(savedCats);
+
+            // 3. UI Pre-load
+            document.getElementById('todayDate').innerText = new Date().toLocaleDateString('th-TH', { month: 'long', day: 'numeric', year: 'numeric' });
             
-            saveToStorage();
+            saveState();
+            
             if (!state.pin) {
-                const hint = document.getElementById('authHint');
-                if (hint) hint.innerText = "ตั้งรหัสความปลอดภัย 4 หลักแรกของคุณ";
+                document.getElementById('authHint').innerText = "ยินดีต้อนรับ! กรุณาตั้งรหัส PIN 4 หลักแรก";
             }
         };
 
-        const saveToStorage = () => {
-            localStorage.setItem(KEYS.main, JSON.stringify(state.data));
-            localStorage.setItem(KEYS.cats, JSON.stringify(state.cats));
+        const saveState = () => {
+            localStorage.setItem(APP_KEYS.main, JSON.stringify(state.transactions));
+            localStorage.setItem(APP_KEYS.cats, JSON.stringify(state.categories));
         };
 
         const refreshData = () => {
-            const btns = [document.getElementById('refreshBtnD'), document.getElementById('refreshBtnM')];
-            btns.forEach(b => b && b.classList.add('spinning'));
+            const btns = document.querySelectorAll('.refresh-btn');
+            btns.forEach(b => b.classList.add('spinning'));
             
             setTimeout(() => {
-                bootSystem();
-                const activeTabBtn = document.querySelector('.tab-btn-m.nav-active') || document.querySelector('.tab-btn-d.nav-active');
-                const currentTab = activeTabBtn ? activeTabBtn.id.split('-')[1] : 'home';
-                switchTab(currentTab);
-                btns.forEach(b => b && b.classList.remove('spinning'));
-                showToast("อัปเดตข้อมูลล่าสุดแล้ว (Refresh Complete)");
+                initApp();
+                const activeTab = document.querySelector('.tab-btn.nav-active').id.split('-')[1];
+                switchTab(activeTab);
+                btns.forEach(b => b.classList.remove('spinning'));
+                showToast("ระบบอัปเดตข้อมูลเสถียรแล้ว ✨");
+            }, 800);
+        };
+
+        // --- Authentication Logic ---
+        const pressKey = (key) => {
+            if (key === 'DEL') {
+                state.tempPin = state.tempPin.slice(0, -1);
+            } else if (state.tempPin.length < 4) {
+                state.tempPin += key;
+            }
+            updatePinUI();
+            if (state.tempPin.length === 4) validateAuth();
+        };
+
+        const updatePinUI = () => {
+            const dots = document.querySelectorAll('#pinDots div');
+            dots.forEach((dot, i) => {
+                if (i < state.tempPin.length) {
+                    dot.classList.add('bg-indigo-600', 'border-indigo-600', 'scale-125');
+                } else {
+                    dot.classList.remove('bg-indigo-600', 'border-indigo-600', 'scale-125');
+                }
+            });
+        };
+
+        const validateAuth = () => {
+            if (!state.pin) {
+                state.pin = state.tempPin;
+                localStorage.setItem(APP_KEYS.pin, state.pin);
+                unlockVault();
+            } else if (state.tempPin === state.pin) {
+                unlockVault();
+            } else {
+                state.tempPin = '';
+                updatePinUI();
+                const hint = document.getElementById('authHint');
+                hint.innerText = "รหัส PIN ผิดพลาด ลองใหม่อีกครั้ง";
+                hint.className = "text-red-500 mb-8 animate-pulse font-bold";
+            }
+        };
+
+        const unlockVault = () => {
+            const overlay = document.getElementById('authOverlay');
+            overlay.classList.add('opacity-0', 'pointer-events-none', 'scale-110');
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                renderHome();
             }, 600);
         };
 
-        window.onkeydown = (e) => {
-            if (e.key === 'F5') {
-                e.preventDefault();
-                refreshData();
-            }
-        };
-
-        const pressKey = (key) => {
-            if (key === 'DEL') {
-                state.pinInput = state.pinInput.slice(0, -1);
-            } else if (state.pinInput.length < 4) {
-                state.pinInput += key;
-            }
-            updatePinDots();
-            if (state.pinInput.length === 4) handleAuth();
-        };
-
-        const updatePinDots = () => {
-            const dots = document.querySelectorAll('#pinDots div');
-            dots.forEach((d, i) => {
-                d.classList.toggle('bg-indigo-600', i < state.pinInput.length);
-                d.classList.toggle('border-indigo-600', i < state.pinInput.length);
-                d.classList.toggle('border-slate-200', i >= state.pinInput.length);
-            });
-        };
-
-        const handleAuth = () => {
-            if (!state.pin) {
-                state.pin = state.pinInput;
-                localStorage.setItem(KEYS.pin, state.pin);
-                unlock();
-            } else if (state.pinInput === state.pin) {
-                unlock();
-            } else {
-                state.pinInput = '';
-                updatePinDots();
-                const hint = document.getElementById('authHint');
-                if (hint) {
-                    hint.innerText = "รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่";
-                    hint.className = "text-sm text-red-500 mb-8";
-                }
-            }
-        };
-
-        const unlock = () => {
-            const auth = document.getElementById('authOverlay');
-            if (auth) {
-                auth.classList.add('opacity-0', 'pointer-events-none');
-                setTimeout(() => {
-                    auth.style.display = 'none';
-                    renderHome();
-                }, 500);
-            }
-        };
-
+        // --- Navigation ---
         const switchTab = (tab) => {
-            // View visibility
-            const view = document.getElementById(`view-${tab}`);
-            if (view) {
-                document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
-                view.classList.remove('hidden');
-            }
+            document.querySelectorAll('main > div').forEach(div => div.classList.add('hidden'));
+            const targetView = document.getElementById(`view-${tab}`);
+            if (targetView) targetView.classList.remove('hidden');
 
-            // Tab button states - Added Null Checks for robustness
-            document.querySelectorAll('.tab-btn-d, .tab-btn-m').forEach(b => {
-                b.classList.remove('nav-active', 'text-slate-900');
-                b.classList.add('text-slate-400');
-            });
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('nav-active', 'text-slate-900'));
             
-            const btnD = document.getElementById(`tab-${tab}-d`);
-            const btnM = document.getElementById(`tab-${tab}-m`);
-            
-            if (btnD) btnD.classList.add('nav-active', 'text-slate-900');
-            if (btnM) btnM.classList.add('nav-active', 'text-slate-900');
+            // Activate both Mobile & Desktop buttons for the tab
+            const dBtn = document.getElementById(`tab-${tab}-d`);
+            const mBtn = document.getElementById(`tab-${tab}-m`);
+            if (dBtn) dBtn.classList.add('nav-active', 'text-slate-900');
+            if (mBtn) mBtn.classList.add('nav-active', 'text-slate-900');
 
             if (tab === 'home') renderHome();
             if (tab === 'history') renderHistory();
             if (tab === 'settings') renderSettings();
         };
 
+        // --- UI Rendering ---
         const renderHome = () => {
-            const total = state.data.reduce((acc, c) => acc + parseFloat(c.amount), 0);
-            const todayStr = new Date().toISOString().split('T')[0];
-            const todayData = state.data.filter(i => i.date === todayStr);
-            const avg = state.data.length ? total / state.data.length : 0;
+            const total = state.transactions.reduce((sum, t) => sum + parseFloat(t.amount), 0);
+            const count = state.transactions.length;
+            const avg = count > 0 ? total / count : 0;
 
-            const fmt = (n) => new Intl.NumberFormat('th-TH', { minimumFractionDigits: 2 }).format(n);
+            const format = (n) => new Intl.NumberFormat('th-TH', { minimumFractionDigits: 2 }).format(n);
             
-            const displayTotal = document.getElementById('displayTotal');
-            const todayCount = document.getElementById('todayCount');
-            const avgAmount = document.getElementById('avgAmount');
-            
-            if (displayTotal) displayTotal.innerText = `฿${fmt(total)}`;
-            if (todayCount) todayCount.innerText = todayData.length;
-            if (avgAmount) avgAmount.innerText = `฿${fmt(avg)}`;
+            document.getElementById('mainBalance').innerText = `฿${format(total)}`;
+            document.getElementById('statAvg').innerText = `฿${format(avg)}`;
+            document.getElementById('statCount').innerText = count;
 
+            // Cat Select
             const txCat = document.getElementById('txCat');
-            if (txCat) txCat.innerHTML = state.cats.map(c => `<option value="${c}">${c}</option>`).join('');
+            txCat.innerHTML = state.categories.map(c => `<option value="${c}">${c}</option>`).join('');
 
+            // Charting
             const catMap = {};
-            state.data.forEach(i => catMap[i.category] = (catMap[i.category] || 0) + parseFloat(i.amount));
-            const labels = Object.keys(catMap);
-            const vals = Object.values(catMap);
+            state.transactions.forEach(t => catMap[t.category] = (catMap[t.category] || 0) + parseFloat(t.amount));
+            
+            const ctx = document.getElementById('balanceChart').getContext('2d');
+            if (state.chart) state.chart.destroy();
+            state.chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Object.keys(catMap),
+                    datasets: [{
+                        label: 'สรุปรายจ่าย',
+                        data: Object.values(catMap),
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 4,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#6366f1'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { display: false }, x: { grid: { display: false } } }
+                }
+            });
 
-            const chartCtx = document.getElementById('mainChart');
-            if (chartCtx) {
-                if (state.chart) state.chart.destroy();
-                state.chart = new Chart(chartCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'ยอดรวม (บาท)',
-                            data: vals,
-                            backgroundColor: '#6366f1',
-                            borderRadius: 12
-                        }]
-                    },
-                    options: {
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } }
-                    }
-                });
-            }
+            // Cat Legend
+            document.getElementById('categoryStats').innerHTML = Object.keys(catMap).map(cat => `
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-slate-500 font-bold">${cat}</span>
+                    <span class="font-black text-slate-800">฿${format(catMap[cat])}</span>
+                </div>
+            `).join('') || '<p class="text-center text-slate-300 py-10">ไม่มีข้อมูลหมวดหมู่</p>';
 
-            const catLegend = document.getElementById('catLegend');
-            if (catLegend) {
-                catLegend.innerHTML = labels.map(l => `
-                    <div class="flex justify-between items-center text-xs">
-                        <span class="text-slate-500 font-bold">${l}</span>
-                        <span class="font-black">฿${fmt(catMap[l])}</span>
+            // Recent Grid
+            const recent = state.transactions.slice(0, 6);
+            document.getElementById('recentGrid').innerHTML = recent.map(t => `
+                <div class="glass-card p-5 hover:bg-white transition-all border border-transparent hover:border-indigo-50">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-[10px] bg-slate-100 px-2 py-1 rounded-md font-black text-slate-500 uppercase">${t.category}</span>
+                        <span class="text-[10px] text-slate-300 font-bold">${new Date(t.date).toLocaleDateString('th-TH')}</span>
                     </div>
-                `).join('');
-            }
-
-            const recentList = document.getElementById('recentList');
-            if (recentList) {
-                const recent = state.data.slice(0, 6);
-                recentList.innerHTML = recent.map(i => `
-                    <div class="glass-card p-5 hover:bg-white transition-all group">
-                        <div class="flex justify-between items-start mb-4">
-                            <span class="text-[10px] bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full font-black uppercase">${i.category}</span>
-                            <span class="text-[10px] text-slate-300 font-bold">${new Date(i.date).toLocaleDateString('th-TH')}</span>
-                        </div>
-                        <p class="font-bold text-slate-800 mb-1">${i.title}</p>
-                        <p class="text-lg font-black text-slate-900">฿${fmt(i.amount)}</p>
-                    </div>
-                `).join('') || '<p class="col-span-full text-center py-10 text-slate-300">ยังไม่มีรายการ</p>';
-            }
+                    <p class="font-bold text-slate-700 truncate mb-1">${t.title}</p>
+                    <p class="text-xl font-black text-slate-900">฿${format(t.amount)}</p>
+                </div>
+            `).join('') || '<div class="col-span-full py-10 text-center text-slate-300">ยินดีต้อนรับ! เริ่มบันทึกรายการแรกได้เลย</div>';
         };
 
         const renderHistory = () => {
-            const searchBox = document.getElementById('searchBox');
-            const query = searchBox ? searchBox.value.toLowerCase() : '';
-            const filtered = state.data.filter(i => i.title.toLowerCase().includes(query) || i.category.toLowerCase().includes(query));
+            const query = document.getElementById('searchBox').value.toLowerCase();
+            const filtered = state.transactions.filter(t => t.title.toLowerCase().includes(query) || t.category.toLowerCase().includes(query));
             
-            const groups = {};
-            filtered.forEach(i => {
-                const d = i.date;
-                if(!groups[d]) groups[d] = [];
-                groups[d].push(i);
+            const grouped = {};
+            filtered.forEach(t => {
+                if (!grouped[t.date]) grouped[t.date] = [];
+                grouped[t.date].push(t);
             });
 
-            const sortedDates = Object.keys(groups).sort((a,b) => new Date(b) - new Date(a));
-            const historyList = document.getElementById('historyList');
+            const sortedDates = Object.keys(grouped).sort((a,b) => new Date(b) - new Date(a));
             
-            if (historyList) {
-                historyList.innerHTML = sortedDates.map(d => `
-                    <div>
-                        <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 mb-3">${new Date(d).toLocaleDateString('th-TH', {weekday:'long', day:'numeric', month:'long'})}</h4>
-                        <div class="space-y-2">
-                            ${groups[d].map(i => `
-                                <div class="glass-card p-5 flex justify-between items-center mx-1">
-                                    <div>
-                                        <p class="font-bold text-slate-800">${i.title}</p>
-                                        <p class="text-[10px] text-slate-400 font-bold uppercase">${i.category}</p>
-                                    </div>
-                                    <div class="flex items-center gap-4">
-                                        <span class="font-black text-slate-900">฿${i.amount.toLocaleString()}</span>
-                                        <button onclick="deleteItem(${i.id})" class="p-2 text-slate-200 hover:text-red-500"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
-                                    </div>
-                                </div>
-                            `).join('')}
+            document.getElementById('fullHistory').innerHTML = sortedDates.map(date => `
+                <div class="space-y-3">
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">${new Date(date).toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long' })}</h4>
+                    ${grouped[date].map(t => `
+                        <div class="glass-card p-5 flex justify-between items-center group">
+                            <div>
+                                <p class="font-bold text-slate-800">${t.title}</p>
+                                <p class="text-[10px] font-bold text-indigo-400 uppercase">${t.category}</p>
+                            </div>
+                            <div class="flex items-center gap-5">
+                                <span class="text-lg font-black">฿${t.amount.toLocaleString()}</span>
+                                <button onclick="deleteTx(${t.id})" class="p-2 text-slate-200 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                `).join('') || '<p class="text-center py-20 text-slate-300">ไม่พบข้อมูล</p>';
-            }
+                    `).join('')}
+                </div>
+            `).join('') || '<div class="text-center py-20 text-slate-300">ไม่พบประวัติการทำรายการ</div>';
         };
 
         const renderSettings = () => {
-            const catTags = document.getElementById('catTags');
-            if (catTags) {
-                catTags.innerHTML = state.cats.map(c => `
-                    <div class="px-4 py-2 bg-white border border-slate-100 rounded-xl flex items-center gap-2">
-                        <span class="text-xs font-bold">${c}</span>
-                        <button onclick="removeCat('${c}')" class="text-slate-300 hover:text-red-500 font-bold">&times;</button>
-                    </div>
-                `).join('');
-            }
+            document.getElementById('settingsCats').innerHTML = state.categories.map(c => `
+                <div class="bg-white px-4 py-2 rounded-xl border border-slate-100 flex items-center gap-3 shadow-sm">
+                    <span class="text-xs font-bold text-slate-700">${c}</span>
+                    <button onclick="removeCategory('${c}')" class="text-slate-300 hover:text-red-500 font-bold">&times;</button>
+                </div>
+            `).join('');
         };
 
-        const txForm = document.getElementById('txForm');
-        if (txForm) {
-            txForm.onsubmit = (e) => {
-                e.preventDefault();
-                const titleInput = document.getElementById('txTitle');
-                const amountInput = document.getElementById('txAmount');
-                const catInput = document.getElementById('txCat');
-                
-                const newItem = {
-                    id: Date.now(),
-                    title: titleInput.value,
-                    amount: parseFloat(amountInput.value),
-                    category: catInput.value,
-                    date: new Date().toISOString().split('T')[0]
-                };
-                state.data.unshift(newItem);
-                saveToStorage();
-                e.target.reset();
-                renderHome();
-                showToast("บันทึกรายการสำเร็จ");
+        // --- Actions ---
+        document.getElementById('txForm').onsubmit = (e) => {
+            e.preventDefault();
+            const newItem = {
+                id: Date.now(),
+                title: document.getElementById('txTitle').value,
+                amount: parseFloat(document.getElementById('txAmount').value),
+                category: document.getElementById('txCat').value,
+                date: new Date().toISOString().split('T')[0]
             };
-        }
+            state.transactions.unshift(newItem);
+            saveState();
+            e.target.reset();
+            renderHome();
+            showToast("บันทึกข้อมูลเรียบร้อย ✅");
+        };
 
-        const deleteItem = (id) => {
-            if(confirm("ยืนยันการลบรายการ?")) {
-                state.data = state.data.filter(i => i.id !== id);
-                saveToStorage();
+        const deleteTx = (id) => {
+            if (confirm("ยืนยันการลบรายการนี้?")) {
+                state.transactions = state.transactions.filter(t => t.id !== id);
+                saveState();
                 renderHistory();
-                showToast("ลบข้อมูลสำเร็จ");
+                showToast("ลบข้อมูลแล้ว");
             }
         };
 
         const addCategory = () => {
             const input = document.getElementById('newCatInput');
-            const val = input ? input.value.trim() : '';
-            if(val && !state.cats.includes(val)) {
-                state.cats.push(val);
-                saveToStorage();
+            const val = input.value.trim();
+            if (val && !state.categories.includes(val)) {
+                state.categories.push(val);
+                saveState();
                 renderSettings();
-                if (input) input.value = '';
+                input.value = '';
             }
         };
 
-        const removeCat = (c) => {
-            if(state.cats.length > 1) {
-                state.cats = state.cats.filter(i => i !== c);
-                saveToStorage();
+        const removeCategory = (c) => {
+            if (state.categories.length > 1) {
+                state.categories = state.categories.filter(cat => cat !== c);
+                saveState();
                 renderSettings();
             }
         };
 
         const showToast = (msg) => {
             const t = document.getElementById('toast');
-            if (t) {
-                t.innerText = msg;
-                t.classList.remove('opacity-0', 'translate-y-10');
-                setTimeout(() => t.classList.add('opacity-0', 'translate-y-10'), 3000);
-            }
+            t.innerText = msg;
+            t.classList.remove('opacity-0', 'translate-y-20');
+            setTimeout(() => t.classList.add('opacity-0', 'translate-y-20'), 3000);
         };
 
-        const exportData = () => {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.data));
+        const exportJSON = () => {
+            const blob = new Blob([JSON.stringify(state.transactions)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.setAttribute("href", dataStr);
-            a.setAttribute("download", `finance_zen_780_${Date.now()}.json`);
+            a.href = url;
+            a.download = `finance_zen_backup_${Date.now()}.json`;
             a.click();
         };
 
-        const resetPin = () => {
-            const current = prompt("กรอกรหัส PIN เดิม:");
-            if(current === state.pin) {
-                const next = prompt("กรอกรหัส PIN ใหม่ 4 หลัก:");
-                if(next && next.length === 4) {
+        const changePIN = () => {
+            const old = prompt("กรุณากรอก PIN เดิม:");
+            if (old === state.pin) {
+                const next = prompt("ตั้งค่า PIN ใหม่ (4 หลัก):");
+                if (next && next.length === 4) {
                     state.pin = next;
-                    localStorage.setItem(KEYS.pin, next);
-                    showToast("เปลี่ยนรหัสสำเร็จ");
+                    localStorage.setItem(APP_KEYS.pin, next);
+                    showToast("เปลี่ยนรหัส PIN สำเร็จ");
                 }
-            } else if (current !== null) { alert("รหัสไม่ถูกต้อง"); }
+            } else if (old !== null) {
+                alert("PIN เดิมไม่ถูกต้อง");
+            }
         };
 
         const factoryReset = () => {
-            if(confirm("คำเตือน: ข้อมูลทั้งหมดจะถูกลบอย่างถาวร ยืนยันการรีเซ็ตระบบ?")) {
+            if (confirm("ระวัง! การดำเนินการนี้จะล้างข้อมูลทั้งหมดในแอปอย่างถาวร ยืนยันหรือไม่?")) {
                 localStorage.clear();
                 location.reload();
             }
         };
 
-        window.onload = () => {
-            bootSystem();
-            const searchBox = document.getElementById('searchBox');
-            if (searchBox) searchBox.oninput = renderHistory;
-        };
+        // --- Bootstrap ---
+        window.onload = initApp;
+        document.getElementById('searchBox').oninput = renderHistory;
+
     </script>
 </body>
 </html>
