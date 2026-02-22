@@ -3,462 +3,423 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Finance Zen 10.0.0</title>
+    <title>Finance Zen 10.4.0 - Nexus Core</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --bg-light: #f8fafc;
+            --bg-dark: #0f172a;
+            --card-light: #ffffff;
+            --card-dark: #1e293b;
+            --text-light: #1e293b;
+            --text-dark: #f1f5f9;
             --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Light Mode Defaults */
-        body.light-mode {
-            background-color: #f8fafc;
-            color: #1e293b;
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-light);
+            transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
         }
-        .light-mode .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-        .light-mode .nav-bar { background: rgba(255, 255, 255, 0.9); }
 
-        /* Dark Mode - High Contrast & Clear Text */
         body.dark-mode {
-            background-color: #020617;
-            color: #f8fafc;
+            background-color: var(--bg-dark);
+            color: var(--text-dark);
         }
-        .dark-mode .glass-card {
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-        }
-        .dark-mode .text-slate-700 { color: #f1f5f9 !important; font-weight: 500; }
-        .dark-mode .text-slate-900 { color: #ffffff !important; font-weight: 700; }
-        .dark-mode .nav-bar { background: rgba(15, 23, 42, 0.95); border-top: 1px solid rgba(255, 255, 255, 0.05); }
-        .dark-mode h1, .dark-mode h2, .dark-mode h3, .dark-mode h4 { color: #ffffff; letter-spacing: 0.025em; text-shadow: 0 0 1px rgba(255,255,255,0.1); }
-        .dark-mode input, .dark-mode select { background-color: #1e293b !important; color: #ffffff !important; border: 1px solid #334155; }
-        
-        /* Global Styles */
-        body { font-family: 'Sarabun', sans-serif; transition: var(--transition); overflow-x: hidden; }
+
         .font-kanit { font-family: 'Kanit', sans-serif; }
-        .tab-active { color: var(--primary) !important; position: relative; }
-        .tab-active::after { content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 20px; height: 3px; background: var(--primary); border-radius: 10px; }
-        
-        .animate-pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes pop { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        
-        .spinning { animation: spin 1s linear infinite; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* Theme Styles */
+        .glass-card {
+            background: var(--card-light);
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+            transition: var(--transition);
+        }
+
+        .dark-mode .glass-card {
+            background: var(--card-dark);
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+        }
+
+        .dark-mode header, .dark-mode nav {
+            background-color: rgba(15, 23, 42, 0.9) !important;
+            border-color: #1e293b;
+        }
+
+        .dark-mode input, .dark-mode select {
+            background-color: #334155 !important;
+            color: white !important;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, #a855f7 100%);
+            color: white;
+            transition: var(--transition);
+        }
+        .btn-primary:active { transform: scale(0.96); }
+
+        /* Custom Toggle */
+        .theme-switch {
+            width: 56px;
+            height: 28px;
+            background: #cbd5e1;
+            border-radius: 50px;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .theme-switch::after {
+            content: '☀️';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: var(--transition);
+        }
+        .dark-mode .theme-switch { background: var(--primary); }
+        .dark-mode .theme-switch::after {
+            content: '🌙';
+            transform: translateX(28px);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: fadeInUp 0.5s ease-out forwards; }
     </style>
 </head>
-<body class="light-mode pb-24 md:pb-0">
+<body class="pb-24">
 
-    <!-- Auth System -->
-    <div id="authScreen" class="fixed inset-0 z-[1000] bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-6">
-        <div class="w-full max-w-md text-center">
-            <div class="mb-8 inline-block p-6 bg-indigo-600 rounded-[2rem] shadow-2xl shadow-indigo-500/20">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A10.003 10.003 0 0012 3m0 0a10.003 10.003 0 0110 10c0 1.988-.547 3.848-1.503 5.439m-1.285 1.564l-.063.1c-1.744 2.772-2.753 6.054-2.753 9.571m0-9.571a10.273 10.273 0 01-2.253-4.5m-.747-4.5A10.273 10.273 0 0112 11" />
-                </svg>
+    <!-- Sticky Header -->
+    <header class="p-5 bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100 transition-colors">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-black font-kanit text-indigo-600">Finance Zen</h1>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">Nexus Core v10.4.0</p>
             </div>
-            <h1 class="text-4xl font-extrabold mb-2 font-kanit tracking-tight">Finance Zen <span class="text-indigo-600">10</span></h1>
-            <p id="authMsg" class="text-slate-400 font-medium mb-10">Lumina Prime Edition</p>
-            
-            <div class="flex justify-center gap-4 mb-12">
-                <div class="pin-dot w-4 h-4 rounded-full border-2 border-slate-300"></div>
-                <div class="pin-dot w-4 h-4 rounded-full border-2 border-slate-300"></div>
-                <div class="pin-dot w-4 h-4 rounded-full border-2 border-slate-300"></div>
-                <div class="pin-dot w-4 h-4 rounded-full border-2 border-slate-300"></div>
-            </div>
-
-            <div class="grid grid-cols-3 gap-4 max-w-[320px] mx-auto">
-                <script>
-                    ['1','2','3','4','5','6','7','8','9','C','0','←'].forEach(k => {
-                        document.write(`<button onclick="handleKey('${k}')" class="h-16 flex items-center justify-center bg-white dark:bg-slate-800 rounded-2xl text-2xl font-bold shadow-sm active:scale-90 transition-transform">${k}</button>`);
-                    });
-                </script>
+            <div class="flex items-center gap-4">
+                <div onclick="toggleTheme()" class="theme-switch" id="themeBtn"></div>
             </div>
         </div>
-    </div>
+    </header>
 
-    <!-- Main App UI -->
-    <main id="appMain" class="opacity-0 transition-opacity duration-1000 max-w-5xl mx-auto p-4 md:p-8">
-        <!-- Dashboard View -->
-        <div id="view-dashboard" class="space-y-6">
-            <header class="flex justify-between items-end">
-                <div>
-                    <h2 class="text-3xl font-extrabold font-kanit">สวัสดีตอน<span id="greetingTime">เช้า</span></h2>
-                    <p id="modeInfo" class="text-xs font-bold text-indigo-500 uppercase mt-1"></p>
+    <main class="max-w-4xl mx-auto p-4 space-y-6">
+        
+        <!-- Balance Dashboard -->
+        <section class="glass-card rounded-[2.5rem] p-8 text-white relative overflow-hidden" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);">
+            <div class="relative z-10">
+                <div class="flex justify-between items-center mb-1">
+                    <p class="text-indigo-100 text-[10px] font-bold uppercase tracking-wider">ยอดเงินรวมในระบบ</p>
+                    <div id="healthBadge" class="px-2 py-0.5 bg-white/20 rounded-md text-[9px] font-bold">Health Score: --</div>
                 </div>
-                <div class="text-right">
-                    <p id="currentDate" class="text-xs font-black text-slate-400"></p>
-                </div>
-            </header>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Balance -->
-                <div class="md:col-span-2 glass-card p-8 rounded-[2.5rem] bg-indigo-600 text-white overflow-hidden relative">
-                    <div class="relative z-10">
-                        <p class="text-indigo-100/70 text-xs font-bold uppercase tracking-widest mb-2">ยอดเงินคงเหลือ</p>
-                        <h3 id="displayBalance" class="text-5xl md:text-6xl font-black font-kanit">฿0.00</h3>
-                        <div class="mt-8 flex gap-8">
-                            <div>
-                                <p class="text-[10px] font-bold text-indigo-200/50 uppercase">รายรับเดือนนี้</p>
-                                <p id="monthIncome" class="text-xl font-bold">฿0.00</p>
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-bold text-indigo-200/50 uppercase">รายจ่ายเดือนนี้</p>
-                                <p id="monthExpense" class="text-xl font-bold">฿0.00</p>
-                            </div>
-                        </div>
+                <h2 id="totalBalance" class="text-4xl font-black font-kanit">฿0.00</h2>
+                
+                <div class="grid grid-cols-2 gap-3 mt-8">
+                    <div class="bg-white/10 backdrop-blur-lg p-4 rounded-3xl border border-white/10">
+                        <p class="text-[9px] text-indigo-100 uppercase font-black">รายรับ (เดือนนี้)</p>
+                        <p id="totalIncome" class="text-xl font-bold">฿0.00</p>
                     </div>
-                    <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-                </div>
-
-                <!-- Fast Add -->
-                <div class="glass-card p-6 rounded-[2.5rem]">
-                    <h4 class="font-bold mb-4 font-kanit">บันทึกด่วน</h4>
-                    <form id="addForm" class="space-y-3">
-                        <input type="text" id="inTitle" placeholder="ทำอะไรไป?" required class="w-full p-4 rounded-2xl outline-none text-sm font-medium">
-                        <input type="number" id="inAmount" placeholder="0.00" step="0.01" required class="w-full p-4 rounded-2xl outline-none text-2xl font-black text-indigo-600">
-                        <div class="flex gap-2">
-                            <select id="inType" class="flex-1 p-4 rounded-2xl outline-none font-bold text-xs appearance-none">
-                                <option value="expense">รายจ่าย (-)</option>
-                                <option value="income">รายรับ (+)</option>
-                            </select>
-                            <button type="submit" class="w-14 h-14 bg-indigo-600 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                            </button>
-                        </div>
-                    </form>
+                    <div class="bg-white/10 backdrop-blur-lg p-4 rounded-3xl border border-white/10">
+                        <p class="text-[9px] text-indigo-100 uppercase font-black">รายจ่าย (เดือนนี้)</p>
+                        <p id="totalExpense" class="text-xl font-bold">฿0.00</p>
+                    </div>
                 </div>
             </div>
+            <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+        </section>
 
-            <!-- Visual Stats -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="glass-card p-6 rounded-[2.5rem] min-h-[300px]">
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <section class="glass-card rounded-3xl p-5">
+                <h3 class="text-[10px] font-bold text-slate-400 uppercase mb-4 tracking-widest">พฤติกรรม 7 วันล่าสุด</h3>
+                <div class="h-40">
                     <canvas id="mainChart"></canvas>
                 </div>
-                <div class="glass-card p-6 rounded-[2.5rem]">
-                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">รายการล่าสุด</h4>
-                    <div id="recentList" class="space-y-3"></div>
+            </section>
+            <section class="glass-card rounded-3xl p-5">
+                <h3 class="text-[10px] font-bold text-slate-400 uppercase mb-4 tracking-widest">สัดส่วนกระแสเงิน</h3>
+                <div class="h-40">
+                    <canvas id="donutChart"></canvas>
                 </div>
-            </div>
+            </section>
         </div>
 
-        <!-- History View -->
-        <div id="view-history" class="hidden animate-pop space-y-6">
-            <div class="glass-card p-4 rounded-3xl flex gap-3">
-                <input type="text" id="search" placeholder="ค้นหารายการ..." class="flex-1 p-4 rounded-2xl outline-none">
-                <button onclick="exportData()" class="p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+        <!-- Add Transaction -->
+        <section class="glass-card rounded-3xl p-6">
+            <form id="txForm" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <input type="text" id="title" placeholder="รายการของคุณ..." required 
+                        class="w-full p-4 rounded-2xl bg-slate-100 outline-none focus:ring-2 ring-indigo-400 font-medium transition-all">
+                    <input type="number" id="amount" placeholder="0.00" step="0.01" required 
+                        class="w-full p-4 rounded-2xl bg-slate-100 outline-none focus:ring-2 ring-indigo-400 font-bold text-indigo-600">
+                    <select id="type" class="w-full p-4 rounded-2xl bg-slate-100 outline-none font-bold text-sm">
+                        <option value="expense">รายจ่าย (-)</option>
+                        <option value="income">รายรับ (+)</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full py-4 rounded-2xl btn-primary font-bold text-lg shadow-xl shadow-indigo-200">
+                    บันทึกรายการลง Nexus
                 </button>
+            </form>
+        </section>
+
+        <!-- List Section -->
+        <section class="space-y-4">
+            <div class="flex justify-between items-center px-2">
+                <h3 class="font-bold font-kanit">ประวัติธุรกรรม</h3>
+                <span id="dataStatus" class="text-[9px] font-black text-emerald-500 uppercase tracking-tighter bg-emerald-50 px-2 py-1 rounded">Nexus Synced</span>
             </div>
-            <div id="historyContainer" class="space-y-6"></div>
-        </div>
+            <div id="txList" class="space-y-3">
+                <!-- Transaction items -->
+            </div>
+        </section>
+
     </main>
 
-    <!-- Navigation Bar -->
-    <nav class="nav-bar fixed bottom-0 left-0 right-0 h-20 px-10 flex items-center justify-around z-[500] md:top-0 md:bottom-auto">
-        <button onclick="setTab('dashboard')" id="nav-dashboard" class="p-2 text-slate-400 tab-active">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+    <!-- Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-100 h-20 flex justify-around items-center px-6 z-50 transition-colors">
+        <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex flex-col items-center gap-1 text-indigo-600">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+            <span class="text-[9px] font-bold">หน้าแรก</span>
         </button>
-        <button onclick="refresh()" class="w-14 h-14 bg-indigo-600 text-white rounded-full flex items-center justify-center -mt-10 md:mt-0 shadow-xl shadow-indigo-500/30 border-4 border-slate-50 dark:border-slate-900">
-            <svg id="refreshIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-        </button>
-        <button onclick="setTab('history')" id="nav-history" class="p-2 text-slate-400">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        <button onclick="exportJSON()" class="flex flex-col items-center gap-1 text-slate-400">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+            <span class="text-[9px] font-bold">สำรองข้อมูล</span>
         </button>
     </nav>
 
-    <!-- Toast Notifications -->
-    <div id="toast" class="fixed top-10 left-1/2 -translate-x-1/2 px-6 py-3 bg-slate-900 text-white text-xs font-bold rounded-full opacity-0 translate-y-[-50px] transition-all duration-500 z-[2000]"></div>
+    <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 px-6 py-3 bg-slate-800 text-white text-[10px] font-bold rounded-full opacity-0 transition-all z-[100]"></div>
 
     <script>
-        // --- Core State v10.0 ---
-        const CONFIG = {
-            keys: {
-                main: 'zen_v10_core',
-                pin: 'zen_v10_pin',
-                legacy: ['finance_zen_aether_v81', 'finance_zen_aether_v78', 'finance_zen_7', 'finance_zen_690', 'incomes_v313']
+        // --- Nexus Core v10.4.0 Engine ---
+        const NEXUS_KEY = 'finance_zen_nexus_v104';
+        const LEGACY_KEYS = [
+            'finance_zen_lumina_v10', 
+            'finance_zen_aether_v81', 
+            'incomes_v313', 
+            'finance_zen_7', 
+            'finance_zen_legacy'
+        ];
+
+        let transactions = [];
+        let charts = { main: null, donut: null };
+        let isDark = false;
+
+        // 1. Core Initialization & Migration (Data Safety Guarantee)
+        const init = () => {
+            // Theme check
+            isDark = localStorage.getItem('nexus_dark') === 'true';
+            if(isDark) document.body.classList.add('dark-mode');
+
+            // Data Bridge
+            const stored = localStorage.getItem(NEXUS_KEY);
+            if(stored) {
+                transactions = JSON.parse(stored);
+            } else {
+                migrateData();
             }
+            render();
         };
 
-        let state = {
-            data: [],
-            pin: localStorage.getItem(CONFIG.keys.pin),
-            inputPin: '',
-            chart: null
-        };
-
-        // --- Data Migration Engine ---
-        const migrate = () => {
-            let core = JSON.parse(localStorage.getItem(CONFIG.keys.main) || "[]");
-            
-            CONFIG.keys.legacy.forEach(key => {
-                const raw = localStorage.getItem(key);
-                if (raw) {
+        const migrateData = () => {
+            let foundCount = 0;
+            LEGACY_KEYS.forEach(key => {
+                const data = localStorage.getItem(key);
+                if(data) {
                     try {
-                        const parsed = JSON.parse(raw);
-                        if (Array.isArray(parsed)) {
+                        const parsed = JSON.parse(data);
+                        if(Array.isArray(parsed)) {
                             parsed.forEach(item => {
-                                // Prevent duplicates by checking ID or Timestamp
-                                if (!core.some(existing => existing.id === item.id)) {
-                                    core.push({
+                                // Nexus Data Normalization
+                                if(!transactions.find(t => t.id == item.id)) {
+                                    transactions.push({
                                         id: item.id || Date.now() + Math.random(),
-                                        title: item.title || 'ไม่มีชื่อ',
+                                        title: item.title || item.name || 'รายการเก่า',
                                         amount: parseFloat(item.amount) || 0,
-                                        type: item.type || (parseFloat(item.amount) < 0 ? 'expense' : 'income'),
+                                        type: item.type || (item.amount < 0 ? 'expense' : 'income'),
                                         date: item.date || new Date().toISOString()
                                     });
+                                    foundCount++;
                                 }
                             });
                         }
-                    } catch (e) { console.warn(`Migration skipped for ${key}:`, e); }
+                    } catch(e) {}
                 }
             });
-
-            state.data = core.sort((a,b) => new Date(b.date) - new Date(a.date));
-            localStorage.setItem(CONFIG.keys.main, JSON.stringify(state.data));
+            if(foundCount > 0) notify(`Nexus Sync: กู้คืน ${foundCount} รายการสำเร็จ`);
+            save();
         };
 
-        // --- Theme Engine v10.0 (Auto Dark/Light) ---
-        const updateTheme = () => {
-            const now = new Date();
-            const hour = now.getHours();
-            const min = now.getMinutes();
-            const totalMin = (hour * 60) + min;
+        const save = () => localStorage.setItem(NEXUS_KEY, JSON.stringify(transactions));
 
-            // 18:00 (1080 min) to 00:00 (1440 min) -> DARK
-            // 00:01 (1 min) to 17:59 (1079 min) -> LIGHT
+        // 2. Rendering Engine
+        const render = () => {
+            const list = document.getElementById('txList');
+            const sorted = [...transactions].sort((a,b) => new Date(b.date) - new Date(a.date));
             
-            const isDark = (hour >= 18 && hour <= 23);
-            
-            if (isDark) {
-                document.body.className = 'dark-mode pb-24 md:pb-0';
-                document.getElementById('modeInfo').innerText = "🌙 Night Mode Enabled (High Contrast)";
-            } else {
-                document.body.className = 'light-mode pb-24 md:pb-0';
-                document.getElementById('modeInfo').innerText = "☀️ Day Mode Enabled";
-            }
-
-            // Update Greeting
-            const greeting = hour < 12 ? 'เช้า' : (hour < 18 ? 'บ่าย' : 'เย็น');
-            document.getElementById('greetingTime').innerText = greeting;
-        };
-
-        // --- Auth Logic ---
-        const handleKey = (key) => {
-            if (key === 'C') state.inputPin = '';
-            else if (key === '←') state.inputPin = state.inputPin.slice(0, -1);
-            else if (state.inputPin.length < 4) state.inputPin += key;
-
-            const dots = document.querySelectorAll('.pin-dot');
-            dots.forEach((dot, i) => {
-                dot.style.background = i < state.inputPin.length ? '#6366f1' : 'transparent';
-                dot.style.borderColor = i < state.inputPin.length ? '#6366f1' : '#cbd5e1';
-            });
-
-            if (state.inputPin.length === 4) {
-                if (!state.pin) {
-                    state.pin = state.inputPin;
-                    localStorage.setItem(CONFIG.keys.pin, state.pin);
-                    unlock();
-                } else if (state.inputPin === state.pin) {
-                    unlock();
-                } else {
-                    state.inputPin = '';
-                    setTimeout(() => {
-                        dots.forEach(d => { d.style.background = 'transparent'; d.style.borderColor = '#ef4444'; });
-                        document.getElementById('authMsg').innerText = "รหัสไม่ถูกต้อง!";
-                        document.getElementById('authMsg').className = "text-red-500 font-bold mb-10";
-                    }, 100);
-                }
-            }
-        };
-
-        const unlock = () => {
-            document.getElementById('authScreen').classList.add('opacity-0', 'pointer-events-none');
-            document.getElementById('appMain').classList.add('opacity-100');
-            renderDashboard();
-        };
-
-        // --- Core UI Functions ---
-        const renderDashboard = () => {
-            const now = new Date();
-            const thisMonth = now.getMonth();
-            const thisYear = now.getFullYear();
-
             let total = 0, inc = 0, exp = 0;
-            const dailyData = {};
-
-            state.data.forEach(t => {
+            const now = new Date();
+            
+            transactions.forEach(t => {
                 const amt = parseFloat(t.amount);
-                const d = new Date(t.date);
-                
-                total += (t.type === 'income' ? amt : -amt);
-
-                if (d.getMonth() === thisMonth && d.getFullYear() === thisYear) {
-                    if (t.type === 'income') inc += amt;
-                    else exp += amt;
+                const tDate = new Date(t.date);
+                if(t.type === 'income') {
+                    total += amt;
+                    if(tDate.getMonth() === now.getMonth()) inc += amt;
+                } else {
+                    total -= amt;
+                    if(tDate.getMonth() === now.getMonth()) exp += amt;
                 }
-
-                const dayKey = d.toLocaleDateString('th-TH', { day: 'numeric' });
-                dailyData[dayKey] = (dailyData[dayKey] || 0) + (t.type === 'income' ? amt : -amt);
             });
 
-            const fmt = (v) => new Intl.NumberFormat('th-TH', { minimumFractionDigits: 2 }).format(v);
-            document.getElementById('displayBalance').innerText = `฿${fmt(total)}`;
-            document.getElementById('monthIncome').innerText = `฿${fmt(inc)}`;
-            document.getElementById('monthExpense').innerText = `฿${fmt(exp)}`;
-            document.getElementById('currentDate').innerText = now.toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            // Update UI
+            const fmt = n => new Intl.NumberFormat('th-TH', { minimumFractionDigits: 2 }).format(n);
+            document.getElementById('totalBalance').innerText = `฿${fmt(total)}`;
+            document.getElementById('totalIncome').innerText = `฿${fmt(inc)}`;
+            document.getElementById('totalExpense').innerText = `฿${fmt(exp)}`;
+            
+            // Health Score
+            const health = inc > 0 ? Math.min(Math.round(( (inc - exp) / inc) * 100), 100) : 0;
+            document.getElementById('healthBadge').innerText = `Health Score: ${health}%`;
 
-            // Chart
-            const ctx = document.getElementById('mainChart').getContext('2d');
-            if (state.chart) state.chart.destroy();
-            state.chart = new Chart(ctx, {
-                type: 'bar',
+            // List Injection
+            list.innerHTML = sorted.slice(0, 10).map(t => `
+                <div class="glass-card p-4 rounded-3xl flex justify-between items-center animate-in">
+                    <div class="flex items-center gap-4">
+                        <div class="w-11 h-11 rounded-2xl flex items-center justify-center ${t.type === 'income' ? 'bg-indigo-100 text-indigo-600' : 'bg-rose-100 text-rose-600'}">
+                            ${t.type === 'income' ? '↙' : '↗'}
+                        </div>
+                        <div>
+                            <p class="font-bold text-sm truncate w-32 md:w-full">${t.title}</p>
+                            <p class="text-[9px] opacity-40 font-black uppercase tracking-widest">${new Date(t.date).toLocaleDateString('th-TH', {day:'numeric', month:'short'})}</p>
+                        </div>
+                    </div>
+                    <p class="font-black text-base ${t.type === 'income' ? 'text-indigo-500' : 'text-rose-500'}">
+                        ${t.type === 'income' ? '+' : '-'} ${fmt(t.amount)}
+                    </p>
+                </div>
+            `).join('') || '<p class="text-center py-10 opacity-30 text-xs">ยังไม่มีข้อมูลในฐาน Nexus</p>';
+
+            updateCharts();
+        };
+
+        // 3. Analytics (Responsive Charts)
+        const updateCharts = () => {
+            const fontColor = isDark ? '#94a3b8' : '#64748b';
+            
+            // Daily Chart
+            const days = {};
+            for(let i=6; i>=0; i--) {
+                const d = new Date(); d.setDate(d.getDate()-i);
+                days[d.toLocaleDateString('th-TH', {day:'numeric', month:'short'})] = 0;
+            }
+            transactions.forEach(t => {
+                const k = new Date(t.date).toLocaleDateString('th-TH', {day:'numeric', month:'short'});
+                if(days.hasOwnProperty(k)) days[k] += (t.type === 'income' ? t.amount : -t.amount);
+            });
+
+            if(charts.main) charts.main.destroy();
+            charts.main = new Chart(document.getElementById('mainChart'), {
+                type: 'line',
                 data: {
-                    labels: Object.keys(dailyData).slice(-7),
+                    labels: Object.keys(days),
                     datasets: [{
-                        data: Object.values(dailyData).slice(-7),
-                        backgroundColor: '#6366f1',
-                        borderRadius: 10
+                        data: Object.values(days),
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        fill: true, tension: 0.4, borderWidth: 3, pointRadius: 2
                     }]
                 },
                 options: {
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: { y: { display: false }, x: { grid: { display: false } } }
+                    scales: {
+                        y: { display: false },
+                        x: { grid: { display: false }, ticks: { color: fontColor, font: { size: 9, weight: 'bold' } } }
+                    }
                 }
             });
 
-            // Recent
-            document.getElementById('recentList').innerHTML = state.data.slice(0, 5).map(t => `
-                <div class="flex justify-between items-center p-2">
-                    <div>
-                        <p class="font-bold text-sm text-slate-900">${t.title}</p>
-                        <p class="text-[10px] text-slate-400 font-bold uppercase">${new Date(t.date).toLocaleDateString('th-TH')}</p>
-                    </div>
-                    <p class="font-black ${t.type === 'income' ? 'text-green-500' : 'text-red-500'}">
-                        ${t.type === 'income' ? '+' : '-'} ฿${t.amount.toLocaleString()}
-                    </p>
-                </div>
-            `).join('') || '<p class="text-center py-10 text-slate-300">ไม่มีข้อมูลล่าสุด</p>';
-        };
+            // Donut Chart
+            const cats = { inc: 0, exp: 0 };
+            transactions.forEach(t => { t.type === 'income' ? cats.inc += t.amount : cats.exp += t.amount; });
 
-        const renderHistory = () => {
-            const query = document.getElementById('search').value.toLowerCase();
-            const filtered = state.data.filter(t => t.title.toLowerCase().includes(query));
-            
-            const groups = {};
-            filtered.forEach(t => {
-                const d = new Date(t.date).toDateString();
-                if (!groups[d]) groups[d] = [];
-                groups[d].push(t);
+            if(charts.donut) charts.donut.destroy();
+            charts.donut = new Chart(document.getElementById('donutChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['รายรับ', 'รายจ่าย'],
+                    datasets: [{
+                        data: [cats.inc, cats.exp],
+                        backgroundColor: ['#6366f1', '#f43f5e'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    cutout: '75%',
+                    plugins: { legend: { position: 'bottom', labels: { color: fontColor, font: { size: 10, family: 'Kanit' } } } }
+                }
             });
-
-            document.getElementById('historyContainer').innerHTML = Object.keys(groups).map(day => `
-                <div class="space-y-2">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">${new Date(day).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
-                    ${groups[day].map(t => `
-                        <div class="glass-card p-5 flex justify-between items-center animate-pop">
-                            <div>
-                                <p class="font-bold text-slate-900">${t.title}</p>
-                                <p class="text-[10px] font-bold text-indigo-400 uppercase">${t.type === 'income' ? 'รายรับ' : 'รายจ่าย'}</p>
-                            </div>
-                            <div class="flex items-center gap-4">
-                                <span class="text-lg font-black ${t.type === 'income' ? 'text-green-500' : 'text-red-500'}">
-                                    ฿${t.amount.toLocaleString()}
-                                </span>
-                                <button onclick="removeItem(${t.id})" class="text-slate-300 hover:text-red-500 transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                </button>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            `).join('') || '<div class="text-center py-20 text-slate-300">ไม่พบประวัติ</div>';
         };
 
-        // --- Logic Handlers ---
-        document.getElementById('addForm').onsubmit = (e) => {
+        // 4. Interface Controls
+        const toggleTheme = () => {
+            isDark = !isDark;
+            document.body.classList.toggle('dark-mode', isDark);
+            localStorage.setItem('nexus_dark', isDark);
+            updateCharts();
+        };
+
+        document.getElementById('txForm').onsubmit = (e) => {
             e.preventDefault();
-            const newItem = {
+            const tx = {
                 id: Date.now(),
-                title: document.getElementById('inTitle').value,
-                amount: parseFloat(document.getElementById('inAmount').value),
-                type: document.getElementById('inType').value,
+                title: document.getElementById('title').value,
+                amount: parseFloat(document.getElementById('amount').value),
+                type: document.getElementById('type').value,
                 date: new Date().toISOString()
             };
-            state.data.unshift(newItem);
-            localStorage.setItem(CONFIG.keys.main, JSON.stringify(state.data));
+            transactions.push(tx);
+            save();
             e.target.reset();
-            renderDashboard();
-            notify("บันทึกสำเร็จ ✨");
+            render();
+            notify("บันทึกสำเร็จ");
         };
 
-        const removeItem = (id) => {
-            if (confirm("ลบรายการนี้ใช่ไหม?")) {
-                state.data = state.data.filter(t => t.id !== id);
-                localStorage.setItem(CONFIG.keys.main, JSON.stringify(state.data));
-                renderHistory();
-                notify("ลบรายการแล้ว");
-            }
-        };
-
-        const setTab = (tab) => {
-            document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
-            document.getElementById(`view-${tab}`).classList.remove('hidden');
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('tab-active'));
-            document.getElementById(`nav-${tab}`).classList.add('tab-active');
-            if (tab === 'dashboard') renderDashboard();
-            else renderHistory();
-        };
-
-        const refresh = () => {
-            document.getElementById('refreshIcon').classList.add('spinning');
-            setTimeout(() => {
-                migrate();
-                updateTheme();
-                renderDashboard();
-                document.getElementById('refreshIcon').classList.remove('spinning');
-                notify("ซิงค์ข้อมูลล่าสุดสำเร็จ");
-            }, 800);
-        };
-
-        const notify = (msg) => {
+        const notify = (m) => {
             const t = document.getElementById('toast');
-            t.innerText = msg;
-            t.classList.remove('opacity-0', 'translate-y-[-50px]');
-            setTimeout(() => t.classList.add('opacity-0', 'translate-y-[-50px]'), 3000);
+            t.innerText = m; t.style.opacity = '1';
+            setTimeout(() => t.style.opacity = '0', 2500);
         };
 
-        const exportData = () => {
-            const blob = new Blob([JSON.stringify(state.data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
+        const exportJSON = () => {
+            const blob = new Blob([JSON.stringify(transactions, null, 2)], {type: 'application/json'});
             const a = document.createElement('a');
-            a.href = url;
-            a.download = `Zen_V10_Backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.href = URL.createObjectURL(blob);
+            a.download = `nexus_v104_backup_${new Date().toISOString().split('T')[0]}.json`;
             a.click();
+            notify("สำรองข้อมูลสำเร็จ");
         };
 
-        // --- Init ---
-        window.onload = () => {
-            migrate();
-            updateTheme();
-            setInterval(updateTheme, 60000); // Check every minute
-            if (!state.pin) {
-                document.getElementById('authMsg').innerText = "กรุณาตั้งรหัส PIN 4 หลักเพื่อเริ่มต้น";
-            }
-        };
-
-        document.getElementById('search').oninput = renderHistory;
+        window.onload = init;
 
     </script>
 </body>
