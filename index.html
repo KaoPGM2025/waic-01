@@ -3,70 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Finance Zen 15.1.0 - Supernova</title>
+    <title>Finance Zen 15.6.0 - Chronos Pulse</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --supernova-main: #8b5cf6;
-            --supernova-glow: rgba(139, 92, 246, 0.5);
-            --bg-dark: #020617;
+            --chronos-main: #10b981;
+            --chronos-glow: rgba(16, 185, 129, 0.4);
+            --bg-dark: #0f172a;
         }
 
         body {
             font-family: 'Sarabun', sans-serif;
-            background-color: #f1f5f9;
+            background-color: #f8fafc;
             color: #1e293b;
-            transition: all 0.3s ease;
+            transition: background 0.3s ease;
         }
 
         body.dark-mode {
             background-color: var(--bg-dark);
-            color: #f8fafc;
+            color: #f1f5f9;
         }
 
-        .supernova-gradient {
-            background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 50%, #06b6d4 100%);
+        .chronos-gradient {
+            background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
         }
 
-        .nebula-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 2rem;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px;
         }
 
-        .dark-mode .nebula-card {
-            background: rgba(30, 41, 59, 0.7);
+        .dark-mode .glass-card {
+            background: rgba(30, 41, 59, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .balance-glow {
-            text-shadow: 0 0 20px var(--supernova-glow);
+        .balance-text {
+            text-shadow: 0 4px 12px var(--chronos-glow);
         }
 
-        input:focus {
-            border-color: var(--supernova-main) !important;
-            box-shadow: 0 0 15px var(--supernova-glow);
+        @keyframes pulse-soft {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+
+        .auto-status {
+            animation: pulse-soft 2s infinite;
         }
     </style>
 </head>
-<body class="pb-24">
+<body class="pb-32">
 
-    <!-- Navbar -->
-    <header class="p-6 sticky top-0 z-50 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800">
+    <!-- Header -->
+    <header class="p-6 sticky top-0 z-50 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
         <div class="max-w-4xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 supernova-gradient rounded-xl flex items-center justify-center shadow-lg">
-                    <span class="text-white font-bold text-xl">S</span>
+                <div class="w-10 h-10 chronos-gradient rounded-full flex items-center justify-center shadow-lg">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </div>
                 <div>
-                    <h1 class="text-xl font-black font-kanit tracking-tight">Supernova</h1>
-                    <p class="text-[9px] font-bold text-purple-500 uppercase tracking-widest">v15.1.0 Stable</p>
+                    <h1 class="text-xl font-black font-kanit">Chronos Pulse</h1>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[9px] font-bold text-emerald-500 uppercase tracking-tighter">v15.6.0 Stable</span>
+                        <span class="w-1 h-1 bg-emerald-500 rounded-full auto-status"></span>
+                        <span class="text-[8px] opacity-50 font-bold uppercase">2-Day Auto Cleanup On</span>
+                    </div>
                 </div>
             </div>
-            <button onclick="toggleTheme()" class="p-3 nebula-card shadow-none">
+            <button onclick="toggleTheme()" class="p-3 glass-card shadow-sm">
                 <span id="themeIcon">☀️</span>
             </button>
         </div>
@@ -74,256 +82,236 @@
 
     <main class="max-w-4xl mx-auto p-4 space-y-6">
 
-        <!-- Master Display -->
-        <section class="nebula-card p-8 supernova-gradient text-white relative overflow-hidden shadow-2xl">
-            <div class="relative z-10">
-                <div class="flex justify-between items-start">
-                    <p class="text-xs font-bold opacity-80 uppercase tracking-widest">Total Wealth Asset</p>
-                    <div class="px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold">Data Protected</div>
-                </div>
-                <h2 id="balance" class="text-5xl font-black font-kanit my-6 balance-glow">฿0.00</h2>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-black/20 p-4 rounded-2xl">
-                        <p class="text-[9px] font-bold opacity-60 uppercase">Monthly Income</p>
-                        <p id="monthInc" class="text-xl font-bold font-kanit text-cyan-200">฿0.00</p>
+        <!-- Master Balance -->
+        <section class="glass-card p-8 chronos-gradient text-white relative overflow-hidden shadow-2xl">
+            <div class="relative z-10 text-center">
+                <p class="text-xs font-bold opacity-80 uppercase tracking-[0.2em]">Total Life Assets</p>
+                <h2 id="balance" class="text-5xl font-black font-kanit my-6 balance-text">฿0.00</h2>
+                <div class="flex justify-center gap-8 border-t border-white/20 pt-6 mt-4">
+                    <div>
+                        <p class="text-[10px] font-bold opacity-60 uppercase">In (Month)</p>
+                        <p id="monthInc" class="text-lg font-bold font-kanit">฿0.00</p>
                     </div>
-                    <div class="bg-black/20 p-4 rounded-2xl">
-                        <p class="text-[9px] font-bold opacity-60 uppercase">Monthly Expense</p>
-                        <p id="monthExp" class="text-xl font-bold font-kanit text-rose-200">฿0.00</p>
+                    <div class="w-[1px] bg-white/10"></div>
+                    <div>
+                        <p class="text-[10px] font-bold opacity-60 uppercase">Out (Month)</p>
+                        <p id="monthExp" class="text-lg font-bold font-kanit">฿0.00</p>
                     </div>
                 </div>
             </div>
-            <div class="absolute -top-10 -left-10 w-40 h-40 bg-purple-400/20 rounded-full blur-3xl"></div>
+            <!-- Decorative Elements -->
+            <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
         </section>
 
-        <!-- Stats Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="nebula-card p-6 md:col-span-2">
-                <h3 class="text-[10px] font-black opacity-40 uppercase tracking-widest mb-4">Cash Flow (7-Day Insight)</h3>
-                <div class="h-48">
-                    <canvas id="mainChart"></canvas>
+        <!-- Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="glass-card p-6">
+                <h3 class="text-[10px] font-black opacity-40 uppercase mb-4">Activity Pulse</h3>
+                <div class="h-40">
+                    <canvas id="pulseChart"></canvas>
                 </div>
             </div>
-            <div class="nebula-card p-6 flex flex-col justify-center items-center text-center">
-                <h3 class="text-[10px] font-black opacity-40 uppercase tracking-widest mb-4">Vault Sync</h3>
-                <div id="syncIndicator" class="w-16 h-16 rounded-full border-4 border-purple-500/30 border-t-purple-500 animate-spin mb-4"></div>
-                <p id="syncText" class="text-xs font-bold font-kanit text-purple-500">Scanning for Legacy Data...</p>
+            <div class="glass-card p-6 flex flex-col items-center justify-center text-center">
+                <div class="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                </div>
+                <h4 class="font-bold font-kanit">Data Integrity Secure</h4>
+                <p id="archiveStat" class="text-[10px] opacity-60 mt-1 uppercase font-bold">Scanning for old logs...</p>
             </div>
         </div>
 
-        <!-- Action Form -->
-        <section class="nebula-card p-8 shadow-xl">
-            <form id="txForm" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-                    <div class="md:col-span-6">
-                        <label class="text-[10px] font-black text-slate-400 ml-2 mb-1 block">ชื่อรายการ</label>
-                        <input type="text" id="title" placeholder="รายการใหม่" required class="w-full p-4 rounded-xl bg-slate-100 dark:bg-slate-800 font-medium border-0 outline-none">
-                    </div>
-                    <div class="md:col-span-4">
-                        <label class="text-[10px] font-black text-slate-400 ml-2 mb-1 block">จำนวนเงิน</label>
-                        <input type="number" id="amount" placeholder="0.00" step="0.01" required class="w-full p-4 rounded-xl bg-slate-100 dark:bg-slate-800 font-black text-purple-500 border-0 outline-none">
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="text-[10px] font-black text-slate-400 ml-2 mb-1 block">ประเภท</label>
-                        <select id="type" class="w-full p-4 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold border-0 outline-none">
-                            <option value="expense">รายจ่าย</option>
-                            <option value="income">รายรับ</option>
-                        </select>
-                    </div>
+        <!-- Add Entry -->
+        <section class="glass-card p-6">
+            <form id="txForm" class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                <div class="md:col-span-5">
+                    <input type="text" id="title" placeholder="รายการของคุณ..." required class="w-full p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 outline-none focus:ring-2 ring-emerald-500 font-medium">
                 </div>
-                <button type="submit" class="w-full py-4 supernova-gradient text-white rounded-xl font-black text-sm uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-purple-500/20">
-                    Add to Supernova Vault
+                <div class="md:col-span-4">
+                    <input type="number" id="amount" placeholder="0.00" step="0.01" required class="w-full p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 outline-none focus:ring-2 ring-emerald-500 font-black text-emerald-600">
+                </div>
+                <div class="md:col-span-3">
+                    <select id="type" class="w-full p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 outline-none focus:ring-2 ring-emerald-500 font-bold">
+                        <option value="expense">รายจ่าย</option>
+                        <option value="income">รายรับ</option>
+                    </select>
+                </div>
+                <button type="submit" class="md:col-span-12 py-4 chronos-gradient text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg active:scale-[0.98] transition-transform">
+                    Add Transaction
                 </button>
             </form>
         </section>
 
-        <!-- History -->
+        <!-- Current History -->
         <div class="space-y-4">
-            <div class="flex justify-between items-center px-4">
-                <h3 class="font-black font-kanit text-xl">Transaction Logs</h3>
-                <div class="flex gap-2">
-                    <button onclick="clearVisibleHistory()" class="text-[10px] font-bold text-rose-500 border border-rose-500/30 px-3 py-1 rounded-lg hover:bg-rose-50">HIDE HISTORY</button>
-                    <button onclick="exportData()" class="text-[10px] font-bold text-purple-500 border border-purple-500/30 px-3 py-1 rounded-lg">BACKUP</button>
-                </div>
+            <div class="flex justify-between items-center px-2">
+                <h3 class="font-black font-kanit text-lg uppercase">Active Logs (Last 48h)</h3>
+                <span class="px-3 py-1 bg-emerald-500/10 text-emerald-500 text-[9px] font-bold rounded-full">AUTO-CLEAN ACTIVE</span>
             </div>
             <div id="historyList" class="space-y-3">
-                <!-- Data injected here -->
+                <!-- Data will be injected here -->
             </div>
         </div>
     </main>
 
-    <!-- Bottom Nav -->
-    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-lg h-16 nebula-card flex justify-around items-center px-6 z-50 shadow-2xl border-t border-white/20">
-        <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="p-2 opacity-50"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg></button>
-        <button onclick="document.getElementById('txForm').scrollIntoView({behavior:'smooth'})" class="w-12 h-12 supernova-gradient rounded-full flex items-center justify-center text-white shadow-lg -translate-y-4 border-4 border-white dark:border-slate-900"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg></button>
-        <button onclick="forceDeepSync()" class="p-2 opacity-50"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
-    </nav>
-
-    <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest opacity-0 transition-all z-50 pointer-events-none"></div>
+    <!-- Fixed Tools -->
+    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-max glass-card flex gap-4 px-6 py-3 shadow-2xl z-50">
+        <button onclick="exportData()" class="p-2 text-slate-400 hover:text-emerald-500 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></button>
+        <button onclick="forceSync()" class="p-2 text-slate-400 hover:text-emerald-500 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
+        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="p-2 text-slate-400 hover:text-emerald-500 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg></button>
+    </div>
 
     <script>
-        // --- v15.1.0 SUPERNOVA CORE ENGINE ---
-        const MASTER_KEY = 'finance_zen_supernova_v151';
-        const MIGRATION_TARGETS = [
-            'finance_zen_nebula_v141',
-            'finance_zen_aether_v121', 
-            'finance_zen_quantum_v111', 
-            'incomes_v313', 
-            'finance_zen_nexus_v104'
-        ];
+        // --- v15.6.0 CHRONOS PULSE CORE ---
+        const DB_KEY = 'finance_zen_supernova_v151'; // คงค่าเดิมเพื่อข้อมูลไม่หาย
+        const ARCHIVE_HOURS = 48; // อัตโนมัติทุกๆ 2 วัน
 
         let state = {
             transactions: [],
             isDark: false
         };
 
-        let mainChart = null;
+        let chart = null;
 
         const init = () => {
-            state.isDark = localStorage.getItem('supernova_theme') === 'dark';
+            // โหลดโหมดมืด
+            state.isDark = localStorage.getItem('chronos_theme') === 'dark';
             document.body.classList.toggle('dark-mode', state.isDark);
             document.getElementById('themeIcon').innerText = state.isDark ? '🌙' : '☀️';
 
-            const localData = localStorage.getItem(MASTER_KEY);
-            if (localData) state.transactions = JSON.parse(localData);
+            // โหลดข้อมูล
+            const raw = localStorage.getItem(DB_KEY);
+            if (raw) state.transactions = JSON.parse(raw);
 
-            setTimeout(runDeepSync, 1000);
+            // รันระบบย้ายข้อมูลเก่าอัตโนมัติ
+            processAutoArchive();
             render();
+            
+            // เช็คข้อมูลตกหล่นจากเวอร์ชันเก่า (Deep Migration)
+            setTimeout(deepMigration, 500);
         };
 
-        const runDeepSync = () => {
-            let found = 0;
-            MIGRATION_TARGETS.forEach(key => {
-                const legacy = localStorage.getItem(key);
-                if (legacy) {
-                    try {
-                        const parsed = JSON.parse(legacy);
-                        parsed.forEach(item => {
-                            const uid = item.id || `mig-${item.date}-${item.amount}`;
-                            if (!state.transactions.some(t => t.id === uid)) {
-                                state.transactions.push({
-                                    id: uid,
-                                    title: item.title || item.name || 'รายการเก่า',
-                                    amount: parseFloat(item.amount),
-                                    type: item.type || (item.amount < 0 ? 'expense' : 'income'),
-                                    date: item.date || new Date().toISOString(),
-                                    isMigrated: true,
-                                    isArchived: false
-                                });
-                                found++;
-                            }
-                        });
-                    } catch(e) {}
+        const processAutoArchive = () => {
+            const now = new Date();
+            let archivedThisSession = 0;
+
+            state.transactions = state.transactions.map(t => {
+                const txDate = new Date(t.date);
+                const diffHours = (now - txDate) / (1000 * 60 * 60);
+
+                if (diffHours >= ARCHIVE_HOURS && !t.isArchived) {
+                    archivedThisSession++;
+                    return { ...t, isArchived: true };
                 }
+                return t;
             });
 
-            const indicator = document.getElementById('syncIndicator');
-            indicator.classList.remove('animate-spin', 'border-t-purple-500');
-            indicator.classList.add('bg-purple-500', 'flex', 'items-center', 'justify-center', 'text-white');
-            indicator.innerHTML = '✓';
-            document.getElementById('syncText').innerText = found > 0 ? `กู้คืนสำเร็จ ${found} รายการ` : "ฐานข้อมูลปลอดภัย";
+            if (archivedThisSession > 0) {
+                save();
+                console.log(`[Chronos] Archived ${archivedThisSession} transactions older than ${ARCHIVE_HOURS}h`);
+            }
             
-            if (found > 0) {
+            const archivedTotal = state.transactions.filter(t => t.isArchived).length;
+            document.getElementById('archiveStat').innerText = `Archived: ${archivedTotal} | Active: ${state.transactions.filter(t => !t.isArchived).length}`;
+        };
+
+        const deepMigration = () => {
+            const OLD_KEYS = ['finance_zen_nebula_v141', 'finance_zen_v151', 'incomes_v313'];
+            let count = 0;
+            OLD_KEYS.forEach(key => {
+                const data = localStorage.getItem(key);
+                if (data && key !== DB_KEY) {
+                    const parsed = JSON.parse(data);
+                    parsed.forEach(oldTx => {
+                        const exists = state.transactions.some(t => t.id === oldTx.id);
+                        if (!exists) {
+                            state.transactions.push({
+                                ...oldTx,
+                                isArchived: true, // รายการเก่ามากย้ายไป archive เลย
+                                isMigrated: true
+                            });
+                            count++;
+                        }
+                    });
+                }
+            });
+            if (count > 0) {
                 save();
                 render();
             }
         };
 
-        const clearVisibleHistory = () => {
-            // ฟีเจอร์ใหม่ 15.1.0: ซ่อนรายการแต่ไม่ลบข้อมูลเงิน
-            state.transactions = state.transactions.map(t => ({...t, isArchived: true}));
-            save();
-            render();
-            toast("ซ่อนประวัติทั้งหมดแล้ว (ยอดเงินคงเดิม)");
-        };
-
-        const forceDeepSync = () => {
-            document.getElementById('syncIndicator').classList.add('animate-spin');
-            document.getElementById('syncText').innerText = "กำลังสแกนหาข้อมูลย้อนหลัง...";
-            setTimeout(runDeepSync, 800);
-        };
-
-        const save = () => localStorage.setItem(MASTER_KEY, JSON.stringify(state.transactions));
+        const save = () => localStorage.setItem(DB_KEY, JSON.stringify(state.transactions));
 
         const render = () => {
             const list = document.getElementById('historyList');
-            let balance = 0, incM = 0, expM = 0;
+            let total = 0, mInc = 0, mExp = 0;
             const now = new Date();
 
-            // คำนวณจากทุกรายการ แม้รายการที่ถูก Archive (ซ่อน) ไปแล้ว
+            // คำนวณยอดเงิน (ทุกรายการทั้งที่ archive และไม่ archive)
             state.transactions.forEach(t => {
                 const amt = parseFloat(t.amount);
-                const isThisMonth = new Date(t.date).getMonth() === now.getMonth() && new Date(t.date).getFullYear() === now.getFullYear();
-                
+                const tDate = new Date(t.date);
+                const isThisMonth = tDate.getMonth() === now.getMonth() && tDate.getFullYear() === now.getFullYear();
+
                 if (t.type === 'income') {
-                    balance += amt;
-                    if (isThisMonth) incM += amt;
+                    total += amt;
+                    if (isThisMonth) mInc += amt;
                 } else {
-                    balance -= amt;
-                    if (isThisMonth) expM += amt;
+                    total -= amt;
+                    if (isThisMonth) mExp += amt;
                 }
             });
 
             const fmt = n => new Intl.NumberFormat('th-TH', { minimumFractionDigits: 2 }).format(n);
-            document.getElementById('balance').innerText = `฿${fmt(balance)}`;
-            document.getElementById('monthInc').innerText = `฿${fmt(incM)}`;
-            document.getElementById('monthExp').innerText = `฿${fmt(expM)}`;
+            document.getElementById('balance').innerText = `฿${fmt(total)}`;
+            document.getElementById('monthInc').innerText = `฿${fmt(mInc)}`;
+            document.getElementById('monthExp').innerText = `฿${fmt(mExp)}`;
 
-            // แสดงเฉพาะรายการที่ยังไม่ถูก Archive
-            const visibleTx = state.transactions.filter(t => !t.isArchived)
-                              .sort((a,b) => new Date(b.date) - new Date(a.date));
+            // กรองเฉพาะรายการที่แสดงผล (Active 48h)
+            const activeTx = state.transactions
+                .filter(t => !t.isArchived)
+                .sort((a,b) => new Date(b.date) - new Date(a.date));
 
-            list.innerHTML = visibleTx.slice(0, 20).map(t => `
-                <div class="nebula-card p-5 flex justify-between items-center group animate-in slide-in-from-bottom-2 duration-300">
+            list.innerHTML = activeTx.map(t => `
+                <div class="glass-card p-5 flex justify-between items-center animate-in slide-in-from-top-4 duration-500">
                     <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold ${t.type === 'income' ? 'bg-purple-100 text-purple-600' : 'bg-rose-100 text-rose-600'}">
-                            ${t.type === 'income' ? '↓' : '↑'}
+                        <div class="w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-lg ${t.type === 'income' ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'}">
+                            ${t.type === 'income' ? '+$' : '-$'}
                         </div>
                         <div>
                             <p class="font-bold font-kanit text-sm">${t.title}</p>
-                            <span class="text-[9px] font-bold opacity-40 uppercase">${new Date(t.date).toLocaleDateString('th-TH')}</span>
+                            <span class="text-[9px] font-bold opacity-40 uppercase">${new Date(t.date).toLocaleString('th-TH', {hour12:false})}</span>
                         </div>
                     </div>
                     <div class="text-right">
-                        <p class="font-black font-kanit ${t.type === 'income' ? 'text-purple-500' : 'text-rose-500'}">
-                            ${t.type === 'income' ? '+' : '-'} ${fmt(t.amount)}
+                        <p class="font-black font-kanit text-lg ${t.type === 'income' ? 'text-emerald-500' : 'text-rose-500'}">
+                            ฿${fmt(t.amount)}
                         </p>
-                        <button onclick="archiveTx('${t.id}')" class="text-[9px] font-bold text-slate-300 hover:text-rose-500 uppercase opacity-0 group-hover:opacity-100 transition-opacity">Hide</button>
                     </div>
                 </div>
-            `).join('') || '<div class="text-center py-10 opacity-20 font-bold text-xs">HISTORY CLEARED (DATA PROTECTED)</div>';
+            `).join('') || `
+                <div class="text-center py-12 opacity-30">
+                    <p class="font-bold text-xs uppercase tracking-widest">No Active Logs</p>
+                    <p class="text-[9px] mt-1 italic">Older transactions are safely auto-archived.</p>
+                </div>
+            `;
 
-            updateChart();
+            updateChart(activeTx);
         };
 
-        const archiveTx = (id) => {
-            const idx = state.transactions.findIndex(t => t.id === id);
-            if (idx !== -1) {
-                state.transactions[idx].isArchived = true;
-                save();
-                render();
-                toast("ซ่อนรายการสำเร็จ");
-            }
-        };
-
-        const updateChart = () => {
-            const ctx = document.getElementById('mainChart').getContext('2d');
-            const last7 = state.transactions.filter(t => !t.isArchived).slice(0, 7).reverse();
+        const updateChart = (data) => {
+            const ctx = document.getElementById('pulseChart').getContext('2d');
+            if (chart) chart.destroy();
             
-            if (mainChart) mainChart.destroy();
-            mainChart = new Chart(ctx, {
-                type: 'line',
+            const displayData = data.slice(0, 5).reverse();
+            chart = new Chart(ctx, {
+                type: 'bar',
                 data: {
-                    labels: last7.map(t => new Date(t.date).getDate()),
+                    labels: displayData.map(t => t.title.substring(0,5)),
                     datasets: [{
-                        label: 'Cashflow',
-                        data: last7.map(t => t.type === 'income' ? t.amount : -t.amount),
-                        borderColor: '#8b5cf6',
-                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 4
+                        data: displayData.map(t => t.type === 'income' ? t.amount : -t.amount),
+                        backgroundColor: displayData.map(t => t.type === 'income' ? '#10b981' : '#f43f5e'),
+                        borderRadius: 12
                     }]
                 },
                 options: {
@@ -336,42 +324,43 @@
 
         document.getElementById('txForm').onsubmit = (e) => {
             e.preventDefault();
-            const tx = {
-                id: Date.now().toString(),
+            const newTx = {
+                id: 'tx-' + Date.now(),
                 title: document.getElementById('title').value,
                 amount: parseFloat(document.getElementById('amount').value),
                 type: document.getElementById('type').value,
                 date: new Date().toISOString(),
                 isArchived: false
             };
-            state.transactions.push(tx);
+            
+            state.transactions.push(newTx);
+            processAutoArchive(); // ตรวจเช็ครายการอื่นทันทีที่เพิ่มรายการใหม่
             save();
             render();
             e.target.reset();
-            toast("เพิ่มรายการใหม่เข้า Vault แล้ว");
         };
 
         const toggleTheme = () => {
             state.isDark = !state.isDark;
             document.body.classList.toggle('dark-mode', state.isDark);
             document.getElementById('themeIcon').innerText = state.isDark ? '🌙' : '☀️';
-            localStorage.setItem('supernova_theme', state.isDark ? 'dark' : 'light');
-            updateChart();
+            localStorage.setItem('chronos_theme', state.isDark ? 'dark' : 'light');
         };
 
-        const toast = (msg) => {
-            const t = document.getElementById('toast');
-            t.innerText = msg;
-            t.style.opacity = '1';
-            setTimeout(() => t.style.opacity = '0', 2000);
+        const forceSync = () => {
+            processAutoArchive();
+            deepMigration();
+            render();
         };
 
         const exportData = () => {
-            const blob = new Blob([JSON.stringify(state.transactions)], {type: 'application/json'});
+            const dataStr = JSON.stringify(state.transactions);
+            const blob = new Blob([dataStr], {type: 'application/json'});
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url; a.download = `Supernova_Vault_Backup.json`; a.click();
-            toast("สำรองข้อมูลสำเร็จ");
+            a.href = url;
+            a.download = `Chronos_Pulse_Full_Backup.json`;
+            a.click();
         };
 
         window.onload = init;
