@@ -3,201 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Finance Zen 12.1.0 - Aether Flow</title>
+    <title>Finance Zen 14.1.0 - Nebula Core</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --aether-primary: #6366f1;
-            --aether-secondary: #a855f7;
-            --aether-accent: #ec4899;
-            --bg-light: #f8fafc;
-            --bg-dark: #0f172a;
-            --glass-white: rgba(255, 255, 255, 0.7);
-            --glass-dark: rgba(30, 41, 59, 0.6);
+            --nebula-main: #06b6d4;
+            --nebula-deep: #0e7490;
+            --nebula-glow: rgba(6, 182, 212, 0.5);
+            --bg-dark: #020617;
+            --card-dark: #0f172a;
         }
 
         body {
             font-family: 'Sarabun', sans-serif;
-            background-color: var(--bg-light);
+            background-color: #f1f5f9;
             color: #1e293b;
-            transition: all 0.4s ease;
-            min-height: 100vh;
+            transition: all 0.3s ease;
         }
 
         body.dark-mode {
             background-color: var(--bg-dark);
-            color: #f1f5f9;
+            color: #f8fafc;
         }
 
-        .font-kanit { font-family: 'Kanit', sans-serif; }
-
-        .aether-card {
-            backdrop-filter: blur(16px);
-            background: var(--glass-white);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-            border-radius: 2.5rem;
+        .nebula-gradient {
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 50%, #8b5cf6 100%);
         }
 
-        .dark-mode .aether-card {
-            background: var(--glass-dark);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        .nebula-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2rem;
+            transition: transform 0.2s ease;
         }
 
-        .btn-flow {
-            background: linear-gradient(135deg, var(--aether-primary) 0%, var(--aether-secondary) 100%);
-            color: white;
-            box-shadow: 0 15px 25px -10px rgba(99, 102, 241, 0.4);
-            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        .dark-mode .nebula-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
-        .btn-flow:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 20px 30px -10px rgba(99, 102, 241, 0.6); }
-        .btn-flow:active { transform: scale(0.97); }
 
-        @keyframes fadeInScale {
-            from { opacity: 0; transform: scale(0.95) translateY(10px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
+        .balance-glow {
+            text-shadow: 0 0 20px var(--nebula-glow);
         }
-        .animate-flow { animation: fadeInScale 0.5s ease-out forwards; }
 
-        /* Hide scrollbar */
-        ::-webkit-scrollbar { display: none; }
+        input, select {
+            border: 2px solid transparent !important;
+            transition: all 0.2s ease !important;
+        }
+
+        input:focus {
+            border-color: var(--nebula-main) !important;
+            box-shadow: 0 0 15px var(--nebula-glow);
+        }
+
+        .scroll-hide::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="pb-32">
+<body class="pb-24">
 
-    <!-- Header Section -->
-    <header class="p-6 sticky top-0 z-40 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
-        <div class="max-w-5xl mx-auto flex justify-between items-center">
-            <div>
-                <h1 class="text-3xl font-black font-kanit tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-500 to-pink-500">Finance Zen</h1>
-                <div class="flex items-center gap-2">
-                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                    <p class="text-[10px] font-bold opacity-50 uppercase tracking-[0.2em]">Aether v12.1.0</p>
+    <!-- Navbar -->
+    <header class="p-6 sticky top-0 z-50 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 nebula-gradient rounded-xl flex items-center justify-center shadow-lg">
+                    <span class="text-white font-bold">N</span>
+                </div>
+                <div>
+                    <h1 class="text-xl font-black font-kanit tracking-tight">Nebula Core</h1>
+                    <p class="text-[9px] font-bold text-cyan-500 uppercase tracking-widest">v14.1.0 Stable</p>
                 </div>
             </div>
-            <button onclick="toggleTheme()" class="w-11 h-11 aether-card flex items-center justify-center hover:rotate-12 transition-transform shadow-none">
-                <span id="themeIcon" class="text-xl">☀️</span>
+            <button onclick="toggleTheme()" class="p-3 nebula-card shadow-none">
+                <span id="themeIcon">☀️</span>
             </button>
         </div>
     </header>
 
-    <main class="max-w-5xl mx-auto p-4 space-y-6">
-        
-        <!-- Dashboard Core -->
-        <section class="aether-card p-10 relative overflow-hidden btn-flow">
+    <main class="max-w-4xl mx-auto p-4 space-y-6">
+
+        <!-- Master Display -->
+        <section class="nebula-card p-8 nebula-gradient text-white relative overflow-hidden shadow-2xl">
             <div class="relative z-10">
-                <p class="text-white/70 text-xs font-bold uppercase tracking-widest mb-1">ยอดเงินรวมทุกระบบ</p>
-                <h2 id="balance" class="text-6xl font-black font-kanit mb-10 tracking-tight">฿0.00</h2>
+                <div class="flex justify-between items-start">
+                    <p class="text-xs font-bold opacity-80 uppercase tracking-widest">Available Balance</p>
+                    <div class="px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold">Safe to Spend</div>
+                </div>
+                <h2 id="balance" class="text-5xl font-black font-kanit my-6 balance-glow">฿0.00</h2>
                 
-                <div class="grid grid-cols-2 gap-6">
-                    <div class="bg-white/10 p-5 rounded-3xl backdrop-blur-md border border-white/20">
-                        <p class="text-[9px] text-white/60 font-bold uppercase mb-1">รายรับเดือนนี้</p>
-                        <p id="monthInc" class="text-2xl font-bold font-kanit">฿0.00</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-black/20 p-4 rounded-2xl">
+                        <p class="text-[9px] font-bold opacity-60 uppercase">Monthly Income</p>
+                        <p id="monthInc" class="text-xl font-bold font-kanit text-cyan-200">฿0.00</p>
                     </div>
-                    <div class="bg-white/10 p-5 rounded-3xl backdrop-blur-md border border-white/20">
-                        <p class="text-[9px] text-white/60 font-bold uppercase mb-1">รายจ่ายเดือนนี้</p>
-                        <p id="monthExp" class="text-2xl font-bold font-kanit">฿0.00</p>
+                    <div class="bg-black/20 p-4 rounded-2xl">
+                        <p class="text-[9px] font-bold opacity-60 uppercase">Monthly Expense</p>
+                        <p id="monthExp" class="text-xl font-bold font-kanit text-rose-200">฿0.00</p>
                     </div>
                 </div>
             </div>
-            <!-- Decorative Glow -->
-            <div class="absolute -top-20 -right-20 w-80 h-80 bg-pink-500/30 rounded-full blur-[100px]"></div>
-            <div class="absolute -bottom-20 -left-20 w-80 h-80 bg-blue-400/20 rounded-full blur-[100px]"></div>
+            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
         </section>
 
-        <!-- Charts Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="aether-card p-8">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Flow Trend</h3>
-                    <div id="trendIndicator" class="text-[10px] font-bold px-2 py-1 rounded-lg bg-emerald-500/10 text-emerald-500">+0%</div>
-                </div>
-                <div class="h-56">
-                    <canvas id="flowChart"></canvas>
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="nebula-card p-6 md:col-span-2">
+                <h3 class="text-[10px] font-black opacity-40 uppercase tracking-widest mb-4">Cash Flow Analysis</h3>
+                <div class="h-48">
+                    <canvas id="mainChart"></canvas>
                 </div>
             </div>
-            <div class="aether-card p-8">
-                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Asset Distribution</h3>
-                <div class="h-56">
-                    <canvas id="assetChart"></canvas>
-                </div>
+            <div class="nebula-card p-6 flex flex-col justify-center items-center text-center">
+                <h3 class="text-[10px] font-black opacity-40 uppercase tracking-widest mb-4">Migration Status</h3>
+                <div id="syncIndicator" class="w-16 h-16 rounded-full border-4 border-cyan-500/30 border-t-cyan-500 animate-spin mb-4"></div>
+                <p id="syncText" class="text-xs font-bold font-kanit">Checking for Legacy Data...</p>
             </div>
         </div>
 
-        <!-- Input Section -->
-        <section id="inputSection" class="aether-card p-8 transition-all">
-            <form id="financeForm" class="space-y-6">
-                <h3 class="font-bold font-kanit text-lg flex items-center gap-2">
-                    <span class="w-1.5 h-6 bg-indigo-500 rounded-full"></span>
-                    บันทึกรายการใหม่
-                </h3>
+        <!-- Action Form -->
+        <section class="nebula-card p-8 shadow-xl">
+            <form id="txForm" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
                     <div class="md:col-span-6">
-                        <label class="text-[10px] font-black uppercase text-slate-400 ml-3 mb-1 block">ชื่อรายการ</label>
-                        <input type="text" id="title" placeholder="จ่ายค่า..." required class="w-full p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/50 border-none outline-none focus:ring-2 ring-indigo-400 font-medium">
+                        <label class="text-[10px] font-black text-slate-400 ml-2 mb-1 block">ชื่อรายการ</label>
+                        <input type="text" id="title" placeholder="เช่น ค่าอาหาร, เงินเดือน" required class="w-full p-4 rounded-xl bg-slate-100 dark:bg-slate-800 font-medium">
                     </div>
                     <div class="md:col-span-4">
-                        <label class="text-[10px] font-black uppercase text-slate-400 ml-3 mb-1 block">จำนวนเงิน</label>
-                        <input type="number" id="amount" placeholder="0.00" step="0.01" required class="w-full p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/50 border-none outline-none focus:ring-2 ring-indigo-400 font-bold text-indigo-500">
+                        <label class="text-[10px] font-black text-slate-400 ml-2 mb-1 block">จำนวนเงิน</label>
+                        <input type="number" id="amount" placeholder="0.00" step="0.01" required class="w-full p-4 rounded-xl bg-slate-100 dark:bg-slate-800 font-black text-cyan-500">
                     </div>
                     <div class="md:col-span-2">
-                        <label class="text-[10px] font-black uppercase text-slate-400 ml-3 mb-1 block">ประเภท</label>
-                        <select id="type" class="w-full p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/50 border-none outline-none font-bold">
-                            <option value="expense">รายจ่าย</option>
-                            <option value="income">รายรับ</option>
+                        <label class="text-[10px] font-black text-slate-400 ml-2 mb-1 block">ประเภท</label>
+                        <select id="type" class="w-full p-4 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold">
+                            <option value="expense">จ่าย</option>
+                            <option value="income">รับ</option>
                         </select>
                     </div>
                 </div>
-                <button type="submit" class="w-full py-5 rounded-3xl btn-flow font-black text-lg uppercase tracking-widest">
-                    Confirm Transaction
+                <button type="submit" class="w-full py-4 nebula-gradient text-white rounded-xl font-black text-sm uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-cyan-500/20">
+                    Process Transaction
                 </button>
             </form>
         </section>
 
-        <!-- Transaction History -->
-        <section class="space-y-4">
-            <div class="flex justify-between items-end px-4">
-                <div>
-                    <h3 class="font-black font-kanit text-2xl">Recent Activities</h3>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase">รวมรายการจากทุกแหล่งข้อมูล</p>
-                </div>
-                <button onclick="exportData()" class="p-3 aether-card flex items-center gap-2 text-[10px] font-black uppercase hover:text-indigo-500">
-                    Backup Data
-                </button>
+        <!-- History -->
+        <div class="space-y-4">
+            <div class="flex justify-between items-center px-4">
+                <h3 class="font-black font-kanit text-xl">History Log</h3>
+                <button onclick="exportData()" class="text-[10px] font-bold text-cyan-500 border border-cyan-500/30 px-3 py-1 rounded-lg">BACKUP JSON</button>
             </div>
-            <div id="txContainer" class="space-y-4">
-                <!-- Transaction Items -->
+            <div id="historyList" class="space-y-3">
+                <!-- Data injected here -->
             </div>
-        </section>
-
+        </div>
     </main>
 
-    <!-- Navigation Bar -->
-    <nav class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-md h-20 aether-card flex justify-between items-center px-10 z-50 shadow-2xl">
-        <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="text-slate-400 hover:text-indigo-500 transition-colors">
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-        </button>
-        <button onclick="document.getElementById('inputSection').scrollIntoView({behavior:'smooth'})" class="w-14 h-14 btn-flow rounded-full flex items-center justify-center -translate-y-6 shadow-indigo-500/50 border-4 border-white dark:border-slate-900">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-        </button>
-        <button onclick="forceSync()" class="text-slate-400 hover:text-indigo-500 transition-colors">
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-        </button>
+    <!-- Bottom Nav -->
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-lg h-16 nebula-card flex justify-around items-center px-6 z-50 shadow-2xl border-t border-white/20">
+        <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="p-2 opacity-50 hover:opacity-100"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg></button>
+        <button onclick="document.getElementById('txForm').scrollIntoView({behavior:'smooth'})" class="w-12 h-12 nebula-gradient rounded-full flex items-center justify-center text-white shadow-lg -translate-y-4 border-4 border-white dark:border-slate-900"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg></button>
+        <button onclick="forceDeepSync()" class="p-2 opacity-50 hover:opacity-100"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
     </nav>
 
-    <!-- Toast UI -->
-    <div id="toast" class="fixed top-28 left-1/2 -translate-x-1/2 px-8 py-4 aether-card bg-slate-900 text-white text-[11px] font-black uppercase tracking-widest opacity-0 transition-all pointer-events-none z-50"></div>
+    <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest opacity-0 transition-all z-50 pointer-events-none"></div>
 
     <script>
-        // --- V12.1.0 AETHER CORE ---
-        const CURRENT_MASTER_KEY = 'finance_zen_aether_v121';
-        const LEGACY_KEYS = [
-            'finance_zen_quantum_v111', // From v11.1
-            'incomes_v313',            // From v3.x
-            'finance_zen_nexus_v104'   // From v10.x
+        // --- v14.1.0 NEBULA ENGINE ---
+        const MASTER_KEY = 'finance_zen_nebula_v141';
+        const MIGRATION_TARGETS = [
+            'finance_zen_aether_v121', 
+            'finance_zen_quantum_v111', 
+            'incomes_v313', 
+            'finance_zen_nexus_v104'
         ];
 
         let state = {
@@ -205,184 +184,144 @@
             isDark: false
         };
 
-        let charts = { flow: null, asset: null };
+        let mainChart = null;
 
         const init = () => {
-            // Restore Theme
-            state.isDark = localStorage.getItem('aether_theme') === 'dark';
-            applyTheme();
+            // Theme setup
+            state.isDark = localStorage.getItem('nebula_theme') === 'dark';
+            document.body.classList.toggle('dark-mode', state.isDark);
+            document.getElementById('themeIcon').innerText = state.isDark ? '🌙' : '☀️';
 
-            // Zero-Loss Migration Logic
-            const currentData = localStorage.getItem(CURRENT_MASTER_KEY);
-            if (currentData) {
-                state.transactions = JSON.parse(currentData);
-            }
-            
-            // Always check for new legacy data to sync
-            autoMigrate();
-            refreshUI();
+            // Load primary data
+            const localData = localStorage.getItem(MASTER_KEY);
+            if (localData) state.transactions = JSON.parse(localData);
+
+            // Execute Deep Sync
+            setTimeout(runDeepSync, 1500);
+            render();
         };
 
-        const autoMigrate = () => {
-            let migratedCount = 0;
-            LEGACY_KEYS.forEach(key => {
-                const legacyRaw = localStorage.getItem(key);
-                if (legacyRaw) {
+        const runDeepSync = () => {
+            let found = 0;
+            MIGRATION_TARGETS.forEach(key => {
+                const legacy = localStorage.getItem(key);
+                if (legacy) {
                     try {
-                        const legacyData = JSON.parse(legacyRaw);
-                        if (Array.isArray(legacyData)) {
-                            legacyData.forEach(item => {
-                                // Create unique ID based on properties if not exists
-                                const legacyId = item.id || `legacy-${item.date}-${item.amount}-${item.title}`;
-                                const alreadyExists = state.transactions.some(t => t.id === legacyId);
-                                
-                                if (!alreadyExists) {
-                                    state.transactions.push({
-                                        id: legacyId,
-                                        title: item.title || item.name || 'รายการนำเข้า',
-                                        amount: parseFloat(item.amount) || 0,
-                                        type: item.type || (item.amount < 0 ? 'expense' : 'income'),
-                                        date: item.date || new Date().toISOString(),
-                                        source: key
-                                    });
-                                    migratedCount++;
-                                }
-                            });
-                        }
-                    } catch (e) { console.error("Sync failed for", key); }
+                        const parsed = JSON.parse(legacy);
+                        parsed.forEach(item => {
+                            const uid = item.id || `mig-${item.date}-${item.amount}`;
+                            if (!state.transactions.some(t => t.id === uid)) {
+                                state.transactions.push({
+                                    id: uid,
+                                    title: item.title || item.name || 'รายการเก่า',
+                                    amount: parseFloat(item.amount),
+                                    type: item.type || (item.amount < 0 ? 'expense' : 'income'),
+                                    date: item.date || new Date().toISOString(),
+                                    isMigrated: true
+                                });
+                                found++;
+                            }
+                        });
+                    } catch(e) {}
                 }
             });
 
-            if (migratedCount > 0) {
-                showToast(`Auto-Sync: กู้คืนข้อมูลสำเร็จ ${migratedCount} รายการ`);
+            const indicator = document.getElementById('syncIndicator');
+            indicator.classList.remove('animate-spin', 'border-t-cyan-500');
+            indicator.classList.add('bg-cyan-500', 'flex', 'items-center', 'justify-center', 'text-white');
+            indicator.innerHTML = '✓';
+            document.getElementById('syncText').innerText = found > 0 ? `กู้คืนข้อมูลสำเร็จ ${found} รายการ` : "ข้อมูลเป็นปัจจุบันแล้ว";
+            
+            if (found > 0) {
                 save();
+                render();
             }
         };
 
-        const forceSync = () => {
-            autoMigrate();
-            refreshUI();
-            showToast("Sync สำเร็จ: ข้อมูลเป็นปัจจุบันแล้ว");
+        const forceDeepSync = () => {
+            document.getElementById('syncIndicator').classList.add('animate-spin');
+            document.getElementById('syncText').innerText = "กำลังสแกนหาข้อมูลย้อนหลัง...";
+            setTimeout(runDeepSync, 1000);
         };
 
-        const save = () => localStorage.setItem(CURRENT_MASTER_KEY, JSON.stringify(state.transactions));
+        const save = () => localStorage.setItem(MASTER_KEY, JSON.stringify(state.transactions));
 
-        const refreshUI = () => {
-            const txList = document.getElementById('txContainer');
-            const sorted = [...state.transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            let total = 0, incM = 0, expM = 0;
+        const render = () => {
+            const list = document.getElementById('historyList');
+            let balance = 0, incM = 0, expM = 0;
             const now = new Date();
 
+            state.transactions.sort((a,b) => new Date(b.date) - new Date(a.date));
+
             state.transactions.forEach(t => {
-                const val = parseFloat(t.amount);
-                const isThisMonth = new Date(t.date).getMonth() === now.getMonth() && new Date(t.date).getFullYear() === now.getFullYear();
+                const amt = parseFloat(t.amount);
+                const isThisMonth = new Date(t.date).getMonth() === now.getMonth();
                 
                 if (t.type === 'income') {
-                    total += val;
-                    if (isThisMonth) incM += val;
+                    balance += amt;
+                    if (isThisMonth) incM += amt;
                 } else {
-                    total -= val;
-                    if (isThisMonth) expM += val;
+                    balance -= amt;
+                    if (isThisMonth) expM += amt;
                 }
             });
 
             const fmt = n => new Intl.NumberFormat('th-TH', { minimumFractionDigits: 2 }).format(n);
-            document.getElementById('balance').innerText = `฿${fmt(total)}`;
+            document.getElementById('balance').innerText = `฿${fmt(balance)}`;
             document.getElementById('monthInc').innerText = `฿${fmt(incM)}`;
             document.getElementById('monthExp').innerText = `฿${fmt(expM)}`;
 
-            txList.innerHTML = sorted.slice(0, 20).map(t => `
-                <div class="aether-card p-6 flex justify-between items-center animate-flow">
-                    <div class="flex items-center gap-5">
-                        <div class="w-14 h-14 rounded-3xl flex items-center justify-center font-bold ${t.type === 'income' ? 'bg-indigo-100 text-indigo-600' : 'bg-rose-100 text-rose-600'}">
-                            ${t.type === 'income' ? '↙' : '↗'}
+            list.innerHTML = state.transactions.slice(0, 15).map(t => `
+                <div class="nebula-card p-5 flex justify-between items-center group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-bold ${t.type === 'income' ? 'bg-cyan-100 text-cyan-600' : 'bg-rose-100 text-rose-600'}">
+                            ${t.type === 'income' ? '↓' : '↑'}
                         </div>
                         <div>
-                            <p class="font-bold font-kanit text-base">${t.title}</p>
+                            <p class="font-bold font-kanit text-sm">${t.title}</p>
                             <div class="flex items-center gap-2">
-                                <span class="text-[9px] font-black opacity-30 uppercase">${new Date(t.date).toLocaleDateString('th-TH', {day:'2-digit', month:'short', year:'2-digit'})}</span>
-                                ${t.source ? `<span class="text-[8px] px-1.5 py-0.5 rounded-md bg-slate-200 dark:bg-slate-700 font-bold opacity-50 uppercase">${t.source.split('_')[1] || 'OLD'}</span>` : ''}
+                                <span class="text-[9px] font-bold opacity-40 uppercase">${new Date(t.date).toLocaleDateString('th-TH')}</span>
+                                ${t.isMigrated ? '<span class="text-[8px] bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500 font-bold uppercase">Legacy</span>' : ''}
                             </div>
                         </div>
                     </div>
                     <div class="text-right">
-                        <p class="font-black font-kanit text-xl ${t.type === 'income' ? 'text-indigo-500' : 'text-rose-500'}">
+                        <p class="font-black font-kanit ${t.type === 'income' ? 'text-cyan-500' : 'text-rose-500'}">
                             ${t.type === 'income' ? '+' : '-'} ${fmt(t.amount)}
                         </p>
-                        <button onclick="deleteTx('${t.id}')" class="text-[9px] font-black text-slate-300 hover:text-rose-500 uppercase tracking-tighter">Remove</button>
+                        <button onclick="deleteTx('${t.id}')" class="text-[9px] font-bold text-slate-300 hover:text-rose-500 uppercase opacity-0 group-hover:opacity-100 transition-opacity">Delete</button>
                     </div>
                 </div>
-            `).join('') || '<div class="text-center py-20 opacity-30 text-xs font-bold uppercase tracking-[0.4em]">Empty Vault</div>';
+            `).join('') || '<div class="text-center py-10 opacity-20 font-bold text-xs">NO DATA FOUND</div>';
 
-            updateCharts();
+            updateChart();
         };
 
-        const updateCharts = () => {
-            const isDark = state.isDark;
-            const textColor = isDark ? '#94a3b8' : '#64748b';
-
-            // Flow Trend Logic (Last 10 entries)
-            const trendData = state.transactions.slice(-10).map(t => t.type === 'income' ? t.amount : -t.amount);
-            if (charts.flow) charts.flow.destroy();
-            charts.flow = new Chart(document.getElementById('flowChart'), {
-                type: 'line',
+        const updateChart = () => {
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            const last7 = state.transactions.slice(0, 7).reverse();
+            
+            if (mainChart) mainChart.destroy();
+            mainChart = new Chart(ctx, {
+                type: 'bar',
                 data: {
-                    labels: trendData.map((_, i) => i + 1),
+                    labels: last7.map(t => new Date(t.date).getDate()),
                     datasets: [{
-                        data: trendData,
-                        borderColor: '#6366f1',
-                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                        fill: true, tension: 0.4, pointRadius: 0, borderWidth: 4
+                        label: 'Flow',
+                        data: last7.map(t => t.type === 'income' ? t.amount : -t.amount),
+                        backgroundColor: last7.map(t => t.type === 'income' ? '#06b6d4' : '#f43f5e'),
+                        borderRadius: 8
                     }]
                 },
                 options: {
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: {
-                        y: { display: false },
-                        x: { display: false }
-                    }
-                }
-            });
-
-            // Distribution
-            const distribution = { inc: 0, exp: 0 };
-            state.transactions.forEach(t => distribution[t.type === 'income' ? 'inc' : 'exp'] += t.amount);
-            
-            if (charts.asset) charts.asset.destroy();
-            charts.asset = new Chart(document.getElementById('assetChart'), {
-                type: 'doughnut',
-                data: {
-                    labels: ['Income', 'Expense'],
-                    datasets: [{
-                        data: [distribution.inc, distribution.exp],
-                        backgroundColor: ['#6366f1', '#ec4899'],
-                        borderWidth: 0,
-                        hoverOffset: 10
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    cutout: '80%',
-                    plugins: { legend: { position: 'bottom', labels: { color: textColor, font: { family: 'Kanit', size: 10 } } } }
+                    scales: { y: { display: false }, x: { grid: { display: false } } }
                 }
             });
         };
 
-        const toggleTheme = () => {
-            state.isDark = !state.isDark;
-            applyTheme();
-            localStorage.setItem('aether_theme', state.isDark ? 'dark' : 'light');
-            updateCharts();
-        };
-
-        const applyTheme = () => {
-            document.body.classList.toggle('dark-mode', state.isDark);
-            document.getElementById('themeIcon').innerText = state.isDark ? '🌙' : '☀️';
-        };
-
-        document.getElementById('financeForm').onsubmit = (e) => {
+        document.getElementById('txForm').onsubmit = (e) => {
             e.preventDefault();
             const tx = {
                 id: Date.now().toString(),
@@ -393,38 +332,41 @@
             };
             state.transactions.push(tx);
             save();
-            refreshUI();
+            render();
             e.target.reset();
-            showToast("บันทึกสำเร็จ (Aether Flow Updated)");
+            toast("บันทึกข้อมูลเรียบร้อยแล้ว");
         };
 
         const deleteTx = (id) => {
             state.transactions = state.transactions.filter(t => t.id !== id);
             save();
-            refreshUI();
-            showToast("ลบข้อมูลแล้ว");
+            render();
+            toast("ลบรายการแล้ว");
         };
 
-        const showToast = (msg) => {
+        const toggleTheme = () => {
+            state.isDark = !state.isDark;
+            document.body.classList.toggle('dark-mode', state.isDark);
+            document.getElementById('themeIcon').innerText = state.isDark ? '🌙' : '☀️';
+            localStorage.setItem('nebula_theme', state.isDark ? 'dark' : 'light');
+            updateChart();
+        };
+
+        const toast = (msg) => {
             const t = document.getElementById('toast');
             t.innerText = msg;
             t.style.opacity = '1';
-            t.style.transform = 'translate(-50%, -10px)';
-            setTimeout(() => {
-                t.style.opacity = '0';
-                t.style.transform = 'translate(-50%, 0px)';
-            }, 3000);
+            setTimeout(() => t.style.opacity = '0', 2000);
         };
 
         const exportData = () => {
-            const dataStr = JSON.stringify(state.transactions, null, 2);
-            const blob = new Blob([dataStr], {type: 'application/json'});
+            const blob = new Blob([JSON.stringify(state.transactions)], {type: 'application/json'});
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `finance_zen_v12_backup.json`;
+            a.download = `Nebula_Backup_${new Date().getTime()}.json`;
             a.click();
-            showToast("Export ข้อมูลสำเร็จ");
+            toast("ดาวน์โหลดไฟล์สำรองเรียบร้อย");
         };
 
         window.onload = init;
