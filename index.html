@@ -2,425 +2,238 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Finance Zen 10.4.0 - Nexus Core</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - ระบบกำลังปรับปรุงและอัปเดต</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --bg-light: #f8fafc;
-            --bg-dark: #0f172a;
-            --card-light: #ffffff;
-            --card-dark: #1e293b;
-            --text-light: #1e293b;
-            --text-dark: #f1f5f9;
-            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap');
 
         body {
-            font-family: 'Sarabun', sans-serif;
-            background-color: var(--bg-light);
-            color: var(--text-light);
-            transition: var(--transition);
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body.dark-mode {
-            background-color: var(--bg-dark);
-            color: var(--text-dark);
-        }
-
-        .font-kanit { font-family: 'Kanit', sans-serif; }
-
-        /* Theme Styles */
-        .glass-card {
-            background: var(--card-light);
-            border: 1px solid rgba(0,0,0,0.05);
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
-            transition: var(--transition);
-        }
-
-        .dark-mode .glass-card {
-            background: var(--card-dark);
-            border: 1px solid rgba(255,255,255,0.05);
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
-        }
-
-        .dark-mode header, .dark-mode nav {
-            background-color: rgba(15, 23, 42, 0.9) !important;
-            border-color: #1e293b;
-        }
-
-        .dark-mode input, .dark-mode select {
-            background-color: #334155 !important;
-            color: white !important;
-        }
-
-        /* Buttons */
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, #a855f7 100%);
-            color: white;
-            transition: var(--transition);
-        }
-        .btn-primary:active { transform: scale(0.96); }
-
-        /* Custom Toggle */
-        .theme-switch {
-            width: 56px;
-            height: 28px;
-            background: #cbd5e1;
-            border-radius: 50px;
-            position: relative;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .theme-switch::after {
-            content: '☀️';
-            position: absolute;
-            width: 22px;
-            height: 22px;
-            background: white;
-            border-radius: 50%;
-            top: 3px;
-            left: 3px;
+            font-family: 'Kanit', sans-serif;
+            background-color: #050a15;
+            color: #ffffff;
+            overflow: hidden;
+            margin: 0;
+            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
-            transition: var(--transition);
-        }
-        .dark-mode .theme-switch { background: var(--primary); }
-        .dark-mode .theme-switch::after {
-            content: '🌙';
-            transform: translateX(28px);
         }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* พื้นหลังอวกาศ/ดิจิทัล */
+        .bg-grid {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background-image: 
+                linear-gradient(0deg, transparent 24%, rgba(32, 150, 255, 0.05) 25%, rgba(32, 150, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(32, 150, 255, 0.05) 75%, rgba(32, 150, 255, 0.05) 76%, transparent 77%, transparent),
+                linear-gradient(90deg, transparent 24%, rgba(32, 150, 255, 0.05) 25%, rgba(32, 150, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(32, 150, 255, 0.05) 75%, rgba(32, 150, 255, 0.05) 76%, transparent 77%, transparent);
+            background-size: 50px 50px;
+            animation: moveGrid 20s linear infinite;
+            z-index: -1;
         }
-        .animate-in { animation: fadeInUp 0.5s ease-out forwards; }
+
+        @keyframes moveGrid {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-50px, -50px); }
+        }
+
+        /* ตัวเซิร์ฟเวอร์เคลื่อนที่ */
+        .server-unit {
+            position: relative;
+            width: 300px;
+            height: 350px;
+            animation: float 4s ease-in-out infinite;
+            perspective: 1000px;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(1deg); }
+        }
+
+        .server-body {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 4px solid #38bdf8;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .screen {
+            width: 80%;
+            height: 60%;
+            background: #000;
+            border-radius: 10px;
+            border: 2px solid #0ea5e9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .error-code {
+            font-size: 5rem;
+            font-weight: 800;
+            color: #38bdf8;
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+            margin: 0;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #f87171;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* ล้อ/ฐานขับเคลื่อน */
+        .wheels {
+            display: flex;
+            justify-content: space-around;
+            width: 110%;
+            margin-top: -10px;
+            margin-left: -5%;
+        }
+
+        .wheel {
+            width: 60px;
+            height: 60px;
+            background: #334155;
+            border-radius: 15px;
+            border: 3px solid #1e293b;
+            position: relative;
+            animation: spin 2s linear infinite;
+        }
+
+        .wheel::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 40%;
+            height: 10%;
+            background: #64748b;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* ควัน/เอฟเฟกต์การเคลื่อนที่ */
+        .trail {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .dust {
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: dustMove 1s infinite;
+        }
+
+        @keyframes dustMove {
+            0% { transform: scale(1) translateY(0); opacity: 0.5; }
+            100% { transform: scale(3) translateY(20px); opacity: 0; }
+        }
+
+        .loading-bar {
+            width: 70%;
+            height: 4px;
+            background: #1e293b;
+            border-radius: 2px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .loading-progress {
+            width: 40%;
+            height: 100%;
+            background: #38bdf8;
+            box-shadow: 0 0 10px #38bdf8;
+            animation: loading 2s infinite ease-in-out;
+        }
+
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(250%); }
+        }
     </style>
 </head>
-<body class="pb-24">
+<body>
+    <div class="bg-grid"></div>
 
-    <!-- Sticky Header -->
-    <header class="p-5 bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100 transition-colors">
-        <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-black font-kanit text-indigo-600">Finance Zen</h1>
-                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">Nexus Core v10.4.0</p>
+    <div class="flex flex-col items-center z-10">
+        <!-- ตัวเซิร์ฟเวอร์ -->
+        <div class="server-unit">
+            <div class="server-body">
+                <div class="screen">
+                    <p class="error-code">404</p>
+                    <div class="text-xs text-blue-400 mt-2 font-mono uppercase">Scanning for assets...</div>
+                </div>
+                <div class="loading-bar">
+                    <div class="loading-progress"></div>
+                </div>
+                <!-- เสาอากาศ -->
+                <div class="absolute -top-8 left-1/4 w-1 h-8 bg-gray-600">
+                    <div class="status-dot absolute -top-2 -left-1"></div>
+                </div>
             </div>
-            <div class="flex items-center gap-4">
-                <div onclick="toggleTheme()" class="theme-switch" id="themeBtn"></div>
+            
+            <div class="wheels">
+                <div class="wheel"></div>
+                <div class="wheel"></div>
+                <div class="wheel"></div>
+            </div>
+
+            <div class="trail">
+                <div class="dust" style="animation-delay: 0s;"></div>
+                <div class="dust" style="animation-delay: 0.2s;"></div>
+                <div class="dust" style="animation-delay: 0.4s;"></div>
             </div>
         </div>
-    </header>
 
-    <main class="max-w-4xl mx-auto p-4 space-y-6">
-        
-        <!-- Balance Dashboard -->
-        <section class="glass-card rounded-[2.5rem] p-8 text-white relative overflow-hidden" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);">
-            <div class="relative z-10">
-                <div class="flex justify-between items-center mb-1">
-                    <p class="text-indigo-100 text-[10px] font-bold uppercase tracking-wider">ยอดเงินรวมในระบบ</p>
-                    <div id="healthBadge" class="px-2 py-0.5 bg-white/20 rounded-md text-[9px] font-bold">Health Score: --</div>
-                </div>
-                <h2 id="totalBalance" class="text-4xl font-black font-kanit">฿0.00</h2>
-                
-                <div class="grid grid-cols-2 gap-3 mt-8">
-                    <div class="bg-white/10 backdrop-blur-lg p-4 rounded-3xl border border-white/10">
-                        <p class="text-[9px] text-indigo-100 uppercase font-black">รายรับ (เดือนนี้)</p>
-                        <p id="totalIncome" class="text-xl font-bold">฿0.00</p>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-lg p-4 rounded-3xl border border-white/10">
-                        <p class="text-[9px] text-indigo-100 uppercase font-black">รายจ่าย (เดือนนี้)</p>
-                        <p id="totalExpense" class="text-xl font-bold">฿0.00</p>
-                    </div>
-                </div>
-            </div>
-            <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
-        </section>
-
-        <!-- Charts Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <section class="glass-card rounded-3xl p-5">
-                <h3 class="text-[10px] font-bold text-slate-400 uppercase mb-4 tracking-widest">พฤติกรรม 7 วันล่าสุด</h3>
-                <div class="h-40">
-                    <canvas id="mainChart"></canvas>
-                </div>
-            </section>
-            <section class="glass-card rounded-3xl p-5">
-                <h3 class="text-[10px] font-bold text-slate-400 uppercase mb-4 tracking-widest">สัดส่วนกระแสเงิน</h3>
-                <div class="h-40">
-                    <canvas id="donutChart"></canvas>
-                </div>
-            </section>
+        <!-- ข้อความแจ้งเตือน -->
+        <div class="text-center mt-12 px-4">
+            <h1 class="text-3xl md:text-4xl font-bold mb-4 text-sky-400">ระบบกำลังปรับปรุงและอัปเดต</h1>
+            <p class="text-gray-400 text-lg max-w-md mx-auto">
+                ขออภัยในความไม่สะดวก ขณะนี้เซิร์ฟเวอร์เคลื่อนที่ของเรากำลังทำการซ่อมบำรุงและติดตั้งโมดูลใหม่เพื่อประสิทธิภาพที่ดีขึ้น
+            </p>
         </div>
-
-        <!-- Add Transaction -->
-        <section class="glass-card rounded-3xl p-6">
-            <form id="txForm" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <input type="text" id="title" placeholder="รายการของคุณ..." required 
-                        class="w-full p-4 rounded-2xl bg-slate-100 outline-none focus:ring-2 ring-indigo-400 font-medium transition-all">
-                    <input type="number" id="amount" placeholder="0.00" step="0.01" required 
-                        class="w-full p-4 rounded-2xl bg-slate-100 outline-none focus:ring-2 ring-indigo-400 font-bold text-indigo-600">
-                    <select id="type" class="w-full p-4 rounded-2xl bg-slate-100 outline-none font-bold text-sm">
-                        <option value="expense">รายจ่าย (-)</option>
-                        <option value="income">รายรับ (+)</option>
-                    </select>
-                </div>
-                <button type="submit" class="w-full py-4 rounded-2xl btn-primary font-bold text-lg shadow-xl shadow-indigo-200">
-                    บันทึกรายการลง Nexus
-                </button>
-            </form>
-        </section>
-
-        <!-- List Section -->
-        <section class="space-y-4">
-            <div class="flex justify-between items-center px-2">
-                <h3 class="font-bold font-kanit">ประวัติธุรกรรม</h3>
-                <span id="dataStatus" class="text-[9px] font-black text-emerald-500 uppercase tracking-tighter bg-emerald-50 px-2 py-1 rounded">Nexus Synced</span>
-            </div>
-            <div id="txList" class="space-y-3">
-                <!-- Transaction items -->
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Navigation -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-100 h-20 flex justify-around items-center px-6 z-50 transition-colors">
-        <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex flex-col items-center gap-1 text-indigo-600">
-            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-            <span class="text-[9px] font-bold">หน้าแรก</span>
-        </button>
-        <button onclick="exportJSON()" class="flex flex-col items-center gap-1 text-slate-400">
-            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-            <span class="text-[9px] font-bold">สำรองข้อมูล</span>
-        </button>
-    </nav>
-
-    <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 px-6 py-3 bg-slate-800 text-white text-[10px] font-bold rounded-full opacity-0 transition-all z-[100]"></div>
+    </div>
 
     <script>
-        // --- Nexus Core v10.4.0 Engine ---
-        const NEXUS_KEY = 'finance_zen_nexus_v104';
-        const LEGACY_KEYS = [
-            'finance_zen_lumina_v10', 
-            'finance_zen_aether_v81', 
-            'incomes_v313', 
-            'finance_zen_7', 
-            'finance_zen_legacy'
-        ];
-
-        let transactions = [];
-        let charts = { main: null, donut: null };
-        let isDark = false;
-
-        // 1. Core Initialization & Migration (Data Safety Guarantee)
-        const init = () => {
-            // Theme check
-            isDark = localStorage.getItem('nexus_dark') === 'true';
-            if(isDark) document.body.classList.add('dark-mode');
-
-            // Data Bridge
-            const stored = localStorage.getItem(NEXUS_KEY);
-            if(stored) {
-                transactions = JSON.parse(stored);
-            } else {
-                migrateData();
-            }
-            render();
-        };
-
-        const migrateData = () => {
-            let foundCount = 0;
-            LEGACY_KEYS.forEach(key => {
-                const data = localStorage.getItem(key);
-                if(data) {
-                    try {
-                        const parsed = JSON.parse(data);
-                        if(Array.isArray(parsed)) {
-                            parsed.forEach(item => {
-                                // Nexus Data Normalization
-                                if(!transactions.find(t => t.id == item.id)) {
-                                    transactions.push({
-                                        id: item.id || Date.now() + Math.random(),
-                                        title: item.title || item.name || 'รายการเก่า',
-                                        amount: parseFloat(item.amount) || 0,
-                                        type: item.type || (item.amount < 0 ? 'expense' : 'income'),
-                                        date: item.date || new Date().toISOString()
-                                    });
-                                    foundCount++;
-                                }
-                            });
-                        }
-                    } catch(e) {}
-                }
-            });
-            if(foundCount > 0) notify(`Nexus Sync: กู้คืน ${foundCount} รายการสำเร็จ`);
-            save();
-        };
-
-        const save = () => localStorage.setItem(NEXUS_KEY, JSON.stringify(transactions));
-
-        // 2. Rendering Engine
-        const render = () => {
-            const list = document.getElementById('txList');
-            const sorted = [...transactions].sort((a,b) => new Date(b.date) - new Date(a.date));
-            
-            let total = 0, inc = 0, exp = 0;
-            const now = new Date();
-            
-            transactions.forEach(t => {
-                const amt = parseFloat(t.amount);
-                const tDate = new Date(t.date);
-                if(t.type === 'income') {
-                    total += amt;
-                    if(tDate.getMonth() === now.getMonth()) inc += amt;
-                } else {
-                    total -= amt;
-                    if(tDate.getMonth() === now.getMonth()) exp += amt;
-                }
-            });
-
-            // Update UI
-            const fmt = n => new Intl.NumberFormat('th-TH', { minimumFractionDigits: 2 }).format(n);
-            document.getElementById('totalBalance').innerText = `฿${fmt(total)}`;
-            document.getElementById('totalIncome').innerText = `฿${fmt(inc)}`;
-            document.getElementById('totalExpense').innerText = `฿${fmt(exp)}`;
-            
-            // Health Score
-            const health = inc > 0 ? Math.min(Math.round(( (inc - exp) / inc) * 100), 100) : 0;
-            document.getElementById('healthBadge').innerText = `Health Score: ${health}%`;
-
-            // List Injection
-            list.innerHTML = sorted.slice(0, 10).map(t => `
-                <div class="glass-card p-4 rounded-3xl flex justify-between items-center animate-in">
-                    <div class="flex items-center gap-4">
-                        <div class="w-11 h-11 rounded-2xl flex items-center justify-center ${t.type === 'income' ? 'bg-indigo-100 text-indigo-600' : 'bg-rose-100 text-rose-600'}">
-                            ${t.type === 'income' ? '↙' : '↗'}
-                        </div>
-                        <div>
-                            <p class="font-bold text-sm truncate w-32 md:w-full">${t.title}</p>
-                            <p class="text-[9px] opacity-40 font-black uppercase tracking-widest">${new Date(t.date).toLocaleDateString('th-TH', {day:'numeric', month:'short'})}</p>
-                        </div>
-                    </div>
-                    <p class="font-black text-base ${t.type === 'income' ? 'text-indigo-500' : 'text-rose-500'}">
-                        ${t.type === 'income' ? '+' : '-'} ${fmt(t.amount)}
-                    </p>
-                </div>
-            `).join('') || '<p class="text-center py-10 opacity-30 text-xs">ยังไม่มีข้อมูลในฐาน Nexus</p>';
-
-            updateCharts();
-        };
-
-        // 3. Analytics (Responsive Charts)
-        const updateCharts = () => {
-            const fontColor = isDark ? '#94a3b8' : '#64748b';
-            
-            // Daily Chart
-            const days = {};
-            for(let i=6; i>=0; i--) {
-                const d = new Date(); d.setDate(d.getDate()-i);
-                days[d.toLocaleDateString('th-TH', {day:'numeric', month:'short'})] = 0;
-            }
-            transactions.forEach(t => {
-                const k = new Date(t.date).toLocaleDateString('th-TH', {day:'numeric', month:'short'});
-                if(days.hasOwnProperty(k)) days[k] += (t.type === 'income' ? t.amount : -t.amount);
-            });
-
-            if(charts.main) charts.main.destroy();
-            charts.main = new Chart(document.getElementById('mainChart'), {
-                type: 'line',
-                data: {
-                    labels: Object.keys(days),
-                    datasets: [{
-                        data: Object.values(days),
-                        borderColor: '#6366f1',
-                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                        fill: true, tension: 0.4, borderWidth: 3, pointRadius: 2
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { display: false },
-                        x: { grid: { display: false }, ticks: { color: fontColor, font: { size: 9, weight: 'bold' } } }
-                    }
-                }
-            });
-
-            // Donut Chart
-            const cats = { inc: 0, exp: 0 };
-            transactions.forEach(t => { t.type === 'income' ? cats.inc += t.amount : cats.exp += t.amount; });
-
-            if(charts.donut) charts.donut.destroy();
-            charts.donut = new Chart(document.getElementById('donutChart'), {
-                type: 'doughnut',
-                data: {
-                    labels: ['รายรับ', 'รายจ่าย'],
-                    datasets: [{
-                        data: [cats.inc, cats.exp],
-                        backgroundColor: ['#6366f1', '#f43f5e'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    cutout: '75%',
-                    plugins: { legend: { position: 'bottom', labels: { color: fontColor, font: { size: 10, family: 'Kanit' } } } }
-                }
-            });
-        };
-
-        // 4. Interface Controls
-        const toggleTheme = () => {
-            isDark = !isDark;
-            document.body.classList.toggle('dark-mode', isDark);
-            localStorage.setItem('nexus_dark', isDark);
-            updateCharts();
-        };
-
-        document.getElementById('txForm').onsubmit = (e) => {
-            e.preventDefault();
-            const tx = {
-                id: Date.now(),
-                title: document.getElementById('title').value,
-                amount: parseFloat(document.getElementById('amount').value),
-                type: document.getElementById('type').value,
-                date: new Date().toISOString()
-            };
-            transactions.push(tx);
-            save();
-            e.target.reset();
-            render();
-            notify("บันทึกสำเร็จ");
-        };
-
-        const notify = (m) => {
-            const t = document.getElementById('toast');
-            t.innerText = m; t.style.opacity = '1';
-            setTimeout(() => t.style.opacity = '0', 2500);
-        };
-
-        const exportJSON = () => {
-            const blob = new Blob([JSON.stringify(transactions, null, 2)], {type: 'application/json'});
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `nexus_v104_backup_${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            notify("สำรองข้อมูลสำเร็จ");
-        };
-
-        window.onload = init;
-
+        // เพิ่มลูกเล่นขยับตามเมาส์เล็กน้อย
+        document.addEventListener('mousemove', (e) => {
+            const server = document.querySelector('.server-unit');
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            server.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
     </script>
 </body>
 </html>
