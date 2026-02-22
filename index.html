@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Finance Zen 14.1.0 - Nebula Core</title>
+    <title>Finance Zen 15.1.0 - Supernova</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --nebula-main: #06b6d4;
-            --nebula-deep: #0e7490;
-            --nebula-glow: rgba(6, 182, 212, 0.5);
+            --supernova-main: #8b5cf6;
+            --supernova-glow: rgba(139, 92, 246, 0.5);
             --bg-dark: #020617;
-            --card-dark: #0f172a;
         }
 
         body {
@@ -28,8 +26,8 @@
             color: #f8fafc;
         }
 
-        .nebula-gradient {
-            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 50%, #8b5cf6 100%);
+        .supernova-gradient {
+            background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 50%, #06b6d4 100%);
         }
 
         .nebula-card {
@@ -37,7 +35,6 @@
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 2rem;
-            transition: transform 0.2s ease;
         }
 
         .dark-mode .nebula-card {
@@ -46,20 +43,13 @@
         }
 
         .balance-glow {
-            text-shadow: 0 0 20px var(--nebula-glow);
-        }
-
-        input, select {
-            border: 2px solid transparent !important;
-            transition: all 0.2s ease !important;
+            text-shadow: 0 0 20px var(--supernova-glow);
         }
 
         input:focus {
-            border-color: var(--nebula-main) !important;
-            box-shadow: 0 0 15px var(--nebula-glow);
+            border-color: var(--supernova-main) !important;
+            box-shadow: 0 0 15px var(--supernova-glow);
         }
-
-        .scroll-hide::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="pb-24">
@@ -68,12 +58,12 @@
     <header class="p-6 sticky top-0 z-50 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800">
         <div class="max-w-4xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 nebula-gradient rounded-xl flex items-center justify-center shadow-lg">
-                    <span class="text-white font-bold">N</span>
+                <div class="w-10 h-10 supernova-gradient rounded-xl flex items-center justify-center shadow-lg">
+                    <span class="text-white font-bold text-xl">S</span>
                 </div>
                 <div>
-                    <h1 class="text-xl font-black font-kanit tracking-tight">Nebula Core</h1>
-                    <p class="text-[9px] font-bold text-cyan-500 uppercase tracking-widest">v14.1.0 Stable</p>
+                    <h1 class="text-xl font-black font-kanit tracking-tight">Supernova</h1>
+                    <p class="text-[9px] font-bold text-purple-500 uppercase tracking-widest">v15.1.0 Stable</p>
                 </div>
             </div>
             <button onclick="toggleTheme()" class="p-3 nebula-card shadow-none">
@@ -85,11 +75,11 @@
     <main class="max-w-4xl mx-auto p-4 space-y-6">
 
         <!-- Master Display -->
-        <section class="nebula-card p-8 nebula-gradient text-white relative overflow-hidden shadow-2xl">
+        <section class="nebula-card p-8 supernova-gradient text-white relative overflow-hidden shadow-2xl">
             <div class="relative z-10">
                 <div class="flex justify-between items-start">
-                    <p class="text-xs font-bold opacity-80 uppercase tracking-widest">Available Balance</p>
-                    <div class="px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold">Safe to Spend</div>
+                    <p class="text-xs font-bold opacity-80 uppercase tracking-widest">Total Wealth Asset</p>
+                    <div class="px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold">Data Protected</div>
                 </div>
                 <h2 id="balance" class="text-5xl font-black font-kanit my-6 balance-glow">฿0.00</h2>
                 
@@ -104,21 +94,21 @@
                     </div>
                 </div>
             </div>
-            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+            <div class="absolute -top-10 -left-10 w-40 h-40 bg-purple-400/20 rounded-full blur-3xl"></div>
         </section>
 
         <!-- Stats Grid -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="nebula-card p-6 md:col-span-2">
-                <h3 class="text-[10px] font-black opacity-40 uppercase tracking-widest mb-4">Cash Flow Analysis</h3>
+                <h3 class="text-[10px] font-black opacity-40 uppercase tracking-widest mb-4">Cash Flow (7-Day Insight)</h3>
                 <div class="h-48">
                     <canvas id="mainChart"></canvas>
                 </div>
             </div>
             <div class="nebula-card p-6 flex flex-col justify-center items-center text-center">
-                <h3 class="text-[10px] font-black opacity-40 uppercase tracking-widest mb-4">Migration Status</h3>
-                <div id="syncIndicator" class="w-16 h-16 rounded-full border-4 border-cyan-500/30 border-t-cyan-500 animate-spin mb-4"></div>
-                <p id="syncText" class="text-xs font-bold font-kanit">Checking for Legacy Data...</p>
+                <h3 class="text-[10px] font-black opacity-40 uppercase tracking-widest mb-4">Vault Sync</h3>
+                <div id="syncIndicator" class="w-16 h-16 rounded-full border-4 border-purple-500/30 border-t-purple-500 animate-spin mb-4"></div>
+                <p id="syncText" class="text-xs font-bold font-kanit text-purple-500">Scanning for Legacy Data...</p>
             </div>
         </div>
 
@@ -128,22 +118,22 @@
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
                     <div class="md:col-span-6">
                         <label class="text-[10px] font-black text-slate-400 ml-2 mb-1 block">ชื่อรายการ</label>
-                        <input type="text" id="title" placeholder="เช่น ค่าอาหาร, เงินเดือน" required class="w-full p-4 rounded-xl bg-slate-100 dark:bg-slate-800 font-medium">
+                        <input type="text" id="title" placeholder="รายการใหม่" required class="w-full p-4 rounded-xl bg-slate-100 dark:bg-slate-800 font-medium border-0 outline-none">
                     </div>
                     <div class="md:col-span-4">
                         <label class="text-[10px] font-black text-slate-400 ml-2 mb-1 block">จำนวนเงิน</label>
-                        <input type="number" id="amount" placeholder="0.00" step="0.01" required class="w-full p-4 rounded-xl bg-slate-100 dark:bg-slate-800 font-black text-cyan-500">
+                        <input type="number" id="amount" placeholder="0.00" step="0.01" required class="w-full p-4 rounded-xl bg-slate-100 dark:bg-slate-800 font-black text-purple-500 border-0 outline-none">
                     </div>
                     <div class="md:col-span-2">
                         <label class="text-[10px] font-black text-slate-400 ml-2 mb-1 block">ประเภท</label>
-                        <select id="type" class="w-full p-4 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold">
-                            <option value="expense">จ่าย</option>
-                            <option value="income">รับ</option>
+                        <select id="type" class="w-full p-4 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold border-0 outline-none">
+                            <option value="expense">รายจ่าย</option>
+                            <option value="income">รายรับ</option>
                         </select>
                     </div>
                 </div>
-                <button type="submit" class="w-full py-4 nebula-gradient text-white rounded-xl font-black text-sm uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-cyan-500/20">
-                    Process Transaction
+                <button type="submit" class="w-full py-4 supernova-gradient text-white rounded-xl font-black text-sm uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-purple-500/20">
+                    Add to Supernova Vault
                 </button>
             </form>
         </section>
@@ -151,8 +141,11 @@
         <!-- History -->
         <div class="space-y-4">
             <div class="flex justify-between items-center px-4">
-                <h3 class="font-black font-kanit text-xl">History Log</h3>
-                <button onclick="exportData()" class="text-[10px] font-bold text-cyan-500 border border-cyan-500/30 px-3 py-1 rounded-lg">BACKUP JSON</button>
+                <h3 class="font-black font-kanit text-xl">Transaction Logs</h3>
+                <div class="flex gap-2">
+                    <button onclick="clearVisibleHistory()" class="text-[10px] font-bold text-rose-500 border border-rose-500/30 px-3 py-1 rounded-lg hover:bg-rose-50">HIDE HISTORY</button>
+                    <button onclick="exportData()" class="text-[10px] font-bold text-purple-500 border border-purple-500/30 px-3 py-1 rounded-lg">BACKUP</button>
+                </div>
             </div>
             <div id="historyList" class="space-y-3">
                 <!-- Data injected here -->
@@ -162,17 +155,18 @@
 
     <!-- Bottom Nav -->
     <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-lg h-16 nebula-card flex justify-around items-center px-6 z-50 shadow-2xl border-t border-white/20">
-        <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="p-2 opacity-50 hover:opacity-100"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg></button>
-        <button onclick="document.getElementById('txForm').scrollIntoView({behavior:'smooth'})" class="w-12 h-12 nebula-gradient rounded-full flex items-center justify-center text-white shadow-lg -translate-y-4 border-4 border-white dark:border-slate-900"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg></button>
-        <button onclick="forceDeepSync()" class="p-2 opacity-50 hover:opacity-100"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
+        <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="p-2 opacity-50"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg></button>
+        <button onclick="document.getElementById('txForm').scrollIntoView({behavior:'smooth'})" class="w-12 h-12 supernova-gradient rounded-full flex items-center justify-center text-white shadow-lg -translate-y-4 border-4 border-white dark:border-slate-900"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg></button>
+        <button onclick="forceDeepSync()" class="p-2 opacity-50"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
     </nav>
 
     <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest opacity-0 transition-all z-50 pointer-events-none"></div>
 
     <script>
-        // --- v14.1.0 NEBULA ENGINE ---
-        const MASTER_KEY = 'finance_zen_nebula_v141';
+        // --- v15.1.0 SUPERNOVA CORE ENGINE ---
+        const MASTER_KEY = 'finance_zen_supernova_v151';
         const MIGRATION_TARGETS = [
+            'finance_zen_nebula_v141',
             'finance_zen_aether_v121', 
             'finance_zen_quantum_v111', 
             'incomes_v313', 
@@ -187,17 +181,14 @@
         let mainChart = null;
 
         const init = () => {
-            // Theme setup
-            state.isDark = localStorage.getItem('nebula_theme') === 'dark';
+            state.isDark = localStorage.getItem('supernova_theme') === 'dark';
             document.body.classList.toggle('dark-mode', state.isDark);
             document.getElementById('themeIcon').innerText = state.isDark ? '🌙' : '☀️';
 
-            // Load primary data
             const localData = localStorage.getItem(MASTER_KEY);
             if (localData) state.transactions = JSON.parse(localData);
 
-            // Execute Deep Sync
-            setTimeout(runDeepSync, 1500);
+            setTimeout(runDeepSync, 1000);
             render();
         };
 
@@ -217,7 +208,8 @@
                                     amount: parseFloat(item.amount),
                                     type: item.type || (item.amount < 0 ? 'expense' : 'income'),
                                     date: item.date || new Date().toISOString(),
-                                    isMigrated: true
+                                    isMigrated: true,
+                                    isArchived: false
                                 });
                                 found++;
                             }
@@ -227,10 +219,10 @@
             });
 
             const indicator = document.getElementById('syncIndicator');
-            indicator.classList.remove('animate-spin', 'border-t-cyan-500');
-            indicator.classList.add('bg-cyan-500', 'flex', 'items-center', 'justify-center', 'text-white');
+            indicator.classList.remove('animate-spin', 'border-t-purple-500');
+            indicator.classList.add('bg-purple-500', 'flex', 'items-center', 'justify-center', 'text-white');
             indicator.innerHTML = '✓';
-            document.getElementById('syncText').innerText = found > 0 ? `กู้คืนข้อมูลสำเร็จ ${found} รายการ` : "ข้อมูลเป็นปัจจุบันแล้ว";
+            document.getElementById('syncText').innerText = found > 0 ? `กู้คืนสำเร็จ ${found} รายการ` : "ฐานข้อมูลปลอดภัย";
             
             if (found > 0) {
                 save();
@@ -238,10 +230,18 @@
             }
         };
 
+        const clearVisibleHistory = () => {
+            // ฟีเจอร์ใหม่ 15.1.0: ซ่อนรายการแต่ไม่ลบข้อมูลเงิน
+            state.transactions = state.transactions.map(t => ({...t, isArchived: true}));
+            save();
+            render();
+            toast("ซ่อนประวัติทั้งหมดแล้ว (ยอดเงินคงเดิม)");
+        };
+
         const forceDeepSync = () => {
             document.getElementById('syncIndicator').classList.add('animate-spin');
             document.getElementById('syncText').innerText = "กำลังสแกนหาข้อมูลย้อนหลัง...";
-            setTimeout(runDeepSync, 1000);
+            setTimeout(runDeepSync, 800);
         };
 
         const save = () => localStorage.setItem(MASTER_KEY, JSON.stringify(state.transactions));
@@ -251,11 +251,10 @@
             let balance = 0, incM = 0, expM = 0;
             const now = new Date();
 
-            state.transactions.sort((a,b) => new Date(b.date) - new Date(a.date));
-
+            // คำนวณจากทุกรายการ แม้รายการที่ถูก Archive (ซ่อน) ไปแล้ว
             state.transactions.forEach(t => {
                 const amt = parseFloat(t.amount);
-                const isThisMonth = new Date(t.date).getMonth() === now.getMonth();
+                const isThisMonth = new Date(t.date).getMonth() === now.getMonth() && new Date(t.date).getFullYear() === now.getFullYear();
                 
                 if (t.type === 'income') {
                     balance += amt;
@@ -271,46 +270,60 @@
             document.getElementById('monthInc').innerText = `฿${fmt(incM)}`;
             document.getElementById('monthExp').innerText = `฿${fmt(expM)}`;
 
-            list.innerHTML = state.transactions.slice(0, 15).map(t => `
-                <div class="nebula-card p-5 flex justify-between items-center group">
+            // แสดงเฉพาะรายการที่ยังไม่ถูก Archive
+            const visibleTx = state.transactions.filter(t => !t.isArchived)
+                              .sort((a,b) => new Date(b.date) - new Date(a.date));
+
+            list.innerHTML = visibleTx.slice(0, 20).map(t => `
+                <div class="nebula-card p-5 flex justify-between items-center group animate-in slide-in-from-bottom-2 duration-300">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-bold ${t.type === 'income' ? 'bg-cyan-100 text-cyan-600' : 'bg-rose-100 text-rose-600'}">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold ${t.type === 'income' ? 'bg-purple-100 text-purple-600' : 'bg-rose-100 text-rose-600'}">
                             ${t.type === 'income' ? '↓' : '↑'}
                         </div>
                         <div>
                             <p class="font-bold font-kanit text-sm">${t.title}</p>
-                            <div class="flex items-center gap-2">
-                                <span class="text-[9px] font-bold opacity-40 uppercase">${new Date(t.date).toLocaleDateString('th-TH')}</span>
-                                ${t.isMigrated ? '<span class="text-[8px] bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500 font-bold uppercase">Legacy</span>' : ''}
-                            </div>
+                            <span class="text-[9px] font-bold opacity-40 uppercase">${new Date(t.date).toLocaleDateString('th-TH')}</span>
                         </div>
                     </div>
                     <div class="text-right">
-                        <p class="font-black font-kanit ${t.type === 'income' ? 'text-cyan-500' : 'text-rose-500'}">
+                        <p class="font-black font-kanit ${t.type === 'income' ? 'text-purple-500' : 'text-rose-500'}">
                             ${t.type === 'income' ? '+' : '-'} ${fmt(t.amount)}
                         </p>
-                        <button onclick="deleteTx('${t.id}')" class="text-[9px] font-bold text-slate-300 hover:text-rose-500 uppercase opacity-0 group-hover:opacity-100 transition-opacity">Delete</button>
+                        <button onclick="archiveTx('${t.id}')" class="text-[9px] font-bold text-slate-300 hover:text-rose-500 uppercase opacity-0 group-hover:opacity-100 transition-opacity">Hide</button>
                     </div>
                 </div>
-            `).join('') || '<div class="text-center py-10 opacity-20 font-bold text-xs">NO DATA FOUND</div>';
+            `).join('') || '<div class="text-center py-10 opacity-20 font-bold text-xs">HISTORY CLEARED (DATA PROTECTED)</div>';
 
             updateChart();
         };
 
+        const archiveTx = (id) => {
+            const idx = state.transactions.findIndex(t => t.id === id);
+            if (idx !== -1) {
+                state.transactions[idx].isArchived = true;
+                save();
+                render();
+                toast("ซ่อนรายการสำเร็จ");
+            }
+        };
+
         const updateChart = () => {
             const ctx = document.getElementById('mainChart').getContext('2d');
-            const last7 = state.transactions.slice(0, 7).reverse();
+            const last7 = state.transactions.filter(t => !t.isArchived).slice(0, 7).reverse();
             
             if (mainChart) mainChart.destroy();
             mainChart = new Chart(ctx, {
-                type: 'bar',
+                type: 'line',
                 data: {
                     labels: last7.map(t => new Date(t.date).getDate()),
                     datasets: [{
-                        label: 'Flow',
+                        label: 'Cashflow',
                         data: last7.map(t => t.type === 'income' ? t.amount : -t.amount),
-                        backgroundColor: last7.map(t => t.type === 'income' ? '#06b6d4' : '#f43f5e'),
-                        borderRadius: 8
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4
                     }]
                 },
                 options: {
@@ -328,27 +341,21 @@
                 title: document.getElementById('title').value,
                 amount: parseFloat(document.getElementById('amount').value),
                 type: document.getElementById('type').value,
-                date: new Date().toISOString()
+                date: new Date().toISOString(),
+                isArchived: false
             };
             state.transactions.push(tx);
             save();
             render();
             e.target.reset();
-            toast("บันทึกข้อมูลเรียบร้อยแล้ว");
-        };
-
-        const deleteTx = (id) => {
-            state.transactions = state.transactions.filter(t => t.id !== id);
-            save();
-            render();
-            toast("ลบรายการแล้ว");
+            toast("เพิ่มรายการใหม่เข้า Vault แล้ว");
         };
 
         const toggleTheme = () => {
             state.isDark = !state.isDark;
             document.body.classList.toggle('dark-mode', state.isDark);
             document.getElementById('themeIcon').innerText = state.isDark ? '🌙' : '☀️';
-            localStorage.setItem('nebula_theme', state.isDark ? 'dark' : 'light');
+            localStorage.setItem('supernova_theme', state.isDark ? 'dark' : 'light');
             updateChart();
         };
 
@@ -363,10 +370,8 @@
             const blob = new Blob([JSON.stringify(state.transactions)], {type: 'application/json'});
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url;
-            a.download = `Nebula_Backup_${new Date().getTime()}.json`;
-            a.click();
-            toast("ดาวน์โหลดไฟล์สำรองเรียบร้อย");
+            a.href = url; a.download = `Supernova_Vault_Backup.json`; a.click();
+            toast("สำรองข้อมูลสำเร็จ");
         };
 
         window.onload = init;
