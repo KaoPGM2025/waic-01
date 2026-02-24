@@ -3,455 +3,395 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Omni Finance 31.1.0</title>
+    <title>Finance Nexus 41.0.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --nexus-primary: #3b82f6;
+            --nexus-primary: #6366f1;
             --nexus-success: #10b981;
-            --nexus-danger: #ef4444;
-            --nexus-bg: #020617;
+            --nexus-danger: #f43f5e;
         }
-        body { font-family: 'Sarabun', sans-serif; background-color: var(--nexus-bg); color: #f1f5f9; overflow-x: hidden; }
+        body { font-family: 'Sarabun', sans-serif; background-color: #020617; color: #f1f5f9; min-height: 100vh; }
         .font-kanit { font-family: 'Kanit', sans-serif; }
-        .nexus-card { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px; }
-        .nav-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #64748b; font-size: 10px; font-weight: bold; }
-        .nav-btn.active { color: var(--nexus-primary); }
-        .offline-mode { pointer-events: none; opacity: 0.3; filter: grayscale(1); }
-        .switch-input:checked + .slider { background-color: var(--nexus-success); }
-        .switch-input:checked + .slider:before { transform: translateX(26px); }
+        .nexus-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px; }
+        
+        /* Toggle Switch */
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #334155; transition: .4s; border-radius: 34px; }
         .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        .goal-progress { transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+        input:checked + .slider { background-color: var(--nexus-success); }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        .progress-fill { transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes pulse-gold { 0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(245, 158, 11, 0); } 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); } }
+        .goal-complete { animation: pulse-gold 2s infinite; }
     </style>
 </head>
-<body class="pb-24">
+<body class="p-4 md:p-8">
 
-    <!-- Header & Online Switch -->
-    <header class="p-6 flex justify-between items-center bg-slate-900/50 sticky top-0 z-50 backdrop-blur-md border-b border-white/5">
+    <!-- Top Navigation -->
+    <nav class="max-w-2xl mx-auto flex justify-between items-center mb-8 px-2">
         <div>
-            <h1 class="font-black text-lg font-kanit tracking-tight">OMNI <span class="text-blue-500">31.1.0</span></h1>
-            <p id="statusIndicator" class="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-400">System Online</p>
+            <h1 class="text-xl font-black tracking-tighter text-indigo-400">NEXUS <span class="text-white">41.0.0</span></h1>
+            <div id="statusIndicator" class="flex items-center gap-1.5 mt-1">
+                <span id="statusDot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span id="statusText" class="text-[10px] font-bold uppercase tracking-widest text-emerald-500">System Online</span>
+            </div>
         </div>
-        <div class="flex items-center gap-3 bg-slate-800/50 p-2 rounded-full px-4 border border-white/5">
-            <span class="text-[10px] font-black opacity-50">SYNC</span>
-            <label class="relative inline-block w-12 h-6">
-                <input type="checkbox" id="onlineToggle" class="hidden switch-input" checked onchange="toggleSystemState()">
+        <div class="flex items-center gap-4">
+            <label class="switch">
+                <input type="checkbox" id="onlineToggle" checked onchange="handleOnlineToggle()">
                 <span class="slider"></span>
             </label>
+            <button onclick="openSettings()" class="text-slate-400 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+            </button>
         </div>
-    </header>
-
-    <main id="mainContainer" class="p-4 max-w-xl mx-auto space-y-6 transition-all duration-300">
-        
-        <!-- Tab: Dashboard -->
-        <div id="tab-dashboard" class="tab-content space-y-6">
-            <section class="nexus-card p-8 bg-gradient-to-br from-blue-600/20 to-purple-600/20 border-blue-500/20">
-                <p class="text-[10px] font-black uppercase opacity-60 tracking-widest text-center">Total Net Assets</p>
-                <h2 id="totalBalance" class="text-4xl font-black font-kanit text-center mt-2">฿0.00</h2>
-                <div class="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-white/10 text-center">
-                    <div>
-                        <p class="text-[9px] opacity-50 uppercase font-bold">Month In</p>
-                        <p id="monthIn" class="text-emerald-400 font-bold font-kanit">฿0.00</p>
-                    </div>
-                    <div>
-                        <p class="text-[9px] opacity-50 uppercase font-bold">Month Out</p>
-                        <p id="monthOut" class="text-rose-400 font-bold font-kanit">฿0.00</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Form -->
-            <section id="formArea" class="nexus-card p-6">
-                <form id="financeForm" class="space-y-4">
-                    <input type="text" id="title" placeholder="ชื่อรายการ..." required class="w-full bg-slate-900/50 p-4 rounded-2xl border border-white/5 outline-none focus:border-blue-500">
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="number" id="amount" placeholder="จำนวนเงิน" step="0.01" required class="w-full bg-slate-900/50 p-4 rounded-2xl border border-white/5 outline-none font-kanit text-blue-400">
-                        <select id="type" class="bg-slate-900/50 p-4 rounded-2xl border border-white/5 font-bold">
-                            <option value="expense">รายจ่าย</option>
-                            <option value="income">รายรับ</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="w-full bg-blue-600 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-blue-500/20">บันทึกข้อมูล</button>
-                </form>
-            </section>
-
-            <!-- Active Logs -->
-            <div class="space-y-4">
-                <h3 class="px-2 text-[10px] font-black opacity-40 uppercase tracking-widest flex justify-between">
-                    Active Logs (48H)
-                    <span id="autoPurgeTimer" class="text-blue-500">Auto-Purge Active</span>
-                </h3>
-                <div id="logList" class="space-y-3"></div>
-            </div>
-        </div>
-
-        <!-- Tab: Goals -->
-        <div id="tab-goals" class="tab-content hidden space-y-6">
-            <section class="nexus-card p-6 bg-emerald-500/5 border-emerald-500/10">
-                <h3 class="font-black font-kanit mb-4">Financial Goals</h3>
-                <div id="goalStatus">
-                    <!-- Goal content -->
-                </div>
-            </section>
-
-            <section class="nexus-card p-6">
-                <h4 class="text-xs font-black uppercase opacity-50 mb-4 tracking-widest">ตั้งค่าเป้าหมาย</h4>
-                <div class="space-y-4">
-                    <input type="text" id="goalTitle" placeholder="เป้าหมาย เช่น ออมซื้อบ้าน" class="w-full bg-slate-900/50 p-4 rounded-xl border border-white/5 outline-none">
-                    <input type="number" id="goalTarget" placeholder="จำนวนเงินเป้าหมาย" class="w-full bg-slate-900/50 p-4 rounded-xl border border-white/5 outline-none">
-                    <button onclick="updateGoalSettings()" class="w-full bg-emerald-600 py-3 rounded-xl font-bold text-sm">อัปเดตเป้าหมาย</button>
-                </div>
-            </section>
-        </div>
-
-        <!-- Tab: Analytics -->
-        <div id="tab-analytics" class="tab-content hidden space-y-6">
-            <section class="nexus-card p-6">
-                <h3 class="font-black font-kanit mb-6 text-center">การวิเคราะห์พฤติกรรมการใช้จ่าย</h3>
-                <div class="w-full max-w-[250px] mx-auto">
-                    <canvas id="analyticsChart"></canvas>
-                </div>
-                <div id="chartLegend" class="mt-6 space-y-2"></div>
-            </section>
-        </div>
-
-        <!-- Tab: Settings -->
-        <div id="tab-settings" class="tab-content hidden space-y-6">
-            <section class="nexus-card p-6 border-rose-500/20 bg-rose-500/5">
-                <h3 class="font-black font-kanit text-rose-500 mb-2">ล้างข้อมูลทั้งหมด</h3>
-                <p class="text-xs opacity-60 mb-6 font-medium">เมื่อยืนยัน ระบบจะทำการลบประวัติ รายรับ-รายจ่าย และเป้าหมายทั้งหมดถาวร ไม่สามารถกู้คืนได้</p>
-                <button onclick="confirmNuclearReset()" class="w-full bg-rose-600/20 border border-rose-600 text-rose-500 py-4 rounded-2xl font-black text-xs uppercase tracking-widest">
-                    ดำเนินการลบข้อมูลถาวร
-                </button>
-            </section>
-            <div class="text-center opacity-30 py-10">
-                <p class="text-[10px] font-black uppercase">System Core Version 31.1.0.812</p>
-                <p class="text-[9px]">OMNI-DATA-PROTECTION ENABLED</p>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- Navigation Bar -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-xl border-t border-white/5 flex justify-around p-3 z-50">
-        <button onclick="switchTab('dashboard')" class="nav-btn active" id="btn-dashboard">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-            <span>Home</span>
-        </button>
-        <button onclick="switchTab('goals')" class="nav-btn" id="btn-goals">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-            <span>Goals</span>
-        </button>
-        <button onclick="switchTab('analytics')" class="nav-btn" id="btn-analytics">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 01-2 2h22a2 2 0 01-2-2v-6a2 2 0 00-2-2h-2a2 2 0 00-2 2v6"></path></svg>
-            <span>Stats</span>
-        </button>
-        <button onclick="switchTab('settings')" class="nav-btn" id="btn-settings">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-            <span>Setup</span>
-        </button>
     </nav>
 
-    <!-- Overlay Alerts -->
-    <div id="systemAlert" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-6">
-        <div class="nexus-card p-8 w-full max-w-sm text-center border-blue-500/50">
-            <div id="alertIcon" class="mb-4"></div>
-            <h3 id="alertTitle" class="font-black text-xl font-kanit mb-2">Alert</h3>
-            <p id="alertMsg" class="text-sm opacity-70 mb-6"></p>
-            <div id="alertAction"></div>
+    <main class="max-w-2xl mx-auto space-y-6">
+        
+        <!-- Total Balance View -->
+        <section class="nexus-card p-8 bg-gradient-to-br from-indigo-900/20 to-transparent border-indigo-500/20">
+            <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-[0.3em] mb-2">Net Worth Portfolio</p>
+            <div class="flex items-baseline gap-2">
+                <span class="text-2xl font-light opacity-50">฿</span>
+                <h2 id="displayBalance" class="text-5xl font-black font-kanit tracking-tighter">0.00</h2>
+            </div>
+        </section>
+
+        <!-- Goal Section -->
+        <section id="goalContainer" class="nexus-card p-6 border-amber-500/10">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h3 class="font-bold text-amber-500 text-sm uppercase tracking-wider">Financial Goal</h3>
+                    <p id="goalNameDisplay" class="text-xl font-black font-kanit text-slate-200">No Active Goal</p>
+                </div>
+                <button onclick="openGoalSettings()" class="text-[10px] font-black uppercase text-amber-500/60 hover:text-amber-500">Configure</button>
+            </div>
+
+            <div id="goalProgressWrapper" class="hidden">
+                <div class="h-3 bg-slate-800 rounded-full overflow-hidden mb-3">
+                    <div id="goalProgressBar" class="progress-fill h-full bg-gradient-to-r from-amber-600 to-yellow-400 w-0"></div>
+                </div>
+                <div class="flex justify-between text-[11px] font-bold">
+                    <span id="goalPercentText" class="text-amber-500">0%</span>
+                    <span id="goalStatusText" class="opacity-40">฿0 / ฿0</span>
+                </div>
+            </div>
+
+            <!-- Auto-Reset Notification -->
+            <div id="goalCompleteNotif" class="hidden mt-4 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <span class="flex h-3 w-3 relative">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                    </span>
+                    <p class="text-xs font-bold text-emerald-400">Goal Complete! Purging in <span id="purgeTimer">10</span>s</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Form Module -->
+        <section id="formModule" class="nexus-card p-6 relative overflow-hidden">
+            <div id="offlineOverlay" class="absolute inset-0 bg-slate-950/80 backdrop-blur-md z-10 flex flex-col items-center justify-center hidden">
+                <svg class="w-12 h-12 text-rose-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                <p class="text-xs font-black uppercase tracking-widest text-rose-500">System Offline</p>
+            </div>
+
+            <form id="txForm" class="space-y-4">
+                <input type="text" id="txLabel" placeholder="รายการอาหาร, เงินเดือน..." required class="w-full bg-slate-800/40 border border-white/5 p-4 rounded-2xl focus:border-indigo-500 outline-none transition-all text-sm">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="number" id="txAmount" placeholder="0.00" required class="w-full bg-slate-800/40 border border-white/5 p-4 rounded-2xl focus:border-indigo-500 outline-none transition-all font-black">
+                    <select id="txType" class="bg-slate-800/40 border border-white/5 p-4 rounded-2xl font-bold outline-none cursor-pointer">
+                        <option value="income">รายรับ (+)</option>
+                        <option value="expense">รายจ่าย (-)</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 p-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all transform active:scale-[0.98] shadow-lg shadow-indigo-600/20">Record Flow</button>
+            </form>
+        </section>
+
+        <!-- Transaction History -->
+        <div class="flex justify-between items-center px-2">
+            <h3 class="text-[10px] font-black uppercase opacity-40 tracking-widest">Rolling History (48H Cycle)</h3>
+            <span class="text-[9px] font-bold text-indigo-400 bg-indigo-400/10 px-2 py-0.5 rounded-full">AUTO-PURGE ENABLED</span>
+        </div>
+        <div id="historyList" class="space-y-3">
+            <!-- Items injected by JS -->
+        </div>
+    </main>
+
+    <!-- Modal Overlays -->
+    <div id="modalBackdrop" class="fixed inset-0 bg-slate-950/90 backdrop-blur-xl z-[100] hidden items-center justify-center p-6">
+        
+        <!-- Goal Setup -->
+        <div id="goalModal" class="nexus-card p-8 w-full max-w-sm hidden border-amber-500/20">
+            <h3 class="text-lg font-black font-kanit text-amber-500 mb-6 uppercase">Set New Goal</h3>
+            <div class="space-y-4">
+                <input type="text" id="newGoalName" placeholder="ชื่อเป้าหมาย..." class="w-full bg-slate-900 border border-white/10 p-4 rounded-2xl outline-none">
+                <input type="number" id="newGoalTarget" placeholder="เป้าหมาย (บาท)..." class="w-full bg-slate-900 border border-white/10 p-4 rounded-2xl outline-none font-black">
+                <div class="flex gap-3 pt-2">
+                    <button onclick="saveGoal()" class="flex-1 bg-amber-500 text-slate-950 font-black p-4 rounded-2xl text-[10px] uppercase tracking-widest">Initialize</button>
+                    <button onclick="closeModals()" class="flex-1 bg-slate-800 text-white font-black p-4 rounded-2xl text-[10px] uppercase tracking-widest">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Master Settings -->
+        <div id="settingsModal" class="nexus-card p-8 w-full max-w-sm hidden border-rose-500/20">
+            <h3 class="text-lg font-black font-kanit text-indigo-400 mb-6 uppercase tracking-widest text-center">Security & Wipe</h3>
+            <div class="space-y-6">
+                <div class="p-4 bg-indigo-500/5 rounded-2xl border border-indigo-500/10">
+                    <p class="text-[10px] font-black text-indigo-400 uppercase mb-2">History Management</p>
+                    <p class="text-[11px] opacity-60 leading-relaxed">ระบบจะลบประวัติรายการอัตโนมัติทุกๆ 2 วันเพื่อให้ฐานข้อมูลรวดเร็ว แต่ยอดเงินรวมจะไม่หายไป</p>
+                </div>
+                <div class="pt-4 border-t border-white/5">
+                    <p class="text-[10px] font-black text-rose-500 uppercase mb-3 text-center">Nuclear Factory Reset</p>
+                    <button onclick="confirmReset()" class="w-full bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white border border-rose-500/20 p-4 rounded-2xl text-[10px] font-black uppercase transition-all">ล้างข้อมูลทั้งหมด (กู้คืนไม่ได้)</button>
+                </div>
+                <button onclick="closeModals()" class="w-full text-[10px] font-black uppercase opacity-30 mt-4">Close Settings</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // --- Core Engine 31.1.0 ---
-        const DB_KEY = 'finance_zen_supernova_v151'; 
-        const GOAL_KEY = 'omni_goal_v311';
-        const STATE_KEY = 'omni_state_v311';
-        
+        // --- Nexus Persistence Engine v41.0.0 ---
+        const KEYS = {
+            TX: 'nexus_v41_transactions',
+            VAULT: 'nexus_v41_vault',
+            GOAL: 'nexus_v41_goal',
+            CONFIG: 'nexus_v41_config'
+        };
+
         let state = {
             transactions: [],
-            isOnline: true,
-            goal: { title: "เก็บออมทั่วไป", target: 10000, current: 0, completed: false }
+            vaultBalance: 0,
+            goal: null,
+            online: true
         };
 
-        let chart = null;
+        // --- 1. Data Migration (ห้ามข้อมูลหาย) ---
+        function migrateLegacyData() {
+            // ค้นหาข้อมูลจากเวอร์ชันเก่า (เช่น v40 หรือ keys เก่า)
+            const oldTx = localStorage.getItem('nx41_transactions') || localStorage.getItem('transactions') || '[]';
+            const oldVault = localStorage.getItem('nx41_vault_balance') || localStorage.getItem('total_balance') || '0';
+            const oldGoal = localStorage.getItem('nx41_goal_data') || localStorage.getItem('goal_data') || 'null';
 
-        const init = () => {
-            // Load Legacy Data
-            const stored = localStorage.getItem(DB_KEY);
-            if (stored) state.transactions = JSON.parse(stored);
-
-            const storedGoal = localStorage.getItem(GOAL_KEY);
-            if (storedGoal) state.goal = JSON.parse(storedGoal);
-
-            const storedState = localStorage.getItem(STATE_KEY);
-            if (storedState) state.isOnline = JSON.parse(storedState);
-
-            document.getElementById('onlineToggle').checked = state.isOnline;
-            
-            autoPurge();
-            toggleSystemState();
-            render();
-            initChart();
-        };
-
-        const toggleSystemState = () => {
-            state.isOnline = document.getElementById('onlineToggle').checked;
-            localStorage.setItem(STATE_KEY, JSON.stringify(state.isOnline));
-            
-            const main = document.getElementById('mainContainer');
-            const status = document.getElementById('statusIndicator');
-            
-            if (!state.isOnline) {
-                main.classList.add('offline-mode');
-                status.innerText = "System Offline - Read Only";
-                status.className = "text-[10px] font-black uppercase tracking-[0.2em] text-rose-500";
-            } else {
-                main.classList.remove('offline-mode');
-                status.innerText = "System Online";
-                status.className = "text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400";
+            // โอนย้ายเข้าสู่โครงสร้างใหม่ถ้ายังไม่มีข้อมูลใน v41
+            if (!localStorage.getItem(KEYS.TX)) {
+                localStorage.setItem(KEYS.TX, oldTx);
+                localStorage.setItem(KEYS.VAULT, oldVault);
+                localStorage.setItem(KEYS.GOAL, oldGoal);
+                console.log("Migration Complete: All data from previous versions synced.");
             }
-        };
+        }
 
-        const autoPurge = () => {
-            const now = new Date();
-            let changed = false;
-            state.transactions = state.transactions.map(t => {
-                const diff = (now - new Date(t.date)) / (1000 * 60 * 60);
-                if (diff >= 48 && !t.isArchived) {
-                    changed = true;
-                    return { ...t, isArchived: true };
-                }
-                return t;
-            });
-            if (changed) save();
-        };
+        // --- 2. System Core ---
+        function loadState() {
+            state.transactions = JSON.parse(localStorage.getItem(KEYS.TX) || '[]');
+            state.vaultBalance = parseFloat(localStorage.getItem(KEYS.VAULT) || '0');
+            state.goal = JSON.parse(localStorage.getItem(KEYS.GOAL) || 'null');
+            const config = JSON.parse(localStorage.getItem(KEYS.CONFIG) || '{"online": true}');
+            state.online = config.online;
+        }
 
-        const save = () => {
-            localStorage.setItem(DB_KEY, JSON.stringify(state.transactions));
-            localStorage.setItem(GOAL_KEY, JSON.stringify(state.goal));
-        };
+        function saveState() {
+            localStorage.setItem(KEYS.TX, JSON.stringify(state.transactions));
+            localStorage.setItem(KEYS.VAULT, state.vaultBalance.toString());
+            localStorage.setItem(KEYS.GOAL, JSON.stringify(state.goal));
+            localStorage.setItem(KEYS.CONFIG, JSON.stringify({ online: state.online }));
+        }
 
-        const switchTab = (tabId) => {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+        function autoPurge() {
+            const now = Date.now();
+            const TWO_DAYS = 2 * 24 * 60 * 60 * 1000;
             
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`btn-${tabId}`).classList.add('active');
+            const toPurge = state.transactions.filter(t => (now - new Date(t.date).getTime()) >= TWO_DAYS);
             
-            if(tabId === 'analytics') updateChart();
-        };
+            if (toPurge.length > 0) {
+                // ลบรายการแต่เก็บยอดเงินไว้ใน Vault
+                toPurge.forEach(t => {
+                    if (t.type === 'income') state.vaultBalance += parseFloat(t.amount);
+                    else state.vaultBalance -= parseFloat(t.amount);
+                });
 
-        const render = () => {
-            const fmt = n => new Intl.NumberFormat('th-TH').format(n);
-            let bal = 0, mIn = 0, mOut = 0;
-            const now = new Date();
+                state.transactions = state.transactions.filter(t => (now - new Date(t.date).getTime()) < TWO_DAYS);
+                saveState();
+                console.log(`[Auto-Purge] ${toPurge.length} items moved to permanent vault storage.`);
+            }
+        }
 
+        // --- 3. UI Interactions ---
+        function render() {
+            // Update Balance
+            let currentFlow = 0;
             state.transactions.forEach(t => {
-                const val = parseFloat(t.amount);
-                const isMonth = new Date(t.date).getMonth() === now.getMonth();
-                if (t.type === 'income') {
-                    bal += val;
-                    if (isMonth) mIn += val;
-                } else {
-                    bal -= val;
-                    if (isMonth) mOut += val;
-                }
+                if (t.type === 'income') currentFlow += parseFloat(t.amount);
+                else currentFlow -= parseFloat(t.amount);
             });
+            const totalNet = state.vaultBalance + currentFlow;
+            document.getElementById('displayBalance').innerText = totalNet.toLocaleString(undefined, {minimumFractionDigits: 2});
 
-            document.getElementById('totalBalance').innerText = `฿${fmt(bal.toFixed(2))}`;
-            document.getElementById('monthIn').innerText = `฿${fmt(mIn.toFixed(2))}`;
-            document.getElementById('monthOut').innerText = `฿${fmt(mOut.toFixed(2))}`;
+            // Update Goal
+            renderGoal(totalNet);
 
-            // Render Logs
-            const list = document.getElementById('logList');
-            const active = state.transactions.filter(t => !t.isArchived).sort((a,b) => new Date(b.date) - new Date(a.date));
-            list.innerHTML = active.map(t => `
-                <div class="nexus-card p-4 flex justify-between items-center">
-                    <div>
-                        <p class="font-bold text-sm">${t.title}</p>
-                        <p class="text-[9px] opacity-40 uppercase font-black">${new Date(t.date).toLocaleTimeString('th-TH')}</p>
-                    </div>
-                    <p class="font-kanit font-bold ${t.type === 'income' ? 'text-emerald-400' : 'text-rose-400'}">
-                        ${t.type === 'income' ? '+' : '-'}฿${fmt(t.amount)}
-                    </p>
-                </div>
-            `).join('') || '<div class="text-center py-10 opacity-20 text-xs">No Recent Data</div>';
+            // Update Online/Offline UI
+            document.getElementById('onlineToggle').checked = state.online;
+            document.getElementById('offlineOverlay').classList.toggle('hidden', state.online);
+            document.getElementById('statusDot').className = `w-2 h-2 rounded-full ${state.online ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`;
+            document.getElementById('statusText').innerText = state.online ? "System Online" : "System Offline";
+            document.getElementById('statusText').className = `text-[10px] font-bold uppercase tracking-widest ${state.online ? 'text-emerald-500' : 'text-rose-500'}`;
 
-            renderGoal();
-        };
-
-        const renderGoal = () => {
-            const goalEl = document.getElementById('goalStatus');
-            const percent = Math.min((state.goal.current / state.goal.target) * 100, 100).toFixed(0);
-            
-            goalEl.innerHTML = `
-                <div class="flex justify-between items-end mb-2">
-                    <div>
-                        <p class="text-[10px] font-black opacity-50 uppercase tracking-widest">${state.goal.title}</p>
-                        <p class="font-kanit font-bold text-xl">${percent}%</p>
-                    </div>
-                    <p class="text-[10px] font-bold opacity-50">฿${state.goal.current} / ฿${state.goal.target}</p>
-                </div>
-                <div class="w-full h-3 bg-slate-800 rounded-full overflow-hidden">
-                    <div class="goal-progress h-full bg-emerald-500" style="width: ${percent}%"></div>
-                </div>
-            `;
-
-            if (percent >= 100 && !state.goal.completed) {
-                state.goal.completed = true;
-                handleGoalCompletion();
-            }
-        };
-
-        const handleGoalCompletion = () => {
-            showAlert("Success!", "เป้าหมายสำเร็จแล้ว 100%! ระบบจะลบเป้าหมายนี้ใน 10 วินาที...", "success");
-            
-            setTimeout(() => {
-                // Reset Goal logic
-                state.goal = { title: "เป้าหมายใหม่ (Auto)", target: 10000, current: 0, completed: false };
-                save();
-                showAlert("New Cycle", "เป้าหมายใหม่พร้อมใช้งานแล้ว!", "info");
-                setTimeout(() => { 
-                    hideAlert(); 
-                    render(); 
-                }, 3000);
-            }, 10000);
-        };
-
-        const updateGoalSettings = () => {
-            const t = document.getElementById('goalTitle').value;
-            const a = document.getElementById('goalTarget').value;
-            if(!t || !a) return;
-            state.goal.title = t;
-            state.goal.target = parseFloat(a);
-            state.goal.current = 0;
-            state.goal.completed = false;
-            save();
-            render();
-            showAlert("Updated", "ตั้งค่าเป้าหมายใหม่เรียบร้อย", "success");
-            setTimeout(hideAlert, 1500);
-        };
-
-        const initChart = () => {
-            const ctx = document.getElementById('analyticsChart').getContext('2d');
-            chart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Income', 'Expense', 'Goal Progress'],
-                    datasets: [{
-                        data: [0, 0, 0],
-                        backgroundColor: ['#10b981', '#ef4444', '#3b82f6'],
-                        borderWidth: 0,
-                        hoverOffset: 10
-                    }]
-                },
-                options: {
-                    cutout: '75%',
-                    plugins: { legend: { display: false } }
-                }
-            });
-        };
-
-        const updateChart = () => {
-            let inc = 0, exp = 0;
-            state.transactions.forEach(t => {
-                if(t.type === 'income') inc += parseFloat(t.amount);
-                else exp += parseFloat(t.amount);
-            });
-            
-            chart.data.datasets[0].data = [inc, exp, state.goal.current];
-            chart.update();
-
-            const legend = document.getElementById('chartLegend');
-            legend.innerHTML = `
-                <div class="flex justify-between items-center text-xs font-bold">
-                    <span class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-emerald-500"></div> รายรับสะสม</span>
-                    <span>฿${inc.toLocaleString()}</span>
-                </div>
-                <div class="flex justify-between items-center text-xs font-bold">
-                    <span class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-rose-500"></div> รายจ่ายสะสม</span>
-                    <span>฿${exp.toLocaleString()}</span>
-                </div>
-                <div class="flex justify-between items-center text-xs font-bold">
-                    <span class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-blue-500"></div> เงินออมเป้าหมาย</span>
-                    <span>฿${state.goal.current.toLocaleString()}</span>
-                </div>
-            `;
-        };
-
-        const confirmNuclearReset = () => {
-            showAlert("ยืนยันการลบ?", "ข้อมูลทั้งหมดจะหายถาวร ไม่สามารถกู้คืนได้", "danger", true);
-        };
-
-        const performNuclearReset = () => {
-            localStorage.clear();
-            state = {
-                transactions: [],
-                isOnline: true,
-                goal: { title: "เป้าหมายใหม่", target: 10000, current: 0, completed: false }
-            };
-            save();
-            location.reload();
-        };
-
-        const showAlert = (title, msg, type, showAction = false) => {
-            const alert = document.getElementById('systemAlert');
-            const aTitle = document.getElementById('alertTitle');
-            const aMsg = document.getElementById('alertMsg');
-            const aAction = document.getElementById('alertAction');
-            
-            aTitle.innerText = title;
-            aMsg.innerText = msg;
-            
-            if(showAction) {
-                aAction.innerHTML = `
-                    <div class="flex gap-3">
-                        <button onclick="hideAlert()" class="flex-1 bg-slate-800 py-3 rounded-xl font-bold">ยกเลิก</button>
-                        <button onclick="performNuclearReset()" class="flex-1 bg-rose-600 py-3 rounded-xl font-bold text-white">ยืนยันการลบ</button>
-                    </div>
-                `;
+            // Update History
+            const historyList = document.getElementById('historyList');
+            if (state.transactions.length === 0) {
+                historyList.innerHTML = `<div class="text-center py-10 opacity-20 text-[10px] font-black uppercase tracking-widest italic">No flow detected</div>`;
             } else {
-                aAction.innerHTML = `<button onclick="hideAlert()" class="w-full bg-blue-600 py-3 rounded-xl font-bold">ตกลง</button>`;
+                historyList.innerHTML = state.transactions.slice().reverse().map(t => `
+                    <div class="nexus-card p-4 flex justify-between items-center group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center ${t.type === 'income' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}">
+                                ${t.type === 'income' ? '↙' : '↗'}
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold">${t.label}</p>
+                                <p class="text-[8px] opacity-30 font-black uppercase">${new Date(t.date).toLocaleString('th-TH')}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-kanit font-black ${t.type === 'income' ? 'text-emerald-400' : 'text-rose-400'}">
+                                ${t.type === 'income' ? '+' : '-'} ${parseFloat(t.amount).toLocaleString()}
+                            </p>
+                        </div>
+                    </div>
+                `).join('');
             }
+        }
 
-            alert.classList.remove('hidden');
-        };
+        function renderGoal(currentTotal) {
+            const wrapper = document.getElementById('goalProgressWrapper');
+            const nameDisp = document.getElementById('goalNameDisplay');
+            
+            if (state.goal) {
+                wrapper.classList.remove('hidden');
+                nameDisp.innerText = state.goal.name;
+                
+                const percent = Math.min(100, Math.floor((currentTotal / state.goal.target) * 100));
+                document.getElementById('goalProgressBar').style.width = `${percent}%`;
+                document.getElementById('goalPercentText').innerText = `${percent}%`;
+                document.getElementById('goalStatusText').innerText = `฿${currentTotal.toLocaleString()} / ฿${state.goal.target.toLocaleString()}`;
+                
+                if (percent >= 100) handleGoalCompletion();
+            } else {
+                wrapper.classList.add('hidden');
+                nameDisp.innerText = "No Active Goal";
+            }
+        }
 
-        const hideAlert = () => document.getElementById('systemAlert').classList.add('hidden');
+        let isPurgingGoal = false;
+        function handleGoalCompletion() {
+            if (isPurgingGoal) return;
+            isPurgingGoal = true;
 
-        document.getElementById('financeForm').onsubmit = (e) => {
+            const notif = document.getElementById('goalCompleteNotif');
+            const timerText = document.getElementById('purgeTimer');
+            document.getElementById('goalContainer').classList.add('goal-complete');
+            notif.classList.remove('hidden');
+
+            let count = 10;
+            const interval = setInterval(() => {
+                count--;
+                timerText.innerText = count;
+                if (count <= 0) {
+                    clearInterval(interval);
+                    
+                    // ลบเป้าหมาย (Auto-delete in 10s)
+                    state.goal = null;
+                    saveState();
+                    notif.classList.add('hidden');
+                    document.getElementById('goalContainer').classList.remove('goal-complete');
+                    render();
+                    isPurgingGoal = false;
+
+                    // เปิด Financial Goal ใหม่ให้ใช้งานใน 3 วินาที
+                    setTimeout(() => {
+                        openGoalSettings();
+                    }, 3000);
+                }
+            }, 1000);
+        }
+
+        // --- 4. Handlers ---
+        function handleOnlineToggle() {
+            state.online = document.getElementById('onlineToggle').checked;
+            saveState();
+            render();
+        }
+
+        document.getElementById('txForm').onsubmit = (e) => {
             e.preventDefault();
-            if(!state.isOnline) return;
+            if (!state.online) return;
 
-            const amt = parseFloat(document.getElementById('amount').value);
-            const type = document.getElementById('type').value;
+            const label = document.getElementById('txLabel').value;
+            const amount = parseFloat(document.getElementById('txAmount').value);
+            const type = document.getElementById('txType').value;
 
-            const newTx = {
-                id: Date.now(),
-                title: document.getElementById('title').value,
-                amount: amt,
-                type: type,
-                date: new Date().toISOString(),
-                isArchived: false
-            };
+            state.transactions.push({
+                label, amount, type, date: new Date().toISOString()
+            });
 
-            state.transactions.push(newTx);
-            
-            // หากเป็นรายรับ จะเติมเข้าเป้าหมายอัตโนมัติ 10% (ตัวอย่าง logic การออม)
-            if(type === 'income') {
-                state.goal.current += (amt * 0.1); 
-            }
-
-            save();
+            saveState();
             render();
             e.target.reset();
         };
 
-        window.onload = init;
+        function saveGoal() {
+            const name = document.getElementById('newGoalName').value;
+            const target = parseFloat(document.getElementById('newGoalTarget').value);
+            if (name && target > 0) {
+                state.goal = { name, target };
+                saveState();
+                closeModals();
+                render();
+            }
+        }
+
+        function confirmReset() {
+            if (confirm("🚨 คำเตือนรุนแรง: ข้อมูลทั้งหมดจะถูกทำลายถาวร และไม่สามารถกู้คืนได้แม้โดยทีมวิศวกร ยืนยันการล้างข้อมูล?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        function openGoalSettings() {
+            document.getElementById('modalBackdrop').style.display = 'flex';
+            document.getElementById('goalModal').classList.remove('hidden');
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        function openSettings() {
+            document.getElementById('modalBackdrop').style.display = 'flex';
+            document.getElementById('settingsModal').classList.remove('hidden');
+            document.getElementById('goalModal').classList.add('hidden');
+        }
+
+        function closeModals() {
+            document.getElementById('modalBackdrop').style.display = 'none';
+        }
+
+        // --- Initialize ---
+        window.onload = () => {
+            migrateLegacyData();
+            loadState();
+            autoPurge();
+            render();
+
+            // Check auto purge every hour
+            setInterval(autoPurge, 3600000);
+        };
     </script>
 </body>
 </html>
