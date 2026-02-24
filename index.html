@@ -3,422 +3,452 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Finance Nexus 29.1.0 - Omni-Nexus</title>
+    <title>Omni Finance 31.1.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --nexus-primary: #6366f1;
+            --nexus-primary: #3b82f6;
             --nexus-success: #10b981;
             --nexus-danger: #ef4444;
-            --nexus-bg: #030712;
+            --nexus-bg: #020617;
         }
-
-        body {
-            font-family: 'Sarabun', sans-serif;
-            background-color: var(--nexus-bg);
-            color: #f3f4f6;
-            min-height: 100vh;
-        }
-
+        body { font-family: 'Sarabun', sans-serif; background-color: var(--nexus-bg); color: #f1f5f9; overflow-x: hidden; }
         .font-kanit { font-family: 'Kanit', sans-serif; }
-
-        .nexus-card {
-            background: rgba(17, 24, 39, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 24px;
-        }
-
-        .goal-progress-bar {
-            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .offline-mode {
-            pointer-events: none;
-            filter: grayscale(0.8) opacity(0.5);
-        }
-
-        /* Switch Styling */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 26px;
-        }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #374151;
-            transition: .4s;
-            border-radius: 34px;
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px; width: 18px;
-            left: 4px; bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        input:checked + .slider { background-color: var(--nexus-success); }
-        input:checked + .slider:before { transform: translateX(24px); }
-
-        .status-badge {
-            font-size: 10px;
-            padding: 2px 8px;
-            border-radius: 100px;
-            font-weight: 900;
-            letter-spacing: 1px;
-        }
-
-        @keyframes success-pulse {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-            70% { box-shadow: 0 0 0 20px rgba(16, 185, 129, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-        .goal-complete { animation: success-pulse 2s infinite; }
+        .nexus-card { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px; }
+        .nav-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #64748b; font-size: 10px; font-weight: bold; }
+        .nav-btn.active { color: var(--nexus-primary); }
+        .offline-mode { pointer-events: none; opacity: 0.3; filter: grayscale(1); }
+        .switch-input:checked + .slider { background-color: var(--nexus-success); }
+        .switch-input:checked + .slider:before { transform: translateX(26px); }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #334155; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        .goal-progress { transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="pb-24">
 
-    <div class="max-w-2xl mx-auto space-y-6">
-        <!-- Header & Connectivity -->
-        <header class="flex justify-between items-center nexus-card p-5">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path></svg>
-                </div>
-                <div>
-                    <h1 class="font-black text-sm tracking-tighter uppercase leading-none">Omni-Nexus</h1>
-                    <span class="text-[10px] text-indigo-400 font-bold">STABLE V29.1.0</span>
-                </div>
-            </div>
-            
-            <div class="flex items-center gap-4">
-                <div id="statusIndicator" class="flex flex-col items-end">
-                    <span id="statusText" class="status-badge bg-emerald-500/10 text-emerald-500">ONLINE</span>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="connectivitySwitch" checked onchange="toggleConnectivity()">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </header>
+    <!-- Header & Online Switch -->
+    <header class="p-6 flex justify-between items-center bg-slate-900/50 sticky top-0 z-50 backdrop-blur-md border-b border-white/5">
+        <div>
+            <h1 class="font-black text-lg font-kanit tracking-tight">OMNI <span class="text-blue-500">31.1.0</span></h1>
+            <p id="statusIndicator" class="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-400">System Online</p>
+        </div>
+        <div class="flex items-center gap-3 bg-slate-800/50 p-2 rounded-full px-4 border border-white/5">
+            <span class="text-[10px] font-black opacity-50">SYNC</span>
+            <label class="relative inline-block w-12 h-6">
+                <input type="checkbox" id="onlineToggle" class="hidden switch-input" checked onchange="toggleSystemState()">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </header>
 
-        <!-- Main Balance -->
-        <section class="nexus-card p-8 bg-gradient-to-br from-gray-900 to-black border-t-2 border-indigo-500/30">
-            <p class="text-[10px] font-black opacity-40 tracking-[0.4em] text-center mb-2 uppercase">Total Consolidated Assets</p>
-            <h2 id="balanceDisplay" class="text-5xl font-black font-kanit text-center text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-200 to-gray-500">฿0.00</h2>
-            
-            <div class="grid grid-cols-2 gap-4 mt-8">
-                <div class="p-4 rounded-3xl bg-emerald-500/5 border border-emerald-500/10">
-                    <p class="text-[9px] font-bold text-emerald-500 uppercase">Cash Inflow</p>
-                    <p id="inflowDisplay" class="text-xl font-bold font-kanit">฿0.00</p>
-                </div>
-                <div class="p-4 rounded-3xl bg-rose-500/5 border border-rose-500/10">
-                    <p class="text-[9px] font-bold text-rose-500 uppercase">Cash Outflow</p>
-                    <p id="outflowDisplay" class="text-xl font-bold font-kanit">฿0.00</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Financial Goals Section -->
-        <section class="nexus-card p-6 border-l-4 border-amber-500/50">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="font-black font-kanit text-lg">Financial Goal</h3>
-                <button onclick="openGoalSettings()" id="goalSetBtn" class="text-[10px] font-bold bg-white/5 px-4 py-2 rounded-xl hover:bg-white/10 transition-all">ตั้งค่าเป้าหมาย</button>
-            </div>
-            
-            <div id="goalContainer">
-                <!-- Goal Content -->
-                <div id="goalActive">
-                    <div class="flex justify-between items-end mb-2">
-                        <div>
-                            <p id="goalNameDisplay" class="text-sm font-bold">ยังไม่มีเป้าหมาย</p>
-                            <p class="text-[10px] opacity-50">สะสมไปแล้ว: <span id="goalCurrentDisplay">฿0</span></p>
-                        </div>
-                        <p id="goalPercentDisplay" class="text-2xl font-black text-amber-400 font-kanit">0%</p>
+    <main id="mainContainer" class="p-4 max-w-xl mx-auto space-y-6 transition-all duration-300">
+        
+        <!-- Tab: Dashboard -->
+        <div id="tab-dashboard" class="tab-content space-y-6">
+            <section class="nexus-card p-8 bg-gradient-to-br from-blue-600/20 to-purple-600/20 border-blue-500/20">
+                <p class="text-[10px] font-black uppercase opacity-60 tracking-widest text-center">Total Net Assets</p>
+                <h2 id="totalBalance" class="text-4xl font-black font-kanit text-center mt-2">฿0.00</h2>
+                <div class="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-white/10 text-center">
+                    <div>
+                        <p class="text-[9px] opacity-50 uppercase font-bold">Month In</p>
+                        <p id="monthIn" class="text-emerald-400 font-bold font-kanit">฿0.00</p>
                     </div>
-                    <div class="w-full h-3 bg-gray-800 rounded-full overflow-hidden">
-                        <div id="goalProgressBar" class="goal-progress-bar h-full bg-gradient-to-r from-amber-600 to-amber-300 w-0"></div>
+                    <div>
+                        <p class="text-[9px] opacity-50 uppercase font-bold">Month Out</p>
+                        <p id="monthOut" class="text-rose-400 font-bold font-kanit">฿0.00</p>
                     </div>
                 </div>
-                
-                <div id="goalEmpty" class="hidden text-center py-4">
-                    <p class="text-xs opacity-40 italic">กำลังเตรียมเป้าหมายใหม่ใน 3 วินาที...</p>
-                </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- Transaction Input -->
-        <section id="inputGroup" class="nexus-card p-6 shadow-2xl">
-            <form id="txForm" class="space-y-4">
-                <div class="grid grid-cols-2 gap-4">
-                    <input type="text" id="txTitle" placeholder="รายการ..." required class="bg-gray-800/50 border border-white/5 p-4 rounded-2xl outline-none focus:border-indigo-500 text-sm">
-                    <input type="number" id="txAmount" placeholder="จำนวนเงิน" required class="bg-gray-800/50 border border-white/5 p-4 rounded-2xl outline-none focus:border-indigo-500 text-sm font-bold text-indigo-400">
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <select id="txType" class="bg-gray-800/50 border border-white/5 p-4 rounded-2xl outline-none text-sm font-bold">
-                        <option value="expense">รายจ่าย (-)</option>
-                        <option value="income">รายรับ (+)</option>
-                    </select>
-                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-indigo-600/20">บันทึกข้อมูล</button>
-                </div>
-            </form>
-        </section>
+            <!-- Form -->
+            <section id="formArea" class="nexus-card p-6">
+                <form id="financeForm" class="space-y-4">
+                    <input type="text" id="title" placeholder="ชื่อรายการ..." required class="w-full bg-slate-900/50 p-4 rounded-2xl border border-white/5 outline-none focus:border-blue-500">
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="number" id="amount" placeholder="จำนวนเงิน" step="0.01" required class="w-full bg-slate-900/50 p-4 rounded-2xl border border-white/5 outline-none font-kanit text-blue-400">
+                        <select id="type" class="bg-slate-900/50 p-4 rounded-2xl border border-white/5 font-bold">
+                            <option value="expense">รายจ่าย</option>
+                            <option value="income">รายรับ</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-blue-500/20">บันทึกข้อมูล</button>
+                </form>
+            </section>
 
-        <!-- History -->
-        <div class="space-y-4">
-            <div class="flex justify-between items-center px-2">
-                <h4 class="text-[10px] font-black opacity-30 uppercase tracking-[0.3em]">History (Rolling 48h)</h4>
-                <div id="autoPurgeTimer" class="text-[9px] font-bold text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full">SHIELD: PROTECTED</div>
-            </div>
-            <div id="historyList" class="space-y-3">
-                <!-- Entries -->
+            <!-- Active Logs -->
+            <div class="space-y-4">
+                <h3 class="px-2 text-[10px] font-black opacity-40 uppercase tracking-widest flex justify-between">
+                    Active Logs (48H)
+                    <span id="autoPurgeTimer" class="text-blue-500">Auto-Purge Active</span>
+                </h3>
+                <div id="logList" class="space-y-3"></div>
             </div>
         </div>
 
-        <!-- Master Settings -->
-        <section class="pt-10 border-t border-white/5">
-            <button onclick="confirmMasterReset()" class="w-full py-4 rounded-2xl border border-rose-500/20 text-rose-500 text-[10px] font-black uppercase tracking-widest hover:bg-rose-500/5 transition-all">ล้างข้อมูลทั้งหมด (Reset Master Database)</button>
-        </section>
-    </div>
+        <!-- Tab: Goals -->
+        <div id="tab-goals" class="tab-content hidden space-y-6">
+            <section class="nexus-card p-6 bg-emerald-500/5 border-emerald-500/10">
+                <h3 class="font-black font-kanit mb-4">Financial Goals</h3>
+                <div id="goalStatus">
+                    <!-- Goal content -->
+                </div>
+            </section>
 
-    <!-- Modals -->
-    <div id="goalModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-        <div class="nexus-card p-8 w-full max-w-sm border border-indigo-500/30">
-            <h3 class="font-black text-xl mb-6 font-kanit">ตั้งค่า Financial Goal</h3>
-            <div class="space-y-4">
-                <div>
-                    <label class="text-[10px] font-bold uppercase opacity-50 mb-1 block">ชื่อเป้าหมาย</label>
-                    <input type="text" id="setGoalName" class="w-full bg-gray-900 p-4 rounded-xl border border-white/10 outline-none">
+            <section class="nexus-card p-6">
+                <h4 class="text-xs font-black uppercase opacity-50 mb-4 tracking-widest">ตั้งค่าเป้าหมาย</h4>
+                <div class="space-y-4">
+                    <input type="text" id="goalTitle" placeholder="เป้าหมาย เช่น ออมซื้อบ้าน" class="w-full bg-slate-900/50 p-4 rounded-xl border border-white/5 outline-none">
+                    <input type="number" id="goalTarget" placeholder="จำนวนเงินเป้าหมาย" class="w-full bg-slate-900/50 p-4 rounded-xl border border-white/5 outline-none">
+                    <button onclick="updateGoalSettings()" class="w-full bg-emerald-600 py-3 rounded-xl font-bold text-sm">อัปเดตเป้าหมาย</button>
                 </div>
-                <div>
-                    <label class="text-[10px] font-bold uppercase opacity-50 mb-1 block">ยอดเงินที่ต้องการ (฿)</label>
-                    <input type="number" id="setGoalTarget" class="w-full bg-gray-900 p-4 rounded-xl border border-white/10 outline-none font-bold text-amber-400">
+            </section>
+        </div>
+
+        <!-- Tab: Analytics -->
+        <div id="tab-analytics" class="tab-content hidden space-y-6">
+            <section class="nexus-card p-6">
+                <h3 class="font-black font-kanit mb-6 text-center">การวิเคราะห์พฤติกรรมการใช้จ่าย</h3>
+                <div class="w-full max-w-[250px] mx-auto">
+                    <canvas id="analyticsChart"></canvas>
                 </div>
-                <div class="flex gap-3 pt-4">
-                    <button onclick="closeGoalSettings()" class="flex-1 py-3 font-bold text-xs uppercase opacity-50">ยกเลิก</button>
-                    <button onclick="saveGoalSettings()" class="flex-1 py-3 bg-amber-600 rounded-xl font-bold text-xs uppercase shadow-lg shadow-amber-600/20">บันทึกเป้าหมาย</button>
-                </div>
+                <div id="chartLegend" class="mt-6 space-y-2"></div>
+            </section>
+        </div>
+
+        <!-- Tab: Settings -->
+        <div id="tab-settings" class="tab-content hidden space-y-6">
+            <section class="nexus-card p-6 border-rose-500/20 bg-rose-500/5">
+                <h3 class="font-black font-kanit text-rose-500 mb-2">ล้างข้อมูลทั้งหมด</h3>
+                <p class="text-xs opacity-60 mb-6 font-medium">เมื่อยืนยัน ระบบจะทำการลบประวัติ รายรับ-รายจ่าย และเป้าหมายทั้งหมดถาวร ไม่สามารถกู้คืนได้</p>
+                <button onclick="confirmNuclearReset()" class="w-full bg-rose-600/20 border border-rose-600 text-rose-500 py-4 rounded-2xl font-black text-xs uppercase tracking-widest">
+                    ดำเนินการลบข้อมูลถาวร
+                </button>
+            </section>
+            <div class="text-center opacity-30 py-10">
+                <p class="text-[10px] font-black uppercase">System Core Version 31.1.0.812</p>
+                <p class="text-[9px]">OMNI-DATA-PROTECTION ENABLED</p>
             </div>
+        </div>
+
+    </main>
+
+    <!-- Navigation Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-xl border-t border-white/5 flex justify-around p-3 z-50">
+        <button onclick="switchTab('dashboard')" class="nav-btn active" id="btn-dashboard">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            <span>Home</span>
+        </button>
+        <button onclick="switchTab('goals')" class="nav-btn" id="btn-goals">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            <span>Goals</span>
+        </button>
+        <button onclick="switchTab('analytics')" class="nav-btn" id="btn-analytics">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 01-2 2h22a2 2 0 01-2-2v-6a2 2 0 00-2-2h-2a2 2 0 00-2 2v6"></path></svg>
+            <span>Stats</span>
+        </button>
+        <button onclick="switchTab('settings')" class="nav-btn" id="btn-settings">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+            <span>Setup</span>
+        </button>
+    </nav>
+
+    <!-- Overlay Alerts -->
+    <div id="systemAlert" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-6">
+        <div class="nexus-card p-8 w-full max-w-sm text-center border-blue-500/50">
+            <div id="alertIcon" class="mb-4"></div>
+            <h3 id="alertTitle" class="font-black text-xl font-kanit mb-2">Alert</h3>
+            <p id="alertMsg" class="text-sm opacity-70 mb-6"></p>
+            <div id="alertAction"></div>
         </div>
     </div>
 
     <script>
-        // --- Omni-Nexus v29.1.0 Core Engine ---
-        const DB_KEY = 'finance_nexus_v29_data';
-        const GOAL_KEY = 'finance_nexus_v29_goal';
-        const CONFIG_KEY = 'finance_nexus_v29_config';
-
+        // --- Core Engine 31.1.0 ---
+        const DB_KEY = 'finance_zen_supernova_v151'; 
+        const GOAL_KEY = 'omni_goal_v311';
+        const STATE_KEY = 'omni_state_v311';
+        
         let state = {
             transactions: [],
-            goal: { name: 'ยังไม่ได้ตั้ง', target: 0, current: 0, completed: false },
-            isOnline: true
+            isOnline: true,
+            goal: { title: "เก็บออมทั่วไป", target: 10000, current: 0, completed: false }
         };
 
+        let chart = null;
+
         const init = () => {
-            // Load Existing Data (Migration Support)
-            const savedData = localStorage.getItem(DB_KEY);
-            const savedGoal = localStorage.getItem(GOAL_KEY);
-            const savedConfig = localStorage.getItem(CONFIG_KEY);
+            // Load Legacy Data
+            const stored = localStorage.getItem(DB_KEY);
+            if (stored) state.transactions = JSON.parse(stored);
 
-            if (savedData) state.transactions = JSON.parse(savedData);
-            if (savedGoal) state.goal = JSON.parse(savedGoal);
-            if (savedConfig) state.isOnline = JSON.parse(savedConfig).isOnline;
+            const storedGoal = localStorage.getItem(GOAL_KEY);
+            if (storedGoal) state.goal = JSON.parse(storedGoal);
 
-            // Setup UI
-            document.getElementById('connectivitySwitch').checked = state.isOnline;
+            const storedState = localStorage.getItem(STATE_KEY);
+            if (storedState) state.isOnline = JSON.parse(storedState);
+
+            document.getElementById('onlineToggle').checked = state.isOnline;
             
-            // Run Systems
             autoPurge();
-            toggleConnectivity();
+            toggleSystemState();
             render();
+            initChart();
+        };
+
+        const toggleSystemState = () => {
+            state.isOnline = document.getElementById('onlineToggle').checked;
+            localStorage.setItem(STATE_KEY, JSON.stringify(state.isOnline));
+            
+            const main = document.getElementById('mainContainer');
+            const status = document.getElementById('statusIndicator');
+            
+            if (!state.isOnline) {
+                main.classList.add('offline-mode');
+                status.innerText = "System Offline - Read Only";
+                status.className = "text-[10px] font-black uppercase tracking-[0.2em] text-rose-500";
+            } else {
+                main.classList.remove('offline-mode');
+                status.innerText = "System Online";
+                status.className = "text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400";
+            }
+        };
+
+        const autoPurge = () => {
+            const now = new Date();
+            let changed = false;
+            state.transactions = state.transactions.map(t => {
+                const diff = (now - new Date(t.date)) / (1000 * 60 * 60);
+                if (diff >= 48 && !t.isArchived) {
+                    changed = true;
+                    return { ...t, isArchived: true };
+                }
+                return t;
+            });
+            if (changed) save();
         };
 
         const save = () => {
             localStorage.setItem(DB_KEY, JSON.stringify(state.transactions));
             localStorage.setItem(GOAL_KEY, JSON.stringify(state.goal));
-            localStorage.setItem(CONFIG_KEY, JSON.stringify({ isOnline: state.isOnline }));
         };
 
-        const toggleConnectivity = () => {
-            state.isOnline = document.getElementById('connectivitySwitch').checked;
-            const group = document.getElementById('inputGroup');
-            const statusText = document.getElementById('statusText');
-            const goalBtn = document.getElementById('goalSetBtn');
-
-            if (state.isOnline) {
-                group.classList.remove('offline-mode');
-                statusText.innerText = "ONLINE";
-                statusText.className = "status-badge bg-emerald-500/10 text-emerald-500";
-                goalBtn.disabled = false;
-                goalBtn.style.opacity = "1";
-            } else {
-                group.classList.add('offline-mode');
-                statusText.innerText = "OFFLINE";
-                statusText.className = "status-badge bg-rose-500/10 text-rose-500";
-                goalBtn.disabled = true;
-                goalBtn.style.opacity = "0.3";
-            }
-            save();
-        };
-
-        const autoPurge = () => {
-            // ระบบลบรายการที่เก่ากว่า 2 วัน (48 ชม.) อัตโนมัติ โดยไม่ลบข้อมูลดิบ (เงินไม่หาย)
-            const now = Date.now();
-            const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
-            let updated = false;
-
-            state.transactions = state.transactions.map(tx => {
-                if (!tx.isArchived && (now - new Date(tx.date).getTime()) > twoDaysInMs) {
-                    updated = true;
-                    return { ...tx, isArchived: true };
-                }
-                return tx;
-            });
-
-            if (updated) save();
+        const switchTab = (tabId) => {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-${tabId}`).classList.add('active');
+            
+            if(tabId === 'analytics') updateChart();
         };
 
         const render = () => {
-            const historyList = document.getElementById('historyList');
-            const balanceDisplay = document.getElementById('balanceDisplay');
-            const inflowDisplay = document.getElementById('inflowDisplay');
-            const outflowDisplay = document.getElementById('outflowDisplay');
-            
-            let total = 0, inflow = 0, outflow = 0;
+            const fmt = n => new Intl.NumberFormat('th-TH').format(n);
+            let bal = 0, mIn = 0, mOut = 0;
+            const now = new Date();
 
-            // Calculate from ALL data (including archived)
-            state.transactions.forEach(tx => {
-                const amt = parseFloat(tx.amount);
-                if (tx.type === 'income') {
-                    total += amt;
-                    inflow += amt;
+            state.transactions.forEach(t => {
+                const val = parseFloat(t.amount);
+                const isMonth = new Date(t.date).getMonth() === now.getMonth();
+                if (t.type === 'income') {
+                    bal += val;
+                    if (isMonth) mIn += val;
                 } else {
-                    total -= amt;
-                    outflow += amt;
+                    bal -= val;
+                    if (isMonth) mOut += val;
                 }
             });
 
-            const fmt = (v) => new Intl.NumberFormat('th-TH', { minimumFractionDigits: 2 }).format(v);
-            balanceDisplay.innerText = `฿${fmt(total)}`;
-            inflowDisplay.innerText = `฿${fmt(inflow)}`;
-            outflowDisplay.innerText = `฿${fmt(outflow)}`;
+            document.getElementById('totalBalance').innerText = `฿${fmt(bal.toFixed(2))}`;
+            document.getElementById('monthIn').innerText = `฿${fmt(mIn.toFixed(2))}`;
+            document.getElementById('monthOut').innerText = `฿${fmt(mOut.toFixed(2))}`;
 
-            // Render History (Only non-archived)
-            const activeTx = state.transactions.filter(t => !t.isArchived).reverse();
-            historyList.innerHTML = activeTx.map(t => `
-                <div class="nexus-card p-4 flex justify-between items-center animate-in slide-in-from-top-2 duration-300">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-xl flex items-center justify-center font-bold text-[10px] ${t.type === 'income' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}">
-                            ${t.type === 'income' ? 'IN' : 'OUT'}
-                        </div>
-                        <div>
-                            <p class="font-bold text-xs">${t.title}</p>
-                            <p class="text-[8px] opacity-30">${new Date(t.date).toLocaleString('th-TH')}</p>
-                        </div>
+            // Render Logs
+            const list = document.getElementById('logList');
+            const active = state.transactions.filter(t => !t.isArchived).sort((a,b) => new Date(b.date) - new Date(a.date));
+            list.innerHTML = active.map(t => `
+                <div class="nexus-card p-4 flex justify-between items-center">
+                    <div>
+                        <p class="font-bold text-sm">${t.title}</p>
+                        <p class="text-[9px] opacity-40 uppercase font-black">${new Date(t.date).toLocaleTimeString('th-TH')}</p>
                     </div>
-                    <p class="font-kanit font-bold ${t.type === 'income' ? 'text-emerald-400' : 'text-rose-400'}">${t.type === 'income' ? '+' : '-'}฿${fmt(t.amount)}</p>
+                    <p class="font-kanit font-bold ${t.type === 'income' ? 'text-emerald-400' : 'text-rose-400'}">
+                        ${t.type === 'income' ? '+' : '-'}฿${fmt(t.amount)}
+                    </p>
                 </div>
-            `).join('');
+            `).join('') || '<div class="text-center py-10 opacity-20 text-xs">No Recent Data</div>';
 
-            if (activeTx.length === 0) historyList.innerHTML = `<p class="text-center py-6 text-[10px] opacity-20 uppercase font-black tracking-widest">No active logs in 48h</p>`;
-
-            renderGoal(total);
+            renderGoal();
         };
 
-        const renderGoal = (currentBalance) => {
-            if (state.goal.target <= 0) return;
-
-            const nameDisp = document.getElementById('goalNameDisplay');
-            const curDisp = document.getElementById('goalCurrentDisplay');
-            const percDisp = document.getElementById('goalPercentDisplay');
-            const bar = document.getElementById('goalProgressBar');
-
-            // ใช้ยอดเงินปัจจุบันเปรียบเทียบ
-            const progress = Math.min(Math.max((currentBalance / state.goal.target) * 100, 0), 100).toFixed(0);
+        const renderGoal = () => {
+            const goalEl = document.getElementById('goalStatus');
+            const percent = Math.min((state.goal.current / state.goal.target) * 100, 100).toFixed(0);
             
-            nameDisp.innerText = state.goal.name;
-            curDisp.innerText = `฿${new Intl.NumberFormat().format(currentBalance.toFixed(0))}`;
-            percDisp.innerText = `${progress}%`;
-            bar.style.width = `${progress}%`;
+            goalEl.innerHTML = `
+                <div class="flex justify-between items-end mb-2">
+                    <div>
+                        <p class="text-[10px] font-black opacity-50 uppercase tracking-widest">${state.goal.title}</p>
+                        <p class="font-kanit font-bold text-xl">${percent}%</p>
+                    </div>
+                    <p class="text-[10px] font-bold opacity-50">฿${state.goal.current} / ฿${state.goal.target}</p>
+                </div>
+                <div class="w-full h-3 bg-slate-800 rounded-full overflow-hidden">
+                    <div class="goal-progress h-full bg-emerald-500" style="width: ${percent}%"></div>
+                </div>
+            `;
 
-            if (progress >= 100 && !state.goal.completed) {
+            if (percent >= 100 && !state.goal.completed) {
                 state.goal.completed = true;
-                bar.classList.add('goal-complete');
                 handleGoalCompletion();
             }
         };
 
         const handleGoalCompletion = () => {
-            // เมื่อครบ 100% ลบอัตโนมัติใน 10 วินาที
+            showAlert("Success!", "เป้าหมายสำเร็จแล้ว 100%! ระบบจะลบเป้าหมายนี้ใน 10 วินาที...", "success");
+            
             setTimeout(() => {
-                document.getElementById('goalActive').classList.add('hidden');
-                document.getElementById('goalEmpty').classList.remove('hidden');
-                
-                // ล้างเป้าหมายเดิม
-                state.goal = { name: 'เป้าหมายถัดไป...', target: 0, current: 0, completed: false };
+                // Reset Goal logic
+                state.goal = { title: "เป้าหมายใหม่ (Auto)", target: 10000, current: 0, completed: false };
                 save();
-
-                // เปิด Financial Goals ใหม่ใน 3 วินาที (รวมเป็น 13 วินาทีจากจุดเริ่มต้น)
-                setTimeout(() => {
-                    document.getElementById('goalActive').classList.remove('hidden');
-                    document.getElementById('goalEmpty').classList.add('hidden');
-                    document.getElementById('goalProgressBar').classList.remove('goal-complete');
-                    render();
+                showAlert("New Cycle", "เป้าหมายใหม่พร้อมใช้งานแล้ว!", "info");
+                setTimeout(() => { 
+                    hideAlert(); 
+                    render(); 
                 }, 3000);
-                
             }, 10000);
         };
 
-        // Form Handling
-        document.getElementById('txForm').onsubmit = (e) => {
-            e.preventDefault();
-            if (!state.isOnline) return;
+        const updateGoalSettings = () => {
+            const t = document.getElementById('goalTitle').value;
+            const a = document.getElementById('goalTarget').value;
+            if(!t || !a) return;
+            state.goal.title = t;
+            state.goal.target = parseFloat(a);
+            state.goal.current = 0;
+            state.goal.completed = false;
+            save();
+            render();
+            showAlert("Updated", "ตั้งค่าเป้าหมายใหม่เรียบร้อย", "success");
+            setTimeout(hideAlert, 1500);
+        };
 
-            const tx = {
+        const initChart = () => {
+            const ctx = document.getElementById('analyticsChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Income', 'Expense', 'Goal Progress'],
+                    datasets: [{
+                        data: [0, 0, 0],
+                        backgroundColor: ['#10b981', '#ef4444', '#3b82f6'],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    cutout: '75%',
+                    plugins: { legend: { display: false } }
+                }
+            });
+        };
+
+        const updateChart = () => {
+            let inc = 0, exp = 0;
+            state.transactions.forEach(t => {
+                if(t.type === 'income') inc += parseFloat(t.amount);
+                else exp += parseFloat(t.amount);
+            });
+            
+            chart.data.datasets[0].data = [inc, exp, state.goal.current];
+            chart.update();
+
+            const legend = document.getElementById('chartLegend');
+            legend.innerHTML = `
+                <div class="flex justify-between items-center text-xs font-bold">
+                    <span class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-emerald-500"></div> รายรับสะสม</span>
+                    <span>฿${inc.toLocaleString()}</span>
+                </div>
+                <div class="flex justify-between items-center text-xs font-bold">
+                    <span class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-rose-500"></div> รายจ่ายสะสม</span>
+                    <span>฿${exp.toLocaleString()}</span>
+                </div>
+                <div class="flex justify-between items-center text-xs font-bold">
+                    <span class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-blue-500"></div> เงินออมเป้าหมาย</span>
+                    <span>฿${state.goal.current.toLocaleString()}</span>
+                </div>
+            `;
+        };
+
+        const confirmNuclearReset = () => {
+            showAlert("ยืนยันการลบ?", "ข้อมูลทั้งหมดจะหายถาวร ไม่สามารถกู้คืนได้", "danger", true);
+        };
+
+        const performNuclearReset = () => {
+            localStorage.clear();
+            state = {
+                transactions: [],
+                isOnline: true,
+                goal: { title: "เป้าหมายใหม่", target: 10000, current: 0, completed: false }
+            };
+            save();
+            location.reload();
+        };
+
+        const showAlert = (title, msg, type, showAction = false) => {
+            const alert = document.getElementById('systemAlert');
+            const aTitle = document.getElementById('alertTitle');
+            const aMsg = document.getElementById('alertMsg');
+            const aAction = document.getElementById('alertAction');
+            
+            aTitle.innerText = title;
+            aMsg.innerText = msg;
+            
+            if(showAction) {
+                aAction.innerHTML = `
+                    <div class="flex gap-3">
+                        <button onclick="hideAlert()" class="flex-1 bg-slate-800 py-3 rounded-xl font-bold">ยกเลิก</button>
+                        <button onclick="performNuclearReset()" class="flex-1 bg-rose-600 py-3 rounded-xl font-bold text-white">ยืนยันการลบ</button>
+                    </div>
+                `;
+            } else {
+                aAction.innerHTML = `<button onclick="hideAlert()" class="w-full bg-blue-600 py-3 rounded-xl font-bold">ตกลง</button>`;
+            }
+
+            alert.classList.remove('hidden');
+        };
+
+        const hideAlert = () => document.getElementById('systemAlert').classList.add('hidden');
+
+        document.getElementById('financeForm').onsubmit = (e) => {
+            e.preventDefault();
+            if(!state.isOnline) return;
+
+            const amt = parseFloat(document.getElementById('amount').value);
+            const type = document.getElementById('type').value;
+
+            const newTx = {
                 id: Date.now(),
-                title: document.getElementById('txTitle').value,
-                amount: parseFloat(document.getElementById('txAmount').value),
-                type: document.getElementById('txType').value,
+                title: document.getElementById('title').value,
+                amount: amt,
+                type: type,
                 date: new Date().toISOString(),
                 isArchived: false
             };
 
-            state.transactions.push(tx);
+            state.transactions.push(newTx);
+            
+            // หากเป็นรายรับ จะเติมเข้าเป้าหมายอัตโนมัติ 10% (ตัวอย่าง logic การออม)
+            if(type === 'income') {
+                state.goal.current += (amt * 0.1); 
+            }
+
             save();
             render();
             e.target.reset();
-        };
-
-        // Modal Controls
-        const openGoalSettings = () => {
-            document.getElementById('goalModal').classList.remove('hidden');
-            document.getElementById('setGoalName').value = state.goal.name;
-            document.getElementById('setGoalTarget').value = state.goal.target;
-        };
-        const closeGoalSettings = () => document.getElementById('goalModal').classList.add('hidden');
-        const saveGoalSettings = () => {
-            state.goal.name = document.getElementById('setGoalName').value || 'เป้าหมายของฉัน';
-            state.goal.target = parseFloat(document.getElementById('setGoalTarget').value) || 0;
-            state.goal.completed = false;
-            save();
-            render();
-            closeGoalSettings();
-        };
-
-        const confirmMasterReset = () => {
-            const code = Math.floor(1000 + Math.random() * 9000);
-            const input = prompt(`ยืนยันการล้างข้อมูลทั้งหมด? (ข้อมูลจะหายถาวรไม่สามารถกู้คืนได้)\nพิมพ์รหัสนี้เพื่อยืนยัน: ${code}`);
-            if (input == code) {
-                localStorage.clear();
-                location.reload();
-            }
         };
 
         window.onload = init;
