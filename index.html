@@ -3,387 +3,440 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Finance Nexus 45.0.0</title>
+    <title>Finance Nexus 49.0.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Kanit:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --quantum-blue: #0ea5e9;
-            --quantum-purple: #8b5cf6;
-            --quantum-bg: #020617;
+            --lumina-glow: #0ea5e9;
+            --surface-color: #0f172a;
         }
-        body { font-family: 'Sarabun', sans-serif; background-color: var(--quantum-bg); color: #f8fafc; min-height: 100vh; }
-        .font-orbitron { font-family: 'Orbitron', sans-serif; }
-        .quantum-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 32px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
-        .quantum-btn { background: linear-gradient(135deg, var(--quantum-blue), var(--quantum-purple)); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .quantum-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(14, 165, 233, 0.4); }
-        .glass-input { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 18px; padding: 14px 20px; width: 100%; transition: all 0.3s; color: white; }
-        .glass-input:focus { border-color: var(--quantum-blue); outline: none; background: rgba(255, 255, 255, 0.07); }
         
-        @keyframes pulse-border { 0% { border-color: rgba(14, 165, 233, 0.1); } 50% { border-color: rgba(14, 165, 233, 0.5); } 100% { border-color: rgba(14, 165, 233, 0.1); } }
-        .active-pulse { animation: pulse-border 3s infinite; }
-        
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        /* ปรับขนาดตัวอักษรขนาดกลาง (Medium) ตามคำขอ */
+        body { 
+            font-family: 'Sarabun', sans-serif; 
+            background-color: #020617; 
+            color: #e2e8f0; 
+            font-size: 16px; /* ขนาดกลางมาตรฐาน */
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, .font-title { font-family: 'Kanit', sans-serif; }
+
+        .nexus-card { 
+            background: rgba(30, 41, 59, 0.5); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 20px; 
+            padding: 1.5rem;
+        }
+
+        /* ขนาดปุ่มและช่องกรอกที่พอดีมือ */
+        .glass-input { 
+            background: rgba(15, 23, 42, 0.6); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 12px; 
+            padding: 12px 16px; 
+            width: 100%; 
+            color: white;
+            font-size: 16px;
+        }
+
+        .btn-action {
+            background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+
+        .btn-action:hover {
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .timeline-item {
+            border-left: 2px solid rgba(14, 165, 233, 0.3);
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -7px;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--lumina-glow);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
 <body class="p-4 md:p-8">
 
-    <header class="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
-        <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-sky-500 rounded-3xl flex items-center justify-center shadow-xl shadow-sky-500/20">
-                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            </div>
+    <div class="max-w-5xl mx-auto">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-8">
             <div>
-                <h1 class="text-3xl font-black font-orbitron tracking-tighter">NEXUS <span class="text-sky-500">45.0</span></h1>
-                <p class="text-[9px] uppercase tracking-[0.4em] text-slate-500 font-bold">Quantum Ledger Protocol</p>
+                <h1 class="text-2xl font-bold text-white tracking-wide">NEXUS <span class="text-sky-400">49.0</span></h1>
+                <p class="text-sm text-slate-400">Lumina Horizon • ระบบจัดการเงินรุ่นที่ 49</p>
             </div>
-        </div>
-        
-        <div class="flex items-center gap-8">
-            <div class="text-right">
-                <p class="text-[10px] font-black text-slate-500 uppercase">Daily Limit</p>
-                <div class="w-32 h-1.5 bg-slate-800 rounded-full mt-1 overflow-hidden">
-                    <div id="dailyLimitBar" class="h-full bg-sky-500 transition-all duration-500" style="width: 0%"></div>
-                </div>
+            <div class="flex gap-3">
+                <button onclick="exportData()" class="p-2 bg-slate-800 rounded-lg text-slate-400 hover:text-white" title="สำรองข้อมูล">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1h16v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <button onclick="toggleSettings()" class="p-2 bg-slate-800 rounded-lg text-slate-400 hover:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-width="2"/></svg>
+                </button>
             </div>
-            <button onclick="toggleSettings()" class="quantum-card p-3 hover:bg-slate-800/50 transition-all">
-                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-            </button>
-        </div>
-    </header>
+        </header>
 
-    <main class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <!-- Left Column -->
-        <div class="lg:col-span-7 space-y-8">
-            <section class="quantum-card p-10 relative overflow-hidden active-pulse">
-                <div class="relative z-10">
-                    <div class="flex justify-between items-start mb-2">
-                        <p class="text-[11px] font-bold text-sky-400 uppercase tracking-widest">Total Net Worth</p>
-                        <span class="text-[10px] bg-sky-500/10 text-sky-400 px-3 py-1 rounded-full border border-sky-500/20 font-bold uppercase">v45 Sync Active</span>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- ยอดรวม (Main Balance) -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="nexus-card bg-gradient-to-br from-slate-800 to-slate-900 border-sky-500/20">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="px-3 py-1 bg-sky-500/10 text-sky-400 text-xs font-bold rounded-full uppercase tracking-tighter">Total Assets</span>
+                        <span class="text-sm text-slate-500" id="currentDateDisplay"></span>
                     </div>
-                    <div class="flex items-baseline gap-3">
-                        <span class="text-3xl font-light text-slate-500">฿</span>
-                        <h2 id="totalBalance" class="text-6xl font-black font-orbitron tracking-tight">0.00</h2>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-2xl text-slate-500">฿</span>
+                        <h2 id="displayTotalBalance" class="text-5xl font-bold text-white tracking-tight">0.00</h2>
                     </div>
-                    
-                    <div class="mt-8 grid grid-cols-2 gap-4">
-                        <div class="p-4 bg-white/5 rounded-2xl border border-white/5">
-                            <p class="text-[10px] font-bold text-slate-500 uppercase">Vault Reserve</p>
-                            <p id="vaultBalance" class="text-xl font-bold font-orbitron">฿0</p>
+                    <div class="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-white/5">
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase font-bold mb-1">รายรับวันนี้</p>
+                            <p id="displayDailyInflow" class="text-lg font-bold text-emerald-400">฿0.00</p>
                         </div>
-                        <div class="p-4 bg-white/5 rounded-2xl border border-white/5">
-                            <p class="text-[10px] font-bold text-slate-500 uppercase">Daily In-Flow</p>
-                            <p id="dailyInflow" class="text-xl font-bold font-orbitron text-emerald-400">฿0</p>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase font-bold mb-1">รายจ่ายวันนี้</p>
+                            <p id="displayDailyOutflow" class="text-lg font-bold text-rose-400">฿0.00</p>
                         </div>
                     </div>
                 </div>
-                <div class="absolute -right-20 -top-20 w-64 h-64 bg-sky-600/10 rounded-full blur-[100px]"></div>
-            </section>
 
-            <!-- Goal Display -->
-            <section id="goalSection" class="quantum-card p-8 border-purple-500/20 hidden">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 id="goalName" class="text-sm font-black uppercase text-purple-400">Financial Mission</h3>
-                    <span id="goalPercent" class="text-xl font-black font-orbitron text-purple-400">0%</span>
-                </div>
-                <div class="h-3 bg-slate-800 rounded-full overflow-hidden">
-                    <div id="goalProgress" class="h-full bg-gradient-to-r from-purple-600 to-sky-400 transition-all duration-1000" style="width: 0%"></div>
-                </div>
-                <div class="flex justify-between mt-3 text-[10px] font-bold text-slate-500 uppercase">
-                    <span>Progress: <span id="goalCurrent">฿0</span></span>
-                    <span>Target: <span id="goalTarget">฿0</span></span>
-                </div>
-            </section>
-
-            <section class="quantum-card p-8">
-                <div class="h-72">
-                    <canvas id="nexusChart"></canvas>
-                </div>
-            </section>
-        </div>
-
-        <!-- Right Column -->
-        <div class="lg:col-span-5 space-y-8">
-            <section class="quantum-card p-8">
-                <h3 class="text-xs font-black uppercase text-sky-500 mb-6 tracking-widest">Quantum Entry</h3>
-                <form id="txForm" class="space-y-4">
-                    <div class="relative">
-                        <input type="text" id="txLabel" placeholder="คำอธิบายรายการ..." required class="glass-input text-sm">
-                        <select id="txCategory" class="absolute right-3 top-3.5 bg-slate-800 text-[10px] rounded-lg px-2 py-1 border-none font-bold text-slate-400">
-                            <option value="food">🍴 อาหาร</option>
-                            <option value="travel">🚗 เดินทาง</option>
-                            <option value="shop">🛍️ ช้อปปิ้ง</option>
-                            <option value="bill">📑 บิล/หนี้</option>
-                            <option value="other">✨ อื่นๆ</option>
-                        </select>
+                <!-- วิเคราะห์เป้าหมาย -->
+                <div id="goalArea" class="nexus-card hidden">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-md font-bold text-white" id="goalTitle">เป้าหมาย</h3>
+                        <span class="text-sky-400 font-bold" id="goalPercentage">0%</span>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="number" id="txAmount" placeholder="0.00" step="0.01" required class="glass-input font-black text-lg">
-                        <select id="txType" class="glass-input font-bold text-sm appearance-none">
-                            <option value="income">รายรับ (+)</option>
-                            <option value="expense" selected>รายจ่าย (-)</option>
-                        </select>
+                    <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden mb-2">
+                        <div id="goalProgressBar" class="h-full bg-sky-500 transition-all duration-1000" style="width: 0%"></div>
                     </div>
-                    <button type="submit" class="w-full quantum-btn text-white p-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg active:scale-[0.98]">Execute Pulse</button>
-                </form>
-            </section>
+                    <div class="flex justify-between text-xs text-slate-500 font-bold">
+                        <span id="goalCurrentText">฿0</span>
+                        <span id="goalTargetText">฿0</span>
+                    </div>
+                </div>
 
-            <div id="txTimeline" class="space-y-4 max-h-[480px] overflow-y-auto pr-2"></div>
-        </div>
-    </main>
+                <!-- กราฟวิเคราะห์ -->
+                <div class="nexus-card h-[350px]">
+                    <h3 class="text-sm font-bold text-slate-400 uppercase mb-4 tracking-widest">การใช้จ่ายตามหมวดหมู่</h3>
+                    <div class="h-[260px] relative">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
 
-    <!-- Settings Overlay -->
-    <div id="settingsOverlay" class="fixed inset-0 bg-slate-950/95 backdrop-blur-2xl z-[100] hidden items-center justify-center p-6">
-        <div class="quantum-card p-10 w-full max-w-lg border-sky-500/10">
-            <h3 class="text-2xl font-black font-orbitron text-sky-400 mb-8 text-center">System Configuration</h3>
+            <!-- เพิ่มรายการ (Transaction Entry) -->
             <div class="space-y-6">
-                <div class="p-6 bg-white/5 rounded-3xl border border-white/5">
-                    <label class="text-[10px] font-black uppercase text-slate-500 block mb-3">Daily Spending Limit (฿)</label>
-                    <div class="flex gap-4">
-                        <input type="number" id="limitInput" class="glass-input font-black" placeholder="ตั้งขีดจำกัดรายวัน...">
-                        <button onclick="saveLimit()" class="quantum-btn px-6 rounded-xl font-black text-xs uppercase text-white">Set</button>
+                <div class="nexus-card">
+                    <h3 class="text-sm font-bold text-white mb-6 uppercase tracking-wider">บันทึกรายการใหม่</h3>
+                    <form id="ledgerForm" class="space-y-4">
+                        <div>
+                            <label class="text-xs text-slate-500 mb-1 block">ชื่อรายการ</label>
+                            <input type="text" id="label" placeholder="ค่าอาหาร, เงินเดือน..." required class="glass-input">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-xs text-slate-500 mb-1 block">ประเภท</label>
+                                <select id="type" class="glass-input">
+                                    <option value="expense">รายจ่าย (-)</option>
+                                    <option value="income">รายรับ (+)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-500 mb-1 block">หมวดหมู่</label>
+                                <select id="category" class="glass-input">
+                                    <option value="Food">อาหาร</option>
+                                    <option value="Travel">เดินทาง</option>
+                                    <option value="Bills">บิล/ไฟ</option>
+                                    <option value="Work">งาน</option>
+                                    <option value="Shopping">ช้อปปิ้ง</option>
+                                    <option value="Other">อื่นๆ</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-500 mb-1 block">จำนวนเงิน (฿)</label>
+                            <input type="number" id="amount" placeholder="0.00" step="0.01" required class="glass-input text-xl font-bold">
+                        </div>
+                        <button type="submit" class="w-full btn-action text-white mt-4">บันทึกรายการ</button>
+                    </form>
+                </div>
+
+                <!-- รายการล่าสุด -->
+                <div class="space-y-3">
+                    <p class="text-xs font-bold text-slate-500 uppercase px-2">รายการล่าสุด</p>
+                    <div id="ledgerList" class="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+                        <!-- Items rendered here -->
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <button onclick="openGoalSetup()" class="p-5 bg-purple-500/10 border border-purple-500/20 rounded-3xl text-left group hover:bg-purple-500 transition-all">
-                        <p class="text-[10px] font-black uppercase text-purple-400 group-hover:text-white mb-1">Financial Goal</p>
-                        <p class="text-xs font-bold text-white uppercase">Configure Mission</p>
-                    </button>
-                    <button onclick="exportData()" class="p-5 bg-sky-500/10 border border-sky-500/20 rounded-3xl text-left group hover:bg-sky-500 transition-all">
-                        <p class="text-[10px] font-black uppercase text-sky-400 group-hover:text-white mb-1">Backup Ledger</p>
-                        <p class="text-xs font-bold text-white uppercase">Export JSON</p>
-                    </button>
-                </div>
-                <button onclick="toggleSettings()" class="w-full text-center text-xs font-bold text-slate-400 py-4 uppercase tracking-[0.3em]">Back to Interface</button>
             </div>
         </div>
     </div>
 
-    <!-- Goal Setup Modal -->
-    <div id="goalModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-xl z-[110] hidden items-center justify-center p-6">
-        <div class="quantum-card p-8 w-full max-w-sm">
-            <h3 class="text-xl font-black font-orbitron text-purple-400 mb-6 text-center uppercase">Initiate Mission</h3>
-            <div class="space-y-4">
-                <input type="text" id="goalInputName" placeholder="Mission Name (e.g. New Car)" class="glass-input">
-                <input type="number" id="goalInputTarget" placeholder="Target Amount (฿)" class="glass-input font-black">
-                <div class="flex gap-3 mt-4">
-                    <button onclick="saveGoal()" class="flex-1 quantum-btn text-white p-3 rounded-xl font-black text-xs uppercase">Start</button>
-                    <button onclick="closeGoalSetup()" class="flex-1 bg-slate-800 text-slate-400 p-3 rounded-xl font-black text-xs uppercase">Cancel</button>
+    <!-- Settings Overlay -->
+    <div id="settingsModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md hidden z-[100] items-center justify-center p-4">
+        <div class="nexus-card w-full max-w-md">
+            <h3 class="text-xl font-bold text-white mb-6">ตั้งค่าระบบ v49</h3>
+            <div class="space-y-6">
+                <div>
+                    <label class="text-xs text-slate-400 block mb-2">เงินตั้งต้นในกระเป๋า (฿)</label>
+                    <input type="number" id="baseBalanceInput" class="glass-input" placeholder="ยอดเงินเริ่มต้น">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-2">ตั้งเป้าหมาย (ชื่อ / จำนวน)</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="goalNameInput" class="glass-input" placeholder="เช่น ซื้อบ้าน">
+                        <input type="number" id="goalTargetInput" class="glass-input" placeholder="฿ 0.00">
+                    </div>
+                </div>
+                <div class="pt-4 border-t border-white/10 flex flex-col gap-3">
+                    <button onclick="saveSettings()" class="btn-action w-full">บันทึกการตั้งค่า</button>
+                    <button onclick="toggleSettings()" class="text-sm text-slate-400 font-bold py-2">ปิดหน้าต่าง</button>
+                    <button onclick="resetData()" class="text-xs text-rose-500/50 mt-4 hover:text-rose-500">ล้างข้อมูลทั้งหมด (ลบแล้วกู้ไม่ได้)</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const KEYS = {
-            TX: 'nexus_v45_ledger',
-            VAULT: 'nexus_v45_vault',
-            GOAL: 'nexus_v45_goal',
-            LIMIT: 'nexus_v45_limit'
+        // Data Keys เพื่อรักษาข้อมูลเดิม
+        const DATA_KEYS = {
+            LEDGER: 'nexus_ledger_v49',
+            BASE: 'nexus_base_v49',
+            GOAL: 'nexus_goal_v49'
         };
 
         let state = {
             ledger: [],
-            vaultBalance: 0,
-            goal: null,
-            limit: 0
+            baseBalance: 0,
+            goal: null
         };
 
-        let mainChart = null;
+        let myChart = null;
 
-        function runMigration() {
-            const versions = ['v43', 'v41', 'nx41'];
-            let foundLegacyTx = '[]';
-            let foundLegacyVault = '0';
-            let foundLegacyGoal = 'null';
+        // ระบบ Lumina Data Bridge (ห้ามข้อมูลหาย)
+        function dataMigration() {
+            const current = localStorage.getItem(DATA_KEYS.LEDGER);
+            if (current && JSON.parse(current).length > 0) return;
 
-            for (const v of versions) {
-                const tx = localStorage.getItem(`nexus_${v}_ledger`) || localStorage.getItem(`nexus_${v}_transactions`) || localStorage.getItem(`${v}_transactions`);
-                if (tx && tx !== '[]') {
-                    foundLegacyTx = tx;
-                    foundLegacyVault = localStorage.getItem(`nexus_${v}_vault`) || localStorage.getItem(`${v}_vault_balance`) || '0';
-                    foundLegacyGoal = localStorage.getItem(`nexus_${v}_goal`) || localStorage.getItem(`${v}_goal_data`) || 'null';
-                    break; 
+            // ตรวจสอบเวอร์ชันเก่าๆ เพื่อย้ายข้อมูล
+            const oldKeys = ['nexus_v47_ledger', 'nexus_v45_ledger', 'nexus_ledger'];
+            for (const key of oldKeys) {
+                const oldData = localStorage.getItem(key);
+                if (oldData && oldData !== '[]') {
+                    console.log(`Lumina Bridge: Migrating data from ${key}`);
+                    localStorage.setItem(DATA_KEYS.LEDGER, oldData);
+                    
+                    // ดึงค่าตั้งต้นถ้ามี
+                    const baseKey = key.replace('ledger', 'vault');
+                    const oldBase = localStorage.getItem(baseKey);
+                    if (oldBase) localStorage.setItem(DATA_KEYS.BASE, oldBase);
+                    break;
                 }
             }
-
-            if (!localStorage.getItem(KEYS.TX) || JSON.parse(localStorage.getItem(KEYS.TX)).length === 0) {
-                localStorage.setItem(KEYS.TX, foundLegacyTx);
-                localStorage.setItem(KEYS.VAULT, foundLegacyVault);
-                localStorage.setItem(KEYS.GOAL, foundLegacyGoal);
-            }
         }
 
-        function loadState() {
-            state.ledger = JSON.parse(localStorage.getItem(KEYS.TX) || '[]');
-            state.vaultBalance = parseFloat(localStorage.getItem(KEYS.VAULT) || '0');
-            state.goal = JSON.parse(localStorage.getItem(KEYS.GOAL) || 'null');
-            state.limit = parseFloat(localStorage.getItem(KEYS.LIMIT) || '0');
+        function loadAppData() {
+            state.ledger = JSON.parse(localStorage.getItem(DATA_KEYS.LEDGER) || '[]');
+            state.baseBalance = parseFloat(localStorage.getItem(DATA_KEYS.BASE) || '0');
+            state.goal = JSON.parse(localStorage.getItem(DATA_KEYS.GOAL) || 'null');
         }
 
-        function saveState() {
-            localStorage.setItem(KEYS.TX, JSON.stringify(state.ledger));
-            localStorage.setItem(KEYS.VAULT, state.vaultBalance.toString());
-            localStorage.setItem(KEYS.GOAL, JSON.stringify(state.goal));
-            localStorage.setItem(KEYS.LIMIT, state.limit.toString());
-            render();
+        function saveData() {
+            localStorage.setItem(DATA_KEYS.LEDGER, JSON.stringify(state.ledger));
+            localStorage.setItem(DATA_KEYS.BASE, state.baseBalance.toString());
+            localStorage.setItem(DATA_KEYS.GOAL, JSON.stringify(state.goal));
+            renderUI();
             updateChart();
         }
 
-        // --- NEW: Goal Management Functions ---
-        function openGoalSetup() {
-            document.getElementById('goalModal').classList.remove('hidden');
-            document.getElementById('goalModal').classList.add('flex');
-            if (state.goal) {
-                document.getElementById('goalInputName').value = state.goal.name;
-                document.getElementById('goalInputTarget').value = state.goal.target;
-            }
-        }
+        function renderUI() {
+            let totalLedger = 0;
+            let dailyIn = 0;
+            let dailyOut = 0;
+            const todayStr = new Date().toDateString();
 
-        function closeGoalSetup() {
-            document.getElementById('goalModal').classList.add('hidden');
-            document.getElementById('goalModal').classList.remove('flex');
-        }
-
-        function saveGoal() {
-            const name = document.getElementById('goalInputName').value;
-            const target = parseFloat(document.getElementById('goalInputTarget').value);
-            if (name && target > 0) {
-                state.goal = { name, target };
-                saveState();
-                closeGoalSetup();
-                toggleSettings();
-            }
-        }
-
-        function render() {
-            let currentSum = 0;
-            let todayExpense = 0;
-            let todayInflow = 0;
-            const today = new Date().toDateString();
-
-            state.ledger.forEach(t => {
-                const amt = parseFloat(t.amount);
-                currentSum += (t.type === 'income' ? 1 : -1) * amt;
-                if (new Date(t.date).toDateString() === today) {
-                    if (t.type === 'expense') todayExpense += amt;
-                    else todayInflow += amt;
+            state.ledger.forEach(tx => {
+                const amt = parseFloat(tx.amount);
+                if (tx.type === 'income') {
+                    totalLedger += amt;
+                    if (new Date(tx.date).toDateString() === todayStr) dailyIn += amt;
+                } else {
+                    totalLedger -= amt;
+                    if (new Date(tx.date).toDateString() === todayStr) dailyOut += amt;
                 }
             });
 
-            const netTotal = state.vaultBalance + currentSum;
-            document.getElementById('totalBalance').innerText = netTotal.toLocaleString(undefined, {minimumFractionDigits: 2});
-            document.getElementById('vaultBalance').innerText = '฿' + state.vaultBalance.toLocaleString();
-            document.getElementById('dailyInflow').innerText = '฿' + todayInflow.toLocaleString();
+            const currentBalance = state.baseBalance + totalLedger;
 
-            const bar = document.getElementById('dailyLimitBar');
-            if (state.limit > 0) {
-                const perc = Math.min(100, (todayExpense / state.limit) * 100);
-                bar.style.width = perc + '%';
-                bar.className = `h-full transition-all duration-500 ${perc > 90 ? 'bg-rose-500' : 'bg-sky-500'}`;
-            }
+            // Update Balances
+            document.getElementById('displayTotalBalance').innerText = currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
+            document.getElementById('displayDailyInflow').innerText = '฿' + dailyIn.toLocaleString();
+            document.getElementById('displayDailyOutflow').innerText = '฿' + dailyOut.toLocaleString();
 
-            // Render Goal
-            const goalSec = document.getElementById('goalSection');
-            if (state.goal) {
-                goalSec.classList.remove('hidden');
-                document.getElementById('goalName').innerText = state.goal.name;
-                const gPerc = Math.min(100, Math.max(0, (netTotal / state.goal.target) * 100));
-                document.getElementById('goalProgress').style.width = gPerc + '%';
-                document.getElementById('goalPercent').innerText = Math.floor(gPerc) + '%';
-                document.getElementById('goalCurrent').innerText = '฿' + netTotal.toLocaleString();
-                document.getElementById('goalTarget').innerText = '฿' + state.goal.target.toLocaleString();
+            // Update Goal
+            const goalArea = document.getElementById('goalArea');
+            if (state.goal && state.goal.target > 0) {
+                goalArea.classList.remove('hidden');
+                document.getElementById('goalTitle').innerText = state.goal.name;
+                const progress = Math.min(100, (currentBalance / state.goal.target) * 100);
+                document.getElementById('goalProgressBar').style.width = progress + '%';
+                document.getElementById('goalPercentage').innerText = Math.floor(progress) + '%';
+                document.getElementById('goalCurrentText').innerText = '฿' + currentBalance.toLocaleString();
+                document.getElementById('goalTargetText').innerText = '฿' + state.goal.target.toLocaleString();
             } else {
-                goalSec.classList.add('hidden');
+                goalArea.classList.add('hidden');
             }
 
-            const timeline = document.getElementById('txTimeline');
-            timeline.innerHTML = state.ledger.slice().reverse().map((t, idx) => `
-                <div class="quantum-card p-5 flex justify-between items-center group">
+            // Render List
+            const listEl = document.getElementById('ledgerList');
+            listEl.innerHTML = state.ledger.slice().reverse().map((tx, idx) => `
+                <div class="bg-slate-800/40 p-4 rounded-xl flex justify-between items-center group">
                     <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-2xl flex items-center justify-center ${t.type === 'income' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}">
-                            <span class="text-xl font-bold">${t.type === 'income' ? '↓' : '↑'}</span>
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center ${tx.type === 'income' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}">
+                            ${tx.type === 'income' ? '↓' : '↑'}
                         </div>
                         <div>
-                            <p class="text-xs font-bold text-slate-100">${t.label}</p>
-                            <p class="text-[9px] font-black text-slate-600 uppercase mt-0.5">${new Date(t.date).toLocaleTimeString('th-TH')}</p>
+                            <p class="font-bold text-white text-md">${tx.label}</p>
+                            <p class="text-[12px] text-slate-500 uppercase font-bold tracking-tight">${tx.category} • ${new Date(tx.date).toLocaleDateString()}</p>
                         </div>
                     </div>
-                    <div class="text-right flex items-center gap-4">
-                        <p class="font-orbitron font-bold text-sm ${t.type === 'income' ? 'text-emerald-400' : 'text-rose-400'}">
-                            ${t.type === 'income' ? '+' : '-'} ${parseFloat(t.amount).toLocaleString()}
+                    <div class="text-right">
+                        <p class="font-bold ${tx.type === 'income' ? 'text-emerald-400' : 'text-rose-400'}">
+                            ${tx.type === 'income' ? '+' : '-'} ${parseFloat(tx.amount).toLocaleString()}
                         </p>
-                        <button onclick="deleteTx(${state.ledger.length - 1 - idx})" class="opacity-0 group-hover:opacity-100 p-2 text-rose-500/40 hover:text-rose-500 transition-all">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        </button>
+                        <button onclick="deleteTx(${state.ledger.length - 1 - idx})" class="text-[10px] text-slate-600 hover:text-rose-500 font-bold uppercase opacity-0 group-hover:opacity-100 transition-all">ลบรายการ</button>
                     </div>
                 </div>
-            `).join('') || `<div class="text-center py-20 opacity-20 text-[10px] font-black uppercase tracking-[0.5em]">No Data</div>`;
+            `).join('') || '<p class="text-center py-10 text-slate-600 text-sm">ยังไม่มีรายการบันทึก</p>';
         }
 
         function updateChart() {
-            const ctx = document.getElementById('nexusChart').getContext('2d');
-            const cats = {};
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            const dataMap = {};
             state.ledger.filter(t => t.type === 'expense').forEach(t => {
-                const c = t.category || 'other';
-                cats[c] = (cats[c] || 0) + parseFloat(t.amount);
+                dataMap[t.category] = (dataMap[t.category] || 0) + parseFloat(t.amount);
             });
-            const labels = Object.keys(cats).length > 0 ? Object.keys(cats) : ['No Data'];
-            const data = Object.keys(cats).length > 0 ? Object.values(cats) : [1];
-            if (mainChart) mainChart.destroy();
-            mainChart = new Chart(ctx, {
+
+            const labels = Object.keys(dataMap).length > 0 ? Object.keys(dataMap) : ['ไม่มีข้อมูล'];
+            const dataValues = Object.keys(dataMap).length > 0 ? Object.values(dataMap) : [1];
+
+            if (myChart) myChart.destroy();
+            myChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: labels,
                     datasets: [{
-                        data: data,
-                        backgroundColor: ['#0ea5e9', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'],
-                        borderWidth: 0
+                        data: dataValues,
+                        backgroundColor: ['#0ea5e9', '#6366f1', '#f472b6', '#fbbf24', '#10b981', '#94a3b8'],
+                        borderWidth: 0,
+                        hoverOffset: 15
                     }]
                 },
-                options: { cutout: '75%', responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 10 } } } } }
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 12, family: 'Sarabun' } } }
+                    },
+                    cutout: '70%'
+                }
             });
         }
 
-        document.getElementById('txForm').onsubmit = (e) => {
+        // --- Event Handlers ---
+        document.getElementById('ledgerForm').onsubmit = (e) => {
             e.preventDefault();
-            state.ledger.push({
-                label: document.getElementById('txLabel').value,
-                amount: document.getElementById('txAmount').value,
-                type: document.getElementById('txType').value,
-                category: document.getElementById('txCategory').value,
+            const tx = {
+                label: document.getElementById('label').value,
+                amount: document.getElementById('amount').value,
+                type: document.getElementById('type').value,
+                category: document.getElementById('category').value,
                 date: new Date().toISOString()
-            });
-            saveState();
+            };
+            state.ledger.push(tx);
+            saveData();
             e.target.reset();
         };
 
         function deleteTx(idx) {
-            if (confirm("Delete this quantum pulse?")) {
+            if (confirm("ต้องการลบรายการนี้ใช่หรือไม่?")) {
                 state.ledger.splice(idx, 1);
-                saveState();
+                saveData();
             }
         }
 
-        function saveLimit() {
-            state.limit = parseFloat(document.getElementById('limitInput').value) || 0;
-            saveState();
+        function toggleSettings() {
+            const modal = document.getElementById('settingsModal');
+            modal.classList.toggle('hidden');
+            modal.classList.toggle('flex');
+            if (!modal.classList.contains('hidden')) {
+                document.getElementById('baseBalanceInput').value = state.baseBalance;
+                if (state.goal) {
+                    document.getElementById('goalNameInput').value = state.goal.name;
+                    document.getElementById('goalTargetInput').value = state.goal.target;
+                }
+            }
+        }
+
+        function saveSettings() {
+            state.baseBalance = parseFloat(document.getElementById('baseBalanceInput').value) || 0;
+            const gName = document.getElementById('goalNameInput').value;
+            const gTarget = parseFloat(document.getElementById('goalTargetInput').value);
+            
+            if (gName && gTarget > 0) {
+                state.goal = { name: gName, target: gTarget };
+            } else {
+                state.goal = null;
+            }
+            
+            saveData();
             toggleSettings();
         }
 
-        function toggleSettings() {
-            const s = document.getElementById('settingsOverlay');
-            s.classList.toggle('hidden');
-            s.classList.toggle('flex');
-            if (!s.classList.contains('hidden')) document.getElementById('limitInput').value = state.limit || '';
+        function exportData() {
+            const blob = new Blob([JSON.stringify(state)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `finance_nexus_v49_backup.json`;
+            a.click();
+        }
+
+        function resetData() {
+            if (confirm("⚠️ นี่คือการลบข้อมูลทั้งหมดถาวร คุณแน่ใจหรือไม่?")) {
+                localStorage.clear();
+                location.reload();
+            }
         }
 
         window.onload = () => {
-            runMigration();
-            loadState();
-            render();
+            document.getElementById('currentDateDisplay').innerText = new Date().toLocaleDateString('th-TH', {day: 'numeric', month: 'long', year: 'numeric'});
+            dataMigration();
+            loadAppData();
+            renderUI();
             updateChart();
         };
     </script>
