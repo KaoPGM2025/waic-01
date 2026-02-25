@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Nexus v56.0.0</title>
+    <title>Finance Nexus v58.0.0 - MetaAI 5.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Kanit:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Kanit:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --nebula-primary: #818cf8; /* Indigo */
-            --nebula-accent: #f472b6; /* Pink */
-            --bg-dark: #020617;
-            --card-bg: rgba(30, 41, 59, 0.7);
+            --meta-primary: #0ea5e9;
+            --meta-secondary: #8b5cf6;
+            --meta-bg: #0f172a;
+            --meta-card: rgba(30, 41, 59, 0.8);
         }
 
         body {
             font-family: 'Sarabun', sans-serif;
-            background: radial-gradient(circle at top right, #1e1b4b, #020617);
-            color: #e2e8f0;
-            /* ปรับขนาดตัวอักษรขนาดกลาง 18px ตามคำขอ */
+            background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+            color: #f1f5f9;
+            /* ปรับขนาดตัวอักษรขนาดกลางที่เหมาะสมที่สุด (18px) */
             font-size: 18px;
             line-height: 1.6;
             min-height: 100vh;
@@ -27,173 +27,162 @@
 
         h1, h2, h3, .font-kanit { font-family: 'Kanit', sans-serif; }
 
-        .nebula-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(16px);
+        .meta-glass {
+            background: var(--meta-card);
+            backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 28px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease, border-color 0.3s ease;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
         }
 
-        .nebula-card:hover {
-            border-color: var(--nebula-primary);
-        }
-
-        .input-nebula {
-            background: rgba(15, 23, 42, 0.8);
-            border: 2px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 12px 16px;
+        .meta-input {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 14px;
             color: white;
             width: 100%;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .input-nebula:focus {
+        .meta-input:focus {
             outline: none;
-            border-color: var(--nebula-primary);
-            box-shadow: 0 0 15px rgba(129, 140, 248, 0.2);
+            border-color: var(--meta-primary);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
         }
 
-        .btn-nebula {
-            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-            border-radius: 16px;
+        .meta-button {
+            background: linear-gradient(90deg, var(--meta-primary), var(--meta-secondary));
+            border-radius: 12px;
             padding: 14px;
             font-weight: 600;
             color: white;
-            text-align: center;
-            cursor: pointer;
             transition: all 0.3s;
+            text-align: center;
         }
 
-        .btn-nebula:hover {
-            filter: brightness(1.1);
+        .meta-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+            filter: brightness(1.1);
         }
 
-        .progress-bar {
-            height: 12px;
-            background: rgba(255, 255, 255, 0.1);
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .progress-container {
+            height: 14px;
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 99px;
             overflow: hidden;
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #818cf8, #f472b6);
-            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(90deg, #0ea5e9, #8b5cf6, #d946ef);
+            transition: width 1.2s ease-out;
         }
 
-        .list-item {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 20px;
-            padding: 16px;
-            margin-bottom: 12px;
-            border: 1px solid transparent;
-            transition: all 0.2s;
-        }
-
-        .list-item:hover {
-            background: rgba(255, 255, 255, 0.07);
-        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
-<body class="p-4 md:p-8 lg:p-12">
+<body class="p-4 md:p-10">
 
-    <div class="max-w-7xl mx-auto">
-        <!-- Header -->
-        <header class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+    <div class="max-w-6xl mx-auto">
+        <!-- Dashboard Header -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
             <div>
-                <h1 class="text-4xl font-extrabold text-white mb-2">NEBULA <span class="text-indigo-400">HORIZON</span></h1>
-                <p class="text-slate-400 font-kanit">Version 56.0.0 • ข้อมูลของคุณถูกย้ายมาเรียบร้อยแล้ว</p>
-            </div>
-            <div class="flex gap-4">
-                <div class="text-right">
-                    <p class="text-xs uppercase tracking-widest text-slate-500 font-bold">ยอดเงินคงเหลือรวม</p>
-                    <h2 id="totalBalance" class="text-4xl font-bold text-white tracking-tight">฿0.00</h2>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="bg-blue-600 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-tighter">AI Powered</span>
+                    <h1 class="text-3xl font-bold tracking-tight text-white">METAAI <span class="text-blue-400">5.0</span></h1>
                 </div>
+                <p class="text-slate-400 font-kanit">ยินดีต้อนรับสู่ Finance Nexus v58.0.0 (Data Migrated)</p>
             </div>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
-            <!-- Left Column: Form & Goal -->
-            <div class="lg:col-span-4 space-y-8">
+            <div class="meta-glass px-8 py-4 text-center min-w-[240px]">
+                <p class="text-xs uppercase text-slate-500 font-bold mb-1">ยอดเงินรวมในระบบ</p>
+                <div id="displayBalance" class="text-4xl font-bold text-white tracking-tighter">฿0.00</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column: AI Input & Goal -->
+            <div class="space-y-8">
                 
-                <!-- Savings Goal Card -->
-                <div class="nebula-card p-8 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-4 opacity-10">
-                        <svg class="w-20 h-20" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg>
+                <!-- Meta Goal Tracker -->
+                <div class="meta-glass p-6">
+                    <div class="flex justify-between items-start mb-6">
+                        <h3 class="font-bold text-white">เป้าหมาย Meta</h3>
+                        <button onclick="toggleModal('goalModal', true)" class="text-blue-400 text-sm hover:underline">ตั้งเป้าหมาย</button>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-4">เป้าหมายการออม</h3>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-end">
-                            <div>
-                                <p id="goalNameDisplay" class="text-slate-400 text-sm">ยังไม่มีเป้าหมาย</p>
-                                <p id="goalAmountDisplay" class="text-2xl font-bold text-pink-400">฿0.00</p>
-                            </div>
-                            <button onclick="openGoalSettings()" class="text-xs text-slate-500 hover:text-white uppercase font-bold">แก้ไข</button>
+                    <div id="goalContent">
+                        <div class="mb-2 flex justify-between">
+                            <span id="goalTitle" class="text-slate-300 font-medium">ไม่มีเป้าหมาย</span>
+                            <span id="goalPercent" class="text-blue-400 font-bold">0%</span>
                         </div>
-                        <div class="progress-bar">
+                        <div class="progress-container mb-2">
                             <div id="goalProgress" class="progress-fill" style="width: 0%"></div>
                         </div>
-                        <p id="goalPercentDisplay" class="text-right text-xs font-bold text-slate-500">0% ของเป้าหมาย</p>
+                        <p id="goalSummary" class="text-sm text-slate-500">฿0.00 จาก ฿0.00</p>
                     </div>
                 </div>
 
                 <!-- Transaction Form -->
-                <div class="nebula-card p-8">
-                    <h3 class="text-xl font-bold text-white mb-6">บันทึกรายการ</h3>
-                    <form id="financeForm" class="space-y-5">
-                        <input type="text" id="label" placeholder="ชื่อรายการ..." required class="input-nebula">
+                <div class="meta-glass p-6">
+                    <h3 class="font-bold text-white mb-6">บันทึกรายการด่วน</h3>
+                    <form id="txForm" class="space-y-4">
+                        <input type="text" id="label" placeholder="ชื่อรายการ..." required class="meta-input">
                         <div class="grid grid-cols-2 gap-4">
-                            <select id="type" class="input-nebula">
+                            <select id="type" class="meta-input">
                                 <option value="income">รายรับ (+)</option>
                                 <option value="expense">รายจ่าย (-)</option>
                             </select>
-                            <select id="category" class="input-nebula">
+                            <select id="category" class="meta-input">
                                 <option value="อาหาร">🍴 อาหาร</option>
-                                <option value="เดินทาง">🚗 เดินทาง</option>
+                                <option value="เดินทาง">🚗 การเดินทาง</option>
                                 <option value="ช้อปปิ้ง">🛍️ ช้อปปิ้ง</option>
-                                <option value="ที่พัก">🏠 ที่พัก/บิล</option>
                                 <option value="บันเทิง">🎮 บันเทิง</option>
+                                <option value="สุขภาพ">🏥 สุขภาพ</option>
                                 <option value="อื่นๆ">✨ อื่นๆ</option>
                             </select>
                         </div>
-                        <input type="number" id="amount" step="0.01" placeholder="จำนวนเงิน 0.00" required class="input-nebula text-xl font-bold">
-                        <button type="submit" class="btn-nebula w-full text-lg">บันทึกข้อมูล</button>
+                        <input type="number" id="amount" placeholder="ยอดเงิน..." required class="meta-input text-2xl font-bold text-blue-400">
+                        <button type="submit" class="meta-button w-full text-lg">บันทึกผ่าน MetaAI</button>
                     </form>
                 </div>
             </div>
 
-            <!-- Right Column: Graphs & History -->
-            <div class="lg:col-span-8 space-y-8">
+            <!-- Middle/Right Column: Analytics -->
+            <div class="lg:col-span-2 space-y-8">
                 
-                <!-- Charts Row -->
+                <!-- Charts Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="nebula-card p-6 h-80">
-                        <h4 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-tighter">หมวดหมู่รายจ่าย</h4>
+                    <div class="meta-glass p-6 h-[300px]">
+                        <h4 class="text-xs font-bold text-slate-500 uppercase mb-4">สัดส่วนการใช้จ่าย</h4>
                         <canvas id="categoryChart"></canvas>
                     </div>
-                    <div class="nebula-card p-6 h-80">
-                        <h4 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-tighter">แนวโน้มการเงิน</h4>
+                    <div class="meta-glass p-6 h-[300px]">
+                        <h4 class="text-xs font-bold text-slate-500 uppercase mb-4">แนวโน้มการเงิน 10 รายการ</h4>
                         <canvas id="trendChart"></canvas>
                     </div>
                 </div>
 
-                <!-- History List -->
-                <div class="nebula-card p-8">
+                <!-- History -->
+                <div class="meta-glass p-6 overflow-hidden">
                     <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-xl font-bold text-white">ประวัติการเงิน</h3>
-                        <div class="flex gap-2">
-                            <button onclick="downloadBackup()" class="p-2 hover:bg-white/5 rounded-lg transition-colors" title="Backup">
-                                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                            </button>
+                        <h3 class="font-bold text-white">ประวัติ Meta Ledger</h3>
+                        <div id="aiSuggestion" class="text-xs text-blue-400 bg-blue-900/30 px-3 py-1 rounded-full border border-blue-500/30">
+                            MetaAI 5.0 พร้อมใช้งาน
                         </div>
                     </div>
-                    <div id="txList" class="max-h-[600px] overflow-y-auto space-y-2 pr-2">
+                    <div id="txList" class="space-y-3 max-h-[400px] overflow-y-auto pr-2">
                         <!-- Items rendered here -->
                     </div>
                 </div>
@@ -201,49 +190,47 @@
         </div>
     </div>
 
-    <!-- Modals -->
-    <div id="goalModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-sm hidden items-center justify-center p-6">
-        <div class="nebula-card w-full max-w-md p-8">
-            <h3 class="text-2xl font-bold text-white mb-6 font-kanit">ตั้งเป้าหมาย Nebula</h3>
+    <!-- Goal Modal -->
+    <div id="goalModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-6">
+        <div class="meta-glass p-8 w-full max-w-md">
+            <h3 class="text-xl font-bold text-white mb-6">ตั้งเป้าหมายการออมใหม่</h3>
             <div class="space-y-4">
-                <input type="text" id="goalTitleInp" placeholder="ชื่อเป้าหมาย (เช่น ซื้อโทรศัพท์ใหม่)" class="input-nebula">
-                <input type="number" id="goalAmountInp" placeholder="ยอดเงินเป้าหมาย" class="input-nebula">
-                <div class="flex gap-4 pt-4">
-                    <button onclick="saveGoal()" class="btn-nebula flex-1">บันทึกเป้าหมาย</button>
-                    <button onclick="closeGoalSettings()" class="px-6 py-2 text-slate-400 hover:text-white transition-colors">ปิด</button>
+                <input type="text" id="modalGoalTitle" placeholder="ชื่อเป้าหมาย..." class="meta-input">
+                <input type="number" id="modalGoalTarget" placeholder="จำนวนเงิน..." class="meta-input">
+                <div class="flex gap-4">
+                    <button onclick="saveGoal()" class="meta-button flex-1">ยืนยัน</button>
+                    <button onclick="toggleModal('goalModal', false)" class="flex-1 text-slate-500 font-bold">ยกเลิก</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const STORAGE_KEY = 'nexus_v56_data';
-        const LEGACY_KEYS = ['nexus_v54_store', 'nexus_v53_storage', 'nexus_v51_data', 'nexus_ledger'];
+        // ข้อมูลหลักและระบบ Migration
+        const STORAGE_KEY = 'nexus_v58_meta_store';
+        const LEGACY_STORAGE = ['nexus_v56_data', 'nexus_v54_store', 'nexus_v53_storage', 'nexus_ledger'];
 
-        let state = {
+        let appState = {
             transactions: [],
-            baseBalance: 0,
-            goal: { title: "เงินออมสะสม", target: 10000 }
+            goal: { title: "เก็บออมสร้างตัว", target: 50000 }
         };
 
-        let charts = { cat: null, trend: null };
+        let charts = { cat: null, line: null };
 
-        // --- Migration & Persistence ---
         function init() {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
-                state = JSON.parse(saved);
+                appState = JSON.parse(saved);
             } else {
-                // Migrate from previous versions
-                for (const key of LEGACY_KEYS) {
-                    const legacyData = localStorage.getItem(key);
-                    if (legacyData) {
-                        const parsed = JSON.parse(legacyData);
-                        state.transactions = Array.isArray(parsed) ? parsed : (parsed.transactions || []);
-                        state.baseBalance = parsed.baseBalance || 0;
-                        if (parsed.goal) state.goal = parsed.goal;
-                        console.log(`Successfully migrated from ${key}`);
-                        save();
+                // ย้ายข้อมูลจากรุ่นเก่า (v56 -> v58)
+                for (const key of LEGACY_STORAGE) {
+                    const legacy = localStorage.getItem(key);
+                    if (legacy) {
+                        const parsed = JSON.parse(legacy);
+                        appState.transactions = Array.isArray(parsed) ? parsed : (parsed.transactions || []);
+                        if (parsed.goal) appState.goal = parsed.goal;
+                        console.log(`Migration v58: Data imported from ${key}`);
+                        saveData();
                         break;
                     }
                 }
@@ -251,57 +238,96 @@
             render();
         }
 
-        function save() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
             render();
         }
 
-        // --- Rendering Engine ---
+        function toggleModal(id, show) {
+            document.getElementById(id).classList.toggle('hidden', !show);
+            document.getElementById(id).classList.toggle('flex', show);
+        }
+
+        function saveGoal() {
+            const title = document.getElementById('modalGoalTitle').value;
+            const target = document.getElementById('modalGoalTarget').value;
+            if (title && target) {
+                appState.goal = { title, target: parseFloat(target) };
+                saveData();
+                toggleModal('goalModal', false);
+            }
+        }
+
+        function deleteItem(idx) {
+            appState.transactions.splice(idx, 1);
+            saveData();
+        }
+
+        document.getElementById('txForm').onsubmit = (e) => {
+            e.preventDefault();
+            const tx = {
+                label: document.getElementById('label').value,
+                type: document.getElementById('type').value,
+                category: document.getElementById('category').value,
+                amount: parseFloat(document.getElementById('amount').value),
+                date: new Date().toISOString()
+            };
+            appState.transactions.push(tx);
+            saveData();
+            e.target.reset();
+        };
+
         function render() {
-            const totalIn = state.transactions.filter(t => t.type === 'income').reduce((s, t) => s + parseFloat(t.amount), 0);
-            const totalOut = state.transactions.filter(t => t.type === 'expense').reduce((s, t) => s + parseFloat(t.amount), 0);
-            const balance = state.baseBalance + totalIn - totalOut;
+            const totalIn = appState.transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+            const totalOut = appState.transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+            const balance = totalIn - totalOut;
 
-            // Header & Totals
-            document.getElementById('totalBalance').innerText = '฿' + balance.toLocaleString(undefined, {minimumFractionDigits: 2});
+            // Balance Display
+            document.getElementById('displayBalance').innerText = '฿' + balance.toLocaleString(undefined, {minimumFractionDigits: 2});
 
-            // Goal Rendering
-            document.getElementById('goalNameDisplay').innerText = state.goal.title;
-            document.getElementById('goalAmountDisplay').innerText = '฿' + parseFloat(state.goal.target).toLocaleString();
-            const progressPercent = Math.min(100, Math.max(0, (balance / state.goal.target) * 100));
-            document.getElementById('goalProgress').style.width = progressPercent + '%';
-            document.getElementById('goalPercentDisplay').innerText = Math.round(progressPercent) + '% ของเป้าหมาย';
+            // Goal Display
+            document.getElementById('goalTitle').innerText = appState.goal.title;
+            const progress = Math.min(100, Math.max(0, (balance / appState.goal.target) * 100));
+            document.getElementById('goalProgress').style.width = progress + '%';
+            document.getElementById('goalPercent').innerText = Math.round(progress) + '%';
+            document.getElementById('goalSummary').innerText = `฿${balance.toLocaleString()} จากเป้าหมาย ฿${appState.goal.target.toLocaleString()}`;
 
-            // List Rendering
+            // AI Insight Placeholder
+            const insightText = balance < 0 ? "MetaAI: ระวัง! รายจ่ายคุณเกินรายรับ" : "MetaAI: สถานะการเงินอยู่ในระดับดีมาก";
+            document.getElementById('aiSuggestion').innerText = insightText;
+
+            // List Display
             const list = document.getElementById('txList');
-            list.innerHTML = state.transactions.slice().reverse().map((t, idx) => `
-                <div class="list-item flex items-center justify-between">
+            list.innerHTML = appState.transactions.slice().reverse().map((t, i) => {
+                const realIdx = appState.transactions.length - 1 - i;
+                return `
+                <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 hover:border-blue-500/30 transition-all group">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl bg-slate-800 border border-white/5 shadow-lg">
-                            ${t.type === 'income' ? '💰' : '💸'}
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-slate-800 font-bold">
+                            ${t.type === 'income' ? '💹' : '📉'}
                         </div>
                         <div>
-                            <p class="font-bold text-white">${t.label}</p>
-                            <p class="text-[14px] text-slate-500">${t.category} • ${new Date(t.date).toLocaleDateString('th-TH')}</p>
+                            <p class="font-bold text-white leading-tight">${t.label}</p>
+                            <p class="text-sm text-slate-500">${t.category} • ${new Date(t.date).toLocaleDateString('th-TH')}</p>
                         </div>
                     </div>
                     <div class="text-right">
-                        <p class="font-bold ${t.type === 'income' ? 'text-indigo-400' : 'text-pink-400'}">
-                            ${t.type === 'income' ? '+' : '-'} ${parseFloat(t.amount).toLocaleString()}
+                        <p class="font-bold ${t.type === 'income' ? 'text-emerald-400' : 'text-rose-400'}">
+                            ${t.type === 'income' ? '+' : '-'} ${t.amount.toLocaleString()}
                         </p>
-                        <button onclick="deleteTx(${state.transactions.length - 1 - idx})" class="text-[10px] text-slate-700 hover:text-rose-500 uppercase font-black">Remove</button>
+                        <button onclick="deleteItem(${realIdx})" class="text-[10px] text-slate-700 hover:text-rose-500 uppercase font-black opacity-0 group-hover:opacity-100 transition-opacity">Delete</button>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
 
             updateCharts();
         }
 
         function updateCharts() {
             // Category Pie
-            const expenses = state.transactions.filter(t => t.type === 'expense');
+            const expenses = appState.transactions.filter(t => t.type === 'expense');
             const catMap = {};
-            expenses.forEach(t => catMap[t.category] = (catMap[t.category] || 0) + parseFloat(t.amount));
+            expenses.forEach(t => catMap[t.category] = (catMap[t.category] || 0) + t.amount);
 
             const catCtx = document.getElementById('categoryChart').getContext('2d');
             if (charts.cat) charts.cat.destroy();
@@ -311,99 +337,49 @@
                     labels: Object.keys(catMap),
                     datasets: [{
                         data: Object.values(catMap),
-                        backgroundColor: ['#818cf8', '#f472b6', '#34d399', '#fbbf24', '#f87171', '#a78bfa'],
-                        borderWidth: 0,
-                        hoverOffset: 20
+                        backgroundColor: ['#0ea5e9', '#8b5cf6', '#d946ef', '#f43f5e', '#10b981', '#f59e0b'],
+                        borderWidth: 0
                     }]
                 },
                 options: {
                     maintainAspectRatio: false,
-                    cutout: '75%',
-                    plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { family: 'Sarabun', size: 14 } } } }
+                    cutout: '80%',
+                    plugins: { legend: { position: 'bottom', labels: { color: '#64748b', font: { family: 'Sarabun' } } } }
                 }
             });
 
-            // Trend Area Chart
+            // Trend Chart
             const trendCtx = document.getElementById('trendChart').getContext('2d');
-            let currentBalance = state.baseBalance;
-            const trendData = state.transactions.map(t => {
-                currentBalance += (t.type === 'income' ? parseFloat(t.amount) : -parseFloat(t.amount));
-                return currentBalance;
+            let runningBalance = 0;
+            const trendPoints = appState.transactions.map(t => {
+                runningBalance += (t.type === 'income' ? t.amount : -t.amount);
+                return runningBalance;
             }).slice(-10);
 
-            if (charts.trend) charts.trend.destroy();
-            charts.trend = new Chart(trendCtx, {
+            if (charts.line) charts.line.destroy();
+            charts.line = new Chart(trendCtx, {
                 type: 'line',
                 data: {
-                    labels: trendData.map((_, i) => `T-${trendData.length - i - 1}`),
+                    labels: trendPoints.map((_, i) => i + 1),
                     datasets: [{
-                        label: 'ยอดคงเหลือ',
-                        data: trendData,
-                        borderColor: '#818cf8',
-                        backgroundColor: 'rgba(129, 140, 248, 0.1)',
+                        label: 'ยอดเงินสะสม',
+                        data: trendPoints,
+                        borderColor: '#0ea5e9',
+                        backgroundColor: 'rgba(14, 165, 233, 0.1)',
                         fill: true,
                         tension: 0.4,
-                        pointRadius: 0
+                        pointBackgroundColor: '#0ea5e9'
                     }]
                 },
                 options: {
                     maintainAspectRatio: false,
                     scales: {
-                        y: { display: false },
-                        x: { grid: { display: false }, ticks: { color: '#64748b' } }
+                        x: { display: false },
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' } }
                     },
                     plugins: { legend: { display: false } }
                 }
             });
-        }
-
-        // --- Interaction Logics ---
-        document.getElementById('financeForm').onsubmit = (e) => {
-            e.preventDefault();
-            const tx = {
-                label: document.getElementById('label').value,
-                type: document.getElementById('type').value,
-                category: document.getElementById('category').value,
-                amount: document.getElementById('amount').value,
-                date: new Date().toISOString()
-            };
-            state.transactions.push(tx);
-            save();
-            e.target.reset();
-        };
-
-        function deleteTx(i) {
-            state.transactions.splice(i, 1);
-            save();
-        }
-
-        function openGoalSettings() {
-            document.getElementById('goalModal').classList.replace('hidden', 'flex');
-            document.getElementById('goalTitleInp').value = state.goal.title;
-            document.getElementById('goalAmountInp').value = state.goal.target;
-        }
-
-        function closeGoalSettings() {
-            document.getElementById('goalModal').classList.replace('flex', 'hidden');
-        }
-
-        function saveGoal() {
-            state.goal = {
-                title: document.getElementById('goalTitleInp').value || "เป้าหมายการออม",
-                target: parseFloat(document.getElementById('goalAmountInp').value) || 0
-            };
-            save();
-            closeGoalSettings();
-        }
-
-        function downloadBackup() {
-            const data = JSON.stringify(state, null, 2);
-            const blob = new Blob([data], {type: 'application/json'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `nexus_v56_backup.json`;
-            a.click();
         }
 
         window.onload = init;
