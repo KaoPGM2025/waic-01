@@ -2,372 +2,415 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Finance Nexus 49.0.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Nexus v51.0.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Kanit:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Kanit:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --lumina-glow: #0ea5e9;
-            --surface-color: #0f172a;
-        }
-        
-        /* ปรับขนาดตัวอักษรขนาดกลาง (Medium) ตามคำขอ */
-        body { 
-            font-family: 'Sarabun', sans-serif; 
-            background-color: #020617; 
-            color: #e2e8f0; 
-            font-size: 16px; /* ขนาดกลางมาตรฐาน */
-            line-height: 1.6;
+            --neon-cyan: #22d3ee;
+            --deep-space: #020617;
+            --glass-bg: rgba(15, 23, 42, 0.7);
         }
 
-        h1, h2, h3, .font-title { font-family: 'Kanit', sans-serif; }
-
-        .nexus-card { 
-            background: rgba(30, 41, 59, 0.5); 
-            backdrop-filter: blur(20px); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            border-radius: 20px; 
-            padding: 1.5rem;
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--deep-space);
+            color: #f1f5f9;
+            /* ปรับขนาดตัวอักษรขนาดกลางที่อ่านง่ายที่สุด */
+            font-size: 16.5px; 
+            line-height: 1.7;
         }
 
-        /* ขนาดปุ่มและช่องกรอกที่พอดีมือ */
-        .glass-input { 
-            background: rgba(15, 23, 42, 0.6); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            border-radius: 12px; 
-            padding: 12px 16px; 
-            width: 100%; 
+        h1, h2, h3 { font-family: 'Kanit', sans-serif; }
+
+        .quantum-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(34, 211, 238, 0.1);
+            border-radius: 24px;
+            padding: 1.75rem;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-input {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 14px;
             color: white;
+            transition: all 0.2s;
             font-size: 16px;
         }
 
-        .btn-action {
-            background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
-            padding: 14px 20px;
-            border-radius: 12px;
+        .glass-input:focus {
+            border-color: var(--neon-cyan);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.1);
+        }
+
+        .btn-glow {
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            border-radius: 14px;
+            padding: 14px 24px;
             font-weight: 600;
-            font-size: 16px;
-            text-transform: uppercase;
             transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
         }
 
-        .btn-action:hover {
-            box-shadow: 0 0 20px rgba(14, 165, 233, 0.4);
+        .btn-glow:hover {
             transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.5);
         }
 
-        .timeline-item {
-            border-left: 2px solid rgba(14, 165, 233, 0.3);
-            padding-left: 1.5rem;
-            margin-bottom: 1.5rem;
-            position: relative;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -7px;
-            top: 0;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--lumina-glow);
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-4 sm:p-6 lg:p-10">
 
-    <div class="max-w-5xl mx-auto">
-        <!-- Header -->
-        <header class="flex justify-between items-center mb-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header Section -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-white tracking-wide">NEXUS <span class="text-sky-400">49.0</span></h1>
-                <p class="text-sm text-slate-400">Lumina Horizon • ระบบจัดการเงินรุ่นที่ 49</p>
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 bg-cyan-400 rounded-full animate-pulse"></div>
+                    <h1 class="text-3xl font-bold tracking-tight text-white">NEXUS <span class="text-cyan-400">51.0</span></h1>
+                </div>
+                <p class="text-slate-400 font-medium">Quantum Insight • ระบบวิเคราะห์การเงินขั้นสูง</p>
             </div>
-            <div class="flex gap-3">
-                <button onclick="exportData()" class="p-2 bg-slate-800 rounded-lg text-slate-400 hover:text-white" title="สำรองข้อมูล">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1h16v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </button>
-                <button onclick="toggleSettings()" class="p-2 bg-slate-800 rounded-lg text-slate-400 hover:text-white">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-width="2"/></svg>
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <p id="clock" class="text-sm font-bold text-slate-300"></p>
+                    <p id="dateDisplay" class="text-xs text-slate-500 font-bold uppercase"></p>
+                </div>
+                <button onclick="toggleSettings()" class="bg-slate-800 p-3 rounded-2xl hover:bg-slate-700 transition-colors">
+                    <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
                 </button>
             </div>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- ยอดรวม (Main Balance) -->
-            <div class="lg:col-span-2 space-y-6">
-                <div class="nexus-card bg-gradient-to-br from-slate-800 to-slate-900 border-sky-500/20">
-                    <div class="flex justify-between items-start mb-4">
-                        <span class="px-3 py-1 bg-sky-500/10 text-sky-400 text-xs font-bold rounded-full uppercase tracking-tighter">Total Assets</span>
-                        <span class="text-sm text-slate-500" id="currentDateDisplay"></span>
-                    </div>
-                    <div class="flex items-baseline gap-2">
-                        <span class="text-2xl text-slate-500">฿</span>
-                        <h2 id="displayTotalBalance" class="text-5xl font-bold text-white tracking-tight">0.00</h2>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-white/5">
-                        <div>
-                            <p class="text-xs text-slate-500 uppercase font-bold mb-1">รายรับวันนี้</p>
-                            <p id="displayDailyInflow" class="text-lg font-bold text-emerald-400">฿0.00</p>
+        <!-- Top Summary Row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="quantum-card bg-gradient-to-br from-slate-900 to-slate-800 border-l-4 border-l-cyan-500">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">ยอดเงินคงเหลือสุทธิ</p>
+                <div class="flex items-baseline gap-2">
+                    <span class="text-2xl text-slate-500 font-light">฿</span>
+                    <h2 id="totalBalance" class="text-4xl font-bold text-white">0.00</h2>
+                </div>
+            </div>
+            <div class="quantum-card border-l-4 border-l-emerald-500">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">รายรับ (เดือนนี้)</p>
+                <h2 id="monthlyIncome" class="text-3xl font-bold text-emerald-400">฿0.00</h2>
+            </div>
+            <div class="quantum-card border-l-4 border-l-rose-500">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">รายจ่าย (เดือนนี้)</p>
+                <h2 id="monthlyExpense" class="text-3xl font-bold text-rose-400">฿0.00</h2>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Left Side: Analytics & Charts -->
+            <div class="lg:col-span-8 space-y-8">
+                <!-- Main Analytics Chart -->
+                <div class="quantum-card">
+                    <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-width="2"></path></svg>
+                        วิเคราะห์แนวโน้มและการใช้จ่าย
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="h-64 relative">
+                            <canvas id="categoryChart"></canvas>
                         </div>
-                        <div>
-                            <p class="text-xs text-slate-500 uppercase font-bold mb-1">รายจ่ายวันนี้</p>
-                            <p id="displayDailyOutflow" class="text-lg font-bold text-rose-400">฿0.00</p>
+                        <div class="h-64 relative">
+                            <canvas id="trendChart"></canvas>
                         </div>
                     </div>
                 </div>
 
-                <!-- วิเคราะห์เป้าหมาย -->
-                <div id="goalArea" class="nexus-card hidden">
-                    <div class="flex justify-between items-center mb-3">
-                        <h3 class="text-md font-bold text-white" id="goalTitle">เป้าหมาย</h3>
-                        <span class="text-sky-400 font-bold" id="goalPercentage">0%</span>
+                <!-- Recent Transactions -->
+                <div class="quantum-card">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-bold text-white">ประวัติรายการ</h3>
+                        <button onclick="exportData()" class="text-xs font-bold text-cyan-400 hover:text-cyan-300 uppercase">Export JSON</button>
                     </div>
-                    <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden mb-2">
-                        <div id="goalProgressBar" class="h-full bg-sky-500 transition-all duration-1000" style="width: 0%"></div>
-                    </div>
-                    <div class="flex justify-between text-xs text-slate-500 font-bold">
-                        <span id="goalCurrentText">฿0</span>
-                        <span id="goalTargetText">฿0</span>
-                    </div>
-                </div>
-
-                <!-- กราฟวิเคราะห์ -->
-                <div class="nexus-card h-[350px]">
-                    <h3 class="text-sm font-bold text-slate-400 uppercase mb-4 tracking-widest">การใช้จ่ายตามหมวดหมู่</h3>
-                    <div class="h-[260px] relative">
-                        <canvas id="categoryChart"></canvas>
+                    <div id="transactionList" class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                        <!-- Data entries here -->
                     </div>
                 </div>
             </div>
 
-            <!-- เพิ่มรายการ (Transaction Entry) -->
-            <div class="space-y-6">
-                <div class="nexus-card">
-                    <h3 class="text-sm font-bold text-white mb-6 uppercase tracking-wider">บันทึกรายการใหม่</h3>
-                    <form id="ledgerForm" class="space-y-4">
+            <!-- Right Side: Controls -->
+            <div class="lg:col-span-4 space-y-8">
+                <div class="quantum-card">
+                    <h3 class="text-lg font-bold text-white mb-6">เพิ่มรายการใหม่</h3>
+                    <form id="txForm" class="space-y-5">
                         <div>
-                            <label class="text-xs text-slate-500 mb-1 block">ชื่อรายการ</label>
-                            <input type="text" id="label" placeholder="ค่าอาหาร, เงินเดือน..." required class="glass-input">
+                            <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">ชื่อรายการ</label>
+                            <input type="text" id="label" placeholder="ระบุรายการ..." required class="glass-input w-full">
                         </div>
-                        <div class="grid grid-cols-2 gap-3">
+                        <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="text-xs text-slate-500 mb-1 block">ประเภท</label>
-                                <select id="type" class="glass-input">
-                                    <option value="expense">รายจ่าย (-)</option>
-                                    <option value="income">รายรับ (+)</option>
+                                <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">ประเภท</label>
+                                <select id="type" class="glass-input w-full">
+                                    <option value="expense">รายจ่าย</option>
+                                    <option value="income">รายรับ</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="text-xs text-slate-500 mb-1 block">หมวดหมู่</label>
-                                <select id="category" class="glass-input">
-                                    <option value="Food">อาหาร</option>
-                                    <option value="Travel">เดินทาง</option>
-                                    <option value="Bills">บิล/ไฟ</option>
-                                    <option value="Work">งาน</option>
-                                    <option value="Shopping">ช้อปปิ้ง</option>
-                                    <option value="Other">อื่นๆ</option>
+                                <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">หมวดหมู่</label>
+                                <select id="category" class="glass-input w-full">
+                                    <option value="อาหาร">อาหาร</option>
+                                    <option value="เดินทาง">เดินทาง</option>
+                                    <option value="บิล/ไฟ">บิล/ไฟ</option>
+                                    <option value="ช้อปปิ้ง">ช้อปปิ้ง</option>
+                                    <option value="บันเทิง">บันเทิง</option>
+                                    <option value="งาน">งาน</option>
+                                    <option value="อื่นๆ">อื่นๆ</option>
                                 </select>
                             </div>
                         </div>
                         <div>
-                            <label class="text-xs text-slate-500 mb-1 block">จำนวนเงิน (฿)</label>
-                            <input type="number" id="amount" placeholder="0.00" step="0.01" required class="glass-input text-xl font-bold">
+                            <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">จำนวนเงิน</label>
+                            <input type="number" id="amount" placeholder="0.00" step="0.01" required class="glass-input w-full text-2xl font-bold text-cyan-400">
                         </div>
-                        <button type="submit" class="w-full btn-action text-white mt-4">บันทึกรายการ</button>
+                        <button type="submit" class="btn-glow w-full text-white uppercase tracking-widest mt-4">บันทึกข้อมูล</button>
                     </form>
                 </div>
 
-                <!-- รายการล่าสุด -->
-                <div class="space-y-3">
-                    <p class="text-xs font-bold text-slate-500 uppercase px-2">รายการล่าสุด</p>
-                    <div id="ledgerList" class="space-y-3 max-h-[400px] overflow-y-auto pr-2">
-                        <!-- Items rendered here -->
+                <!-- Goal Insight (Optional Display) -->
+                <div id="goalPanel" class="quantum-card hidden">
+                    <h3 class="text-sm font-bold text-slate-400 uppercase mb-4 tracking-tighter">Savings Progress</h3>
+                    <div class="flex justify-between mb-2">
+                        <span id="goalName" class="text-white font-bold">เป้าหมาย</span>
+                        <span id="goalPercent" class="text-cyan-400">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                        <div id="goalBar" class="h-full bg-cyan-400 transition-all duration-700" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Settings Overlay -->
-    <div id="settingsModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md hidden z-[100] items-center justify-center p-4">
-        <div class="nexus-card w-full max-w-md">
-            <h3 class="text-xl font-bold text-white mb-6">ตั้งค่าระบบ v49</h3>
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md hidden items-center justify-center p-6">
+        <div class="quantum-card w-full max-w-md">
+            <h3 class="text-2xl font-bold text-white mb-6">ตั้งค่าระบบ v51.0</h3>
             <div class="space-y-6">
                 <div>
-                    <label class="text-xs text-slate-400 block mb-2">เงินตั้งต้นในกระเป๋า (฿)</label>
-                    <input type="number" id="baseBalanceInput" class="glass-input" placeholder="ยอดเงินเริ่มต้น">
+                    <label class="text-xs font-bold text-slate-500 uppercase block mb-2">เงินทุนเริ่มต้น (฿)</label>
+                    <input type="number" id="baseInput" class="glass-input w-full">
                 </div>
                 <div>
-                    <label class="text-xs text-slate-400 block mb-2">ตั้งเป้าหมาย (ชื่อ / จำนวน)</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="goalNameInput" class="glass-input" placeholder="เช่น ซื้อบ้าน">
-                        <input type="number" id="goalTargetInput" class="glass-input" placeholder="฿ 0.00">
+                    <label class="text-xs font-bold text-slate-500 uppercase block mb-2">ตั้งเป้าหมายออมเงิน</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="text" id="goalTitleInput" placeholder="ชื่อเป้าหมาย" class="glass-input">
+                        <input type="number" id="goalAmountInput" placeholder="ยอดที่ต้องการ" class="glass-input">
                     </div>
                 </div>
-                <div class="pt-4 border-t border-white/10 flex flex-col gap-3">
-                    <button onclick="saveSettings()" class="btn-action w-full">บันทึกการตั้งค่า</button>
-                    <button onclick="toggleSettings()" class="text-sm text-slate-400 font-bold py-2">ปิดหน้าต่าง</button>
-                    <button onclick="resetData()" class="text-xs text-rose-500/50 mt-4 hover:text-rose-500">ล้างข้อมูลทั้งหมด (ลบแล้วกู้ไม่ได้)</button>
+                <div class="flex flex-col gap-3 pt-4">
+                    <button onclick="saveSettings()" class="btn-glow text-white">บันทึกและอัปเดต</button>
+                    <button onclick="toggleSettings()" class="text-slate-400 font-bold py-2">ยกเลิก</button>
+                    <button onclick="resetData()" class="text-xs text-rose-900 mt-6 hover:text-rose-500 transition-colors uppercase font-bold tracking-widest">Wipe All Data (ล้างข้อมูลทั้งหมด)</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Data Keys เพื่อรักษาข้อมูลเดิม
-        const DATA_KEYS = {
-            LEDGER: 'nexus_ledger_v49',
-            BASE: 'nexus_base_v49',
-            GOAL: 'nexus_goal_v49'
-        };
+        // Storage Configuration (Quantum Data Persistence)
+        const STORAGE_KEY = 'nexus_v51_data';
+        const LEGACY_KEYS = ['nexus_v49_ledger', 'nexus_ledger_v49', 'nexus_ledger', 'nexus_v47_ledger'];
 
         let state = {
-            ledger: [],
+            transactions: [],
             baseBalance: 0,
             goal: null
         };
 
-        let myChart = null;
+        let catChart = null;
+        let trendChart = null;
 
-        // ระบบ Lumina Data Bridge (ห้ามข้อมูลหาย)
-        function dataMigration() {
-            const current = localStorage.getItem(DATA_KEYS.LEDGER);
-            if (current && JSON.parse(current).length > 0) return;
+        // --- Data Security & Migration ---
+        function runDataMigration() {
+            const currentData = localStorage.getItem(STORAGE_KEY);
+            if (currentData) {
+                state = JSON.parse(currentData);
+                return;
+            }
 
-            // ตรวจสอบเวอร์ชันเก่าๆ เพื่อย้ายข้อมูล
-            const oldKeys = ['nexus_v47_ledger', 'nexus_v45_ledger', 'nexus_ledger'];
-            for (const key of oldKeys) {
-                const oldData = localStorage.getItem(key);
-                if (oldData && oldData !== '[]') {
-                    console.log(`Lumina Bridge: Migrating data from ${key}`);
-                    localStorage.setItem(DATA_KEYS.LEDGER, oldData);
-                    
-                    // ดึงค่าตั้งต้นถ้ามี
-                    const baseKey = key.replace('ledger', 'vault');
-                    const oldBase = localStorage.getItem(baseKey);
-                    if (oldBase) localStorage.setItem(DATA_KEYS.BASE, oldBase);
-                    break;
+            // If new version, look for older version data
+            console.log("Nexus Migration: Looking for legacy data...");
+            let legacyTransactions = [];
+            let legacyBase = 0;
+
+            for (const key of LEGACY_KEYS) {
+                const data = localStorage.getItem(key);
+                if (data) {
+                    try {
+                        const parsed = JSON.parse(data);
+                        if (Array.isArray(parsed)) {
+                            legacyTransactions = parsed;
+                        } else if (parsed.transactions) {
+                            legacyTransactions = parsed.transactions;
+                            legacyBase = parsed.baseBalance || 0;
+                        }
+                        console.log(`Nexus Migration: Recovered data from ${key}`);
+                        break; 
+                    } catch(e) { console.error("Migration error", e); }
                 }
             }
+
+            state.transactions = legacyTransactions;
+            state.baseBalance = legacyBase;
+            saveToStorage();
         }
 
-        function loadAppData() {
-            state.ledger = JSON.parse(localStorage.getItem(DATA_KEYS.LEDGER) || '[]');
-            state.baseBalance = parseFloat(localStorage.getItem(DATA_KEYS.BASE) || '0');
-            state.goal = JSON.parse(localStorage.getItem(DATA_KEYS.GOAL) || 'null');
+        function saveToStorage() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            updateUI();
         }
 
-        function saveData() {
-            localStorage.setItem(DATA_KEYS.LEDGER, JSON.stringify(state.ledger));
-            localStorage.setItem(DATA_KEYS.BASE, state.baseBalance.toString());
-            localStorage.setItem(DATA_KEYS.GOAL, JSON.stringify(state.goal));
-            renderUI();
-            updateChart();
-        }
+        // --- UI Rendering ---
+        function updateUI() {
+            const now = new Date();
+            const thisMonth = now.getMonth();
+            const thisYear = now.getFullYear();
 
-        function renderUI() {
-            let totalLedger = 0;
-            let dailyIn = 0;
-            let dailyOut = 0;
-            const todayStr = new Date().toDateString();
+            let totalTx = 0;
+            let monthIn = 0;
+            let monthOut = 0;
 
-            state.ledger.forEach(tx => {
+            state.transactions.forEach(tx => {
                 const amt = parseFloat(tx.amount);
+                const txDate = new Date(tx.date);
+                
                 if (tx.type === 'income') {
-                    totalLedger += amt;
-                    if (new Date(tx.date).toDateString() === todayStr) dailyIn += amt;
+                    totalTx += amt;
+                    if (txDate.getMonth() === thisMonth && txDate.getFullYear() === thisYear) monthIn += amt;
                 } else {
-                    totalLedger -= amt;
-                    if (new Date(tx.date).toDateString() === todayStr) dailyOut += amt;
+                    totalTx -= amt;
+                    if (txDate.getMonth() === thisMonth && txDate.getFullYear() === thisYear) monthOut += amt;
                 }
             });
 
-            const currentBalance = state.baseBalance + totalLedger;
+            const currentBalance = state.baseBalance + totalTx;
 
-            // Update Balances
-            document.getElementById('displayTotalBalance').innerText = currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
-            document.getElementById('displayDailyInflow').innerText = '฿' + dailyIn.toLocaleString();
-            document.getElementById('displayDailyOutflow').innerText = '฿' + dailyOut.toLocaleString();
+            // Update Displays
+            document.getElementById('totalBalance').innerText = currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
+            document.getElementById('monthlyIncome').innerText = '฿' + monthIn.toLocaleString();
+            document.getElementById('monthlyExpense').innerText = '฿' + monthOut.toLocaleString();
 
-            // Update Goal
-            const goalArea = document.getElementById('goalArea');
+            // Render Goal
+            const goalPanel = document.getElementById('goalPanel');
             if (state.goal && state.goal.target > 0) {
-                goalArea.classList.remove('hidden');
-                document.getElementById('goalTitle').innerText = state.goal.name;
+                goalPanel.classList.remove('hidden');
+                document.getElementById('goalName').innerText = state.goal.title;
                 const progress = Math.min(100, (currentBalance / state.goal.target) * 100);
-                document.getElementById('goalProgressBar').style.width = progress + '%';
-                document.getElementById('goalPercentage').innerText = Math.floor(progress) + '%';
-                document.getElementById('goalCurrentText').innerText = '฿' + currentBalance.toLocaleString();
-                document.getElementById('goalTargetText').innerText = '฿' + state.goal.target.toLocaleString();
+                document.getElementById('goalBar').style.width = progress + '%';
+                document.getElementById('goalPercent').innerText = Math.floor(progress) + '%';
             } else {
-                goalArea.classList.add('hidden');
+                goalPanel.classList.add('hidden');
             }
 
             // Render List
-            const listEl = document.getElementById('ledgerList');
-            listEl.innerHTML = state.ledger.slice().reverse().map((tx, idx) => `
-                <div class="bg-slate-800/40 p-4 rounded-xl flex justify-between items-center group">
+            const list = document.getElementById('transactionList');
+            list.innerHTML = state.transactions.slice().reverse().map((tx, idx) => `
+                <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-800/30 border border-white/5 hover:border-cyan-400/30 transition-all group">
                     <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-lg flex items-center justify-center ${tx.type === 'income' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}">
-                            ${tx.type === 'income' ? '↓' : '↑'}
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg ${tx.type === 'income' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}">
+                            ${tx.type === 'income' ? '💰' : '💸'}
                         </div>
                         <div>
-                            <p class="font-bold text-white text-md">${tx.label}</p>
-                            <p class="text-[12px] text-slate-500 uppercase font-bold tracking-tight">${tx.category} • ${new Date(tx.date).toLocaleDateString()}</p>
+                            <h4 class="font-bold text-white text-md">${tx.label}</h4>
+                            <div class="flex gap-2 text-[12px] uppercase font-bold tracking-tight text-slate-500">
+                                <span class="text-cyan-400/70">${tx.category}</span>
+                                <span>•</span>
+                                <span>${new Date(tx.date).toLocaleDateString('th-TH')}</span>
+                            </div>
                         </div>
                     </div>
                     <div class="text-right">
-                        <p class="font-bold ${tx.type === 'income' ? 'text-emerald-400' : 'text-rose-400'}">
+                        <p class="font-bold text-lg ${tx.type === 'income' ? 'text-emerald-400' : 'text-rose-400'}">
                             ${tx.type === 'income' ? '+' : '-'} ${parseFloat(tx.amount).toLocaleString()}
                         </p>
-                        <button onclick="deleteTx(${state.ledger.length - 1 - idx})" class="text-[10px] text-slate-600 hover:text-rose-500 font-bold uppercase opacity-0 group-hover:opacity-100 transition-all">ลบรายการ</button>
+                        <button onclick="deleteTx(${state.transactions.length - 1 - idx})" class="text-[10px] uppercase font-bold text-slate-600 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity">ลบข้อมูล</button>
                     </div>
                 </div>
-            `).join('') || '<p class="text-center py-10 text-slate-600 text-sm">ยังไม่มีรายการบันทึก</p>';
+            `).join('');
+
+            updateCharts();
         }
 
-        function updateChart() {
-            const ctx = document.getElementById('categoryChart').getContext('2d');
-            const dataMap = {};
-            state.ledger.filter(t => t.type === 'expense').forEach(t => {
-                dataMap[t.category] = (dataMap[t.category] || 0) + parseFloat(t.amount);
+        // --- Charts Implementation ---
+        function updateCharts() {
+            // Category Chart
+            const catCtx = document.getElementById('categoryChart').getContext('2d');
+            const categories = {};
+            state.transactions.filter(t => t.type === 'expense').forEach(t => {
+                categories[t.category] = (categories[t.category] || 0) + parseFloat(t.amount);
             });
 
-            const labels = Object.keys(dataMap).length > 0 ? Object.keys(dataMap) : ['ไม่มีข้อมูล'];
-            const dataValues = Object.keys(dataMap).length > 0 ? Object.values(dataMap) : [1];
-
-            if (myChart) myChart.destroy();
-            myChart = new Chart(ctx, {
+            if (catChart) catChart.destroy();
+            catChart = new Chart(catCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: labels,
+                    labels: Object.keys(categories),
                     datasets: [{
-                        data: dataValues,
-                        backgroundColor: ['#0ea5e9', '#6366f1', '#f472b6', '#fbbf24', '#10b981', '#94a3b8'],
+                        data: Object.values(categories),
+                        backgroundColor: ['#22d3ee', '#3b82f6', '#818cf8', '#f472b6', '#fbbf24', '#34d399', '#94a3b8'],
                         borderWidth: 0,
-                        hoverOffset: 15
+                        hoverOffset: 10
                     }]
                 },
                 options: {
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 12, family: 'Sarabun' } } }
+                        legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 12, family: 'Sarabun' } } },
+                        title: { display: true, text: 'สัดส่วนค่าใช้จ่าย', color: '#fff', font: { size: 14 } }
                     },
                     cutout: '70%'
                 }
             });
+
+            // Trend Chart (Last 7 transactions or days)
+            const trendCtx = document.getElementById('trendChart').getContext('2d');
+            const recent = state.transactions.slice(-10);
+            
+            if (trendChart) trendChart.destroy();
+            trendChart = new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: recent.map(r => new Date(r.date).toLocaleDateString('th-TH', {day: 'numeric', month: 'short'})),
+                    datasets: [{
+                        label: 'จำนวนเงิน',
+                        data: recent.map(r => r.amount),
+                        borderColor: '#22d3ee',
+                        backgroundColor: 'rgba(34, 211, 238, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        x: { ticks: { color: '#64748b' }, grid: { display: false } }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: true, text: 'แนวโน้มรายการล่าสุด', color: '#fff', font: { size: 14 } }
+                    }
+                }
+            });
         }
 
-        // --- Event Handlers ---
-        document.getElementById('ledgerForm').onsubmit = (e) => {
+        // --- Logic Functions ---
+        document.getElementById('txForm').onsubmit = (e) => {
             e.preventDefault();
             const tx = {
                 label: document.getElementById('label').value,
@@ -376,69 +419,73 @@
                 category: document.getElementById('category').value,
                 date: new Date().toISOString()
             };
-            state.ledger.push(tx);
-            saveData();
+            state.transactions.push(tx);
+            saveToStorage();
             e.target.reset();
         };
 
         function deleteTx(idx) {
-            if (confirm("ต้องการลบรายการนี้ใช่หรือไม่?")) {
-                state.ledger.splice(idx, 1);
-                saveData();
-            }
+            state.transactions.splice(idx, 1);
+            saveToStorage();
         }
 
         function toggleSettings() {
             const modal = document.getElementById('settingsModal');
             modal.classList.toggle('hidden');
             modal.classList.toggle('flex');
+            
             if (!modal.classList.contains('hidden')) {
-                document.getElementById('baseBalanceInput').value = state.baseBalance;
+                document.getElementById('baseInput').value = state.baseBalance;
                 if (state.goal) {
-                    document.getElementById('goalNameInput').value = state.goal.name;
-                    document.getElementById('goalTargetInput').value = state.goal.target;
+                    document.getElementById('goalTitleInput').value = state.goal.title;
+                    document.getElementById('goalAmountInput').value = state.goal.target;
                 }
             }
         }
 
         function saveSettings() {
-            state.baseBalance = parseFloat(document.getElementById('baseBalanceInput').value) || 0;
-            const gName = document.getElementById('goalNameInput').value;
-            const gTarget = parseFloat(document.getElementById('goalTargetInput').value);
+            state.baseBalance = parseFloat(document.getElementById('baseInput').value) || 0;
+            const gt = document.getElementById('goalTitleInput').value;
+            const ga = parseFloat(document.getElementById('goalAmountInput').value);
             
-            if (gName && gTarget > 0) {
-                state.goal = { name: gName, target: gTarget };
-            } else {
-                state.goal = null;
-            }
-            
-            saveData();
+            if (gt && ga) state.goal = { title: gt, target: ga };
+            else state.goal = null;
+
+            saveToStorage();
             toggleSettings();
         }
 
         function exportData() {
-            const blob = new Blob([JSON.stringify(state)], {type: 'application/json'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `finance_nexus_v49_backup.json`;
-            a.click();
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", "nexus_v51_backup.json");
+            dlAnchorElem.click();
         }
 
         function resetData() {
-            if (confirm("⚠️ นี่คือการลบข้อมูลทั้งหมดถาวร คุณแน่ใจหรือไม่?")) {
+            if (confirm("คุณกำลังจะลบข้อมูลทั้งหมดถาวร! ข้อมูลเดิมที่ถูก Migration มาก็จะหายไปด้วย ยืนยันหรือไม่?")) {
                 localStorage.clear();
                 location.reload();
             }
         }
 
-        window.onload = () => {
-            document.getElementById('currentDateDisplay').innerText = new Date().toLocaleDateString('th-TH', {day: 'numeric', month: 'long', year: 'numeric'});
-            dataMigration();
-            loadAppData();
-            renderUI();
-            updateChart();
-        };
+        // --- System Init ---
+        function initSystem() {
+            runDataMigration();
+            
+            // Clock & Date
+            setInterval(() => {
+                const now = new Date();
+                document.getElementById('clock').innerText = now.toLocaleTimeString('th-TH', {hour12: false});
+            }, 1000);
+            
+            document.getElementById('dateDisplay').innerText = new Date().toLocaleDateString('th-TH', {
+                weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+            });
+        }
+
+        window.onload = initSystem;
     </script>
 </body>
 </html>
