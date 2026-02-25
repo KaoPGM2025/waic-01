@@ -3,342 +3,323 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Nexus v51.0.0</title>
+    <title>Finance Nexus v54.0.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Kanit:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Kanit:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --neon-cyan: #22d3ee;
-            --deep-space: #020617;
-            --glass-bg: rgba(15, 23, 42, 0.7);
+            --quantum-primary: #06b6d4; /* Cyan */
+            --quantum-secondary: #8b5cf6; /* Violet */
+            --bg-base: #020617;
+            --surface: rgba(15, 23, 42, 0.8);
         }
 
         body {
             font-family: 'Sarabun', sans-serif;
-            background-color: var(--deep-space);
+            background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
             color: #f1f5f9;
-            /* ปรับขนาดตัวอักษรขนาดกลางที่อ่านง่ายที่สุด */
-            font-size: 16.5px; 
+            /* ปรับขนาดตัวอักษรขนาดกลางที่เหมาะสมที่สุดสำหรับ v54 */
+            font-size: 17.5px;
             line-height: 1.7;
+            min-height: 100vh;
         }
 
-        h1, h2, h3 { font-family: 'Kanit', sans-serif; }
+        h1, h2, h3, .font-kanit { font-family: 'Kanit', sans-serif; }
 
         .quantum-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(34, 211, 238, 0.1);
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 24px;
-            padding: 1.75rem;
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .glass-input {
-            background: rgba(30, 41, 59, 0.5);
+        .quantum-card:hover {
+            border-color: rgba(6, 182, 212, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .input-quantum {
+            background: rgba(2, 6, 23, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 14px;
             padding: 14px;
             color: white;
-            transition: all 0.2s;
-            font-size: 16px;
+            transition: all 0.3s ease;
         }
 
-        .glass-input:focus {
-            border-color: var(--neon-cyan);
+        .input-quantum:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.1);
+            border-color: var(--quantum-primary);
+            box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.15);
         }
 
-        .btn-glow {
+        .btn-quantum {
             background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
             border-radius: 14px;
-            padding: 14px 24px;
+            padding: 16px;
             font-weight: 600;
+            color: white;
+            text-align: center;
+            cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
         }
 
-        .btn-glow:hover {
-            transform: translateY(-2px);
+        .btn-quantum:hover {
+            opacity: 0.9;
+            transform: scale(1.01);
             box-shadow: 0 8px 25px rgba(6, 182, 212, 0.5);
         }
 
-        /* Scrollbar Styling */
+        .status-badge {
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 99px;
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--quantum-primary);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+        }
+
         ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
     </style>
 </head>
-<body class="p-4 sm:p-6 lg:p-10">
+<body class="p-4 lg:p-10">
 
     <div class="max-w-6xl mx-auto">
-        <!-- Header Section -->
-        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+        <!-- Main Header -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
             <div>
-                <div class="flex items-center gap-2">
-                    <div class="w-3 h-3 bg-cyan-400 rounded-full animate-pulse"></div>
-                    <h1 class="text-3xl font-bold tracking-tight text-white">NEXUS <span class="text-cyan-400">51.0</span></h1>
+                <div class="flex items-center gap-3">
+                    <h1 class="text-3xl font-bold tracking-tight text-white flex items-center gap-2">
+                        <span class="text-cyan-400">NEXUS</span> v54.0.0
+                    </h1>
+                    <span class="status-badge font-kanit">Quantum Core</span>
                 </div>
-                <p class="text-slate-400 font-medium">Quantum Insight • ระบบวิเคราะห์การเงินขั้นสูง</p>
+                <p class="text-slate-400">ระบบวิเคราะห์การเงินอัจฉริยะ • อัปเกรดฐานข้อมูลแล้ว</p>
             </div>
-            <div class="flex items-center gap-3">
-                <div class="text-right hidden sm:block">
-                    <p id="clock" class="text-sm font-bold text-slate-300"></p>
-                    <p id="dateDisplay" class="text-xs text-slate-500 font-bold uppercase"></p>
-                </div>
-                <button onclick="toggleSettings()" class="bg-slate-800 p-3 rounded-2xl hover:bg-slate-700 transition-colors">
-                    <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-                </button>
+            <div id="realtime-clock" class="font-kanit text-slate-400 bg-slate-900/50 px-6 py-2 rounded-full border border-white/5">
+                00:00:00
             </div>
-        </header>
+        </div>
 
-        <!-- Top Summary Row -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="quantum-card bg-gradient-to-br from-slate-900 to-slate-800 border-l-4 border-l-cyan-500">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">ยอดเงินคงเหลือสุทธิ</p>
-                <div class="flex items-baseline gap-2">
-                    <span class="text-2xl text-slate-500 font-light">฿</span>
-                    <h2 id="totalBalance" class="text-4xl font-bold text-white">0.00</h2>
-                </div>
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div class="quantum-card p-6 border-l-4 border-l-cyan-500">
+                <p class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">ยอดเงินสุทธิ</p>
+                <h2 id="totalBalance" class="text-4xl font-bold text-white tracking-tight">฿0.00</h2>
             </div>
-            <div class="quantum-card border-l-4 border-l-emerald-500">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">รายรับ (เดือนนี้)</p>
+            <div class="quantum-card p-6 border-l-4 border-l-emerald-500">
+                <p class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">รายรับเดือนนี้</p>
                 <h2 id="monthlyIncome" class="text-3xl font-bold text-emerald-400">฿0.00</h2>
             </div>
-            <div class="quantum-card border-l-4 border-l-rose-500">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">รายจ่าย (เดือนนี้)</p>
+            <div class="quantum-card p-6 border-l-4 border-l-rose-500">
+                <p class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">รายจ่ายเดือนนี้</p>
                 <h2 id="monthlyExpense" class="text-3xl font-bold text-rose-400">฿0.00</h2>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Left Side: Analytics & Charts -->
-            <div class="lg:col-span-8 space-y-8">
-                <!-- Main Analytics Chart -->
-                <div class="quantum-card">
-                    <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-width="2"></path></svg>
-                        วิเคราะห์แนวโน้มและการใช้จ่าย
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="h-64 relative">
-                            <canvas id="categoryChart"></canvas>
-                        </div>
-                        <div class="h-64 relative">
-                            <canvas id="trendChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Recent Transactions -->
-                <div class="quantum-card">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-lg font-bold text-white">ประวัติรายการ</h3>
-                        <button onclick="exportData()" class="text-xs font-bold text-cyan-400 hover:text-cyan-300 uppercase">Export JSON</button>
-                    </div>
-                    <div id="transactionList" class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
-                        <!-- Data entries here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Side: Controls -->
+            <!-- Left: Analysis & Forms -->
             <div class="lg:col-span-4 space-y-8">
-                <div class="quantum-card">
-                    <h3 class="text-lg font-bold text-white mb-6">เพิ่มรายการใหม่</h3>
-                    <form id="txForm" class="space-y-5">
-                        <div>
-                            <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">ชื่อรายการ</label>
-                            <input type="text" id="label" placeholder="ระบุรายการ..." required class="glass-input w-full">
+                <!-- Form Card -->
+                <div class="quantum-card p-8">
+                    <h3 class="text-xl font-bold text-white mb-6">บันทึกรายการใหม่</h3>
+                    <form id="financeForm" class="space-y-5">
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-slate-400 block ml-1">ชื่อรายการ</label>
+                            <input type="text" id="label" placeholder="เช่น ค่าอาหาร, เงินเดือน..." required class="input-quantum w-full">
                         </div>
                         <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">ประเภท</label>
-                                <select id="type" class="glass-input w-full">
-                                    <option value="expense">รายจ่าย</option>
+                            <div class="space-y-2">
+                                <label class="text-sm font-bold text-slate-400 block ml-1">ประเภท</label>
+                                <select id="type" class="input-quantum w-full">
                                     <option value="income">รายรับ</option>
+                                    <option value="expense">รายจ่าย</option>
                                 </select>
                             </div>
-                            <div>
-                                <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">หมวดหมู่</label>
-                                <select id="category" class="glass-input w-full">
-                                    <option value="อาหาร">อาหาร</option>
-                                    <option value="เดินทาง">เดินทาง</option>
-                                    <option value="บิล/ไฟ">บิล/ไฟ</option>
-                                    <option value="ช้อปปิ้ง">ช้อปปิ้ง</option>
-                                    <option value="บันเทิง">บันเทิง</option>
-                                    <option value="งาน">งาน</option>
-                                    <option value="อื่นๆ">อื่นๆ</option>
+                            <div class="space-y-2">
+                                <label class="text-sm font-bold text-slate-400 block ml-1">หมวดหมู่</label>
+                                <select id="category" class="input-quantum w-full">
+                                    <option value="อาหาร">🍔 อาหาร</option>
+                                    <option value="เดินทาง">🚗 เดินทาง</option>
+                                    <option value="ช้อปปิ้ง">🛍️ ช้อปปิ้ง</option>
+                                    <option value="บิล">🧾 บิล/ค่าไฟ</option>
+                                    <option value="บันเทิง">🎬 บันเทิง</option>
+                                    <option value="อื่นๆ">📦 อื่นๆ</option>
                                 </select>
                             </div>
                         </div>
-                        <div>
-                            <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">จำนวนเงิน</label>
-                            <input type="number" id="amount" placeholder="0.00" step="0.01" required class="glass-input w-full text-2xl font-bold text-cyan-400">
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-slate-400 block ml-1">จำนวนเงิน (฿)</label>
+                            <input type="number" id="amount" step="0.01" placeholder="0.00" required class="input-quantum w-full text-2xl font-bold text-cyan-400">
                         </div>
-                        <button type="submit" class="btn-glow w-full text-white uppercase tracking-widest mt-4">บันทึกข้อมูล</button>
+                        <button type="submit" class="btn-quantum w-full font-kanit text-lg mt-4">บันทึกข้อมูล</button>
                     </form>
                 </div>
 
-                <!-- Goal Insight (Optional Display) -->
-                <div id="goalPanel" class="quantum-card hidden">
-                    <h3 class="text-sm font-bold text-slate-400 uppercase mb-4 tracking-tighter">Savings Progress</h3>
-                    <div class="flex justify-between mb-2">
-                        <span id="goalName" class="text-white font-bold">เป้าหมาย</span>
-                        <span id="goalPercent" class="text-cyan-400">0%</span>
+                <!-- Settings Mini Card -->
+                <div class="quantum-card p-6 flex justify-between items-center">
+                    <div class="text-sm text-slate-400">
+                        <p class="font-bold">เงินต้นพื้นฐาน</p>
+                        <p id="displayBase" class="text-cyan-400 font-mono">฿0.00</p>
                     </div>
-                    <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
-                        <div id="goalBar" class="h-full bg-cyan-400 transition-all duration-700" style="width: 0%"></div>
+                    <button onclick="openSettings()" class="bg-slate-800 hover:bg-slate-700 p-3 rounded-xl transition-colors">
+                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right: Visualization & History -->
+            <div class="lg:col-span-8 space-y-8">
+                <!-- Analytics Charts -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="quantum-card p-6">
+                        <h4 class="text-sm font-bold text-slate-500 mb-4 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-cyan-500"></span> หมวดหมู่การจ่าย
+                        </h4>
+                        <div class="h-64"><canvas id="categoryChart"></canvas></div>
+                    </div>
+                    <div class="quantum-card p-6">
+                        <h4 class="text-sm font-bold text-slate-500 mb-4 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-violet-500"></span> รายรับ vs รายจ่าย (7 รายการล่าสุด)
+                        </h4>
+                        <div class="h-64"><canvas id="flowChart"></canvas></div>
+                    </div>
+                </div>
+
+                <!-- List History -->
+                <div class="quantum-card p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-white">ประวัติรายการ</h3>
+                        <button onclick="downloadBackup()" class="text-xs text-slate-500 hover:text-cyan-400 transition-colors uppercase font-bold tracking-tighter">Backup Data</button>
+                    </div>
+                    <div id="txList" class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+                        <!-- Content via JS -->
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Settings Modal -->
-    <div id="settingsModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md hidden items-center justify-center p-6">
-        <div class="quantum-card w-full max-w-md">
-            <h3 class="text-2xl font-bold text-white mb-6">ตั้งค่าระบบ v51.0</h3>
-            <div class="space-y-6">
-                <div>
-                    <label class="text-xs font-bold text-slate-500 uppercase block mb-2">เงินทุนเริ่มต้น (฿)</label>
-                    <input type="number" id="baseInput" class="glass-input w-full">
+    <!-- Modals -->
+    <div id="settingsModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="quantum-card w-full max-w-md p-8">
+            <h3 class="text-2xl font-bold text-white mb-6">ตั้งค่าฐานระบบ v54</h3>
+            <div class="space-y-5">
+                <div class="space-y-2">
+                    <label class="text-sm font-bold text-slate-400 block">เงินต้นในบัญชี (เริ่มต้น)</label>
+                    <input type="number" id="baseInp" class="input-quantum w-full">
                 </div>
-                <div>
-                    <label class="text-xs font-bold text-slate-500 uppercase block mb-2">ตั้งเป้าหมายออมเงิน</label>
-                    <div class="grid grid-cols-2 gap-3">
-                        <input type="text" id="goalTitleInput" placeholder="ชื่อเป้าหมาย" class="glass-input">
-                        <input type="number" id="goalAmountInput" placeholder="ยอดที่ต้องการ" class="glass-input">
-                    </div>
+                <div class="flex gap-4 pt-4">
+                    <button onclick="saveSettings()" class="btn-quantum flex-1">ยืนยัน</button>
+                    <button onclick="closeSettings()" class="bg-slate-800 text-slate-400 rounded-xl px-6 hover:bg-slate-700 transition-all">ยกเลิก</button>
                 </div>
-                <div class="flex flex-col gap-3 pt-4">
-                    <button onclick="saveSettings()" class="btn-glow text-white">บันทึกและอัปเดต</button>
-                    <button onclick="toggleSettings()" class="text-slate-400 font-bold py-2">ยกเลิก</button>
-                    <button onclick="resetData()" class="text-xs text-rose-900 mt-6 hover:text-rose-500 transition-colors uppercase font-bold tracking-widest">Wipe All Data (ล้างข้อมูลทั้งหมด)</button>
+                <div class="pt-8 border-t border-white/5">
+                    <button onclick="wipeAllData()" class="text-xs text-rose-800 hover:text-rose-500 transition-colors uppercase font-bold">Wipe All Data (คืนค่าโรงงาน)</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Storage Configuration (Quantum Data Persistence)
-        const STORAGE_KEY = 'nexus_v51_data';
-        const LEGACY_KEYS = ['nexus_v49_ledger', 'nexus_ledger_v49', 'nexus_ledger', 'nexus_v47_ledger'];
+        // Storage Configuration
+        const CURRENT_V = 'nexus_v54_store';
+        const PREV_V = 'nexus_v53_storage';
+        const LEGACY_KEYS = ['nexus_v51_data', 'nexus_v49_ledger', 'nexus_v47_ledger', 'nexus_ledger'];
 
         let state = {
             transactions: [],
-            baseBalance: 0,
-            goal: null
+            baseBalance: 0
         };
 
-        let catChart = null;
-        let trendChart = null;
+        let charts = { cat: null, flow: null };
 
-        // --- Data Security & Migration ---
-        function runDataMigration() {
-            const currentData = localStorage.getItem(STORAGE_KEY);
-            if (currentData) {
-                state = JSON.parse(currentData);
+        // --- Data Migration Hub ---
+        function migrate() {
+            const current = localStorage.getItem(CURRENT_V);
+            if (current) {
+                state = JSON.parse(current);
                 return;
             }
 
-            // If new version, look for older version data
-            console.log("Nexus Migration: Looking for legacy data...");
-            let legacyTransactions = [];
-            let legacyBase = 0;
-
-            for (const key of LEGACY_KEYS) {
-                const data = localStorage.getItem(key);
-                if (data) {
-                    try {
-                        const parsed = JSON.parse(data);
-                        if (Array.isArray(parsed)) {
-                            legacyTransactions = parsed;
-                        } else if (parsed.transactions) {
-                            legacyTransactions = parsed.transactions;
-                            legacyBase = parsed.baseBalance || 0;
-                        }
-                        console.log(`Nexus Migration: Recovered data from ${key}`);
-                        break; 
-                    } catch(e) { console.error("Migration error", e); }
-                }
+            // Try migrating from v53
+            const v53 = localStorage.getItem(PREV_V);
+            if (v53) {
+                state = JSON.parse(v53);
+                console.log("Migrated from v53");
+                save();
+                return;
             }
 
-            state.transactions = legacyTransactions;
-            state.baseBalance = legacyBase;
-            saveToStorage();
+            // Try migrating from older legacy keys
+            for (const k of LEGACY_KEYS) {
+                const raw = localStorage.getItem(k);
+                if (raw) {
+                    try {
+                        const parsed = JSON.parse(raw);
+                        state.transactions = Array.isArray(parsed) ? parsed : (parsed.transactions || []);
+                        state.baseBalance = parsed.baseBalance || 0;
+                        console.log(`Migrated from legacy: ${k}`);
+                        save();
+                        break;
+                    } catch(e) {}
+                }
+            }
         }
 
-        function saveToStorage() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-            updateUI();
+        function save() {
+            localStorage.setItem(CURRENT_V, JSON.stringify(state));
+            render();
         }
 
-        // --- UI Rendering ---
-        function updateUI() {
+        function render() {
+            let totalFlow = 0;
+            let mIn = 0;
+            let mOut = 0;
             const now = new Date();
-            const thisMonth = now.getMonth();
-            const thisYear = now.getFullYear();
 
-            let totalTx = 0;
-            let monthIn = 0;
-            let monthOut = 0;
-
-            state.transactions.forEach(tx => {
-                const amt = parseFloat(tx.amount);
-                const txDate = new Date(tx.date);
-                
-                if (tx.type === 'income') {
-                    totalTx += amt;
-                    if (txDate.getMonth() === thisMonth && txDate.getFullYear() === thisYear) monthIn += amt;
+            state.transactions.forEach(t => {
+                const amt = parseFloat(t.amount);
+                const d = new Date(t.date);
+                if (t.type === 'income') {
+                    totalFlow += amt;
+                    if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) mIn += amt;
                 } else {
-                    totalTx -= amt;
-                    if (txDate.getMonth() === thisMonth && txDate.getFullYear() === thisYear) monthOut += amt;
+                    totalFlow -= amt;
+                    if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) mOut += amt;
                 }
             });
 
-            const currentBalance = state.baseBalance + totalTx;
+            const net = state.baseBalance + totalFlow;
 
-            // Update Displays
-            document.getElementById('totalBalance').innerText = currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
-            document.getElementById('monthlyIncome').innerText = '฿' + monthIn.toLocaleString();
-            document.getElementById('monthlyExpense').innerText = '฿' + monthOut.toLocaleString();
+            // UI Elements
+            document.getElementById('totalBalance').innerText = '฿' + net.toLocaleString(undefined, {minimumFractionDigits: 2});
+            document.getElementById('monthlyIncome').innerText = '฿' + mIn.toLocaleString();
+            document.getElementById('monthlyExpense').innerText = '฿' + mOut.toLocaleString();
+            document.getElementById('displayBase').innerText = '฿' + state.baseBalance.toLocaleString();
 
-            // Render Goal
-            const goalPanel = document.getElementById('goalPanel');
-            if (state.goal && state.goal.target > 0) {
-                goalPanel.classList.remove('hidden');
-                document.getElementById('goalName').innerText = state.goal.title;
-                const progress = Math.min(100, (currentBalance / state.goal.target) * 100);
-                document.getElementById('goalBar').style.width = progress + '%';
-                document.getElementById('goalPercent').innerText = Math.floor(progress) + '%';
-            } else {
-                goalPanel.classList.add('hidden');
-            }
-
-            // Render List
-            const list = document.getElementById('transactionList');
-            list.innerHTML = state.transactions.slice().reverse().map((tx, idx) => `
-                <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-800/30 border border-white/5 hover:border-cyan-400/30 transition-all group">
+            // List
+            const container = document.getElementById('txList');
+            container.innerHTML = state.transactions.slice().reverse().map((t, idx) => `
+                <div class="flex items-center justify-between p-4 bg-slate-800/30 rounded-2xl border border-white/5 hover:border-cyan-500/20 transition-all">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg ${tx.type === 'income' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}">
-                            ${tx.type === 'income' ? '💰' : '💸'}
+                        <div class="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center text-xl shadow-inner border border-white/5">
+                            ${t.type === 'income' ? '💹' : '📉'}
                         </div>
                         <div>
-                            <h4 class="font-bold text-white text-md">${tx.label}</h4>
-                            <div class="flex gap-2 text-[12px] uppercase font-bold tracking-tight text-slate-500">
-                                <span class="text-cyan-400/70">${tx.category}</span>
-                                <span>•</span>
-                                <span>${new Date(tx.date).toLocaleDateString('th-TH')}</span>
-                            </div>
+                            <p class="font-bold text-white">${t.label}</p>
+                            <p class="text-[12px] font-bold uppercase text-slate-500 tracking-wider">${t.category} • ${new Date(t.date).toLocaleDateString('th-TH')}</p>
                         </div>
                     </div>
                     <div class="text-right">
-                        <p class="font-bold text-lg ${tx.type === 'income' ? 'text-emerald-400' : 'text-rose-400'}">
-                            ${tx.type === 'income' ? '+' : '-'} ${parseFloat(tx.amount).toLocaleString()}
+                        <p class="font-bold text-lg ${t.type === 'income' ? 'text-emerald-400' : 'text-rose-400'}">
+                            ${t.type === 'income' ? '+' : '-'} ${parseFloat(t.amount).toLocaleString()}
                         </p>
-                        <button onclick="deleteTx(${state.transactions.length - 1 - idx})" class="text-[10px] uppercase font-bold text-slate-600 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity">ลบข้อมูล</button>
+                        <button onclick="deleteTx(${state.transactions.length - 1 - idx})" class="text-[10px] text-slate-600 hover:text-rose-500 uppercase font-bold">Delete</button>
                     </div>
                 </div>
             `).join('');
@@ -346,146 +327,121 @@
             updateCharts();
         }
 
-        // --- Charts Implementation ---
         function updateCharts() {
-            // Category Chart
-            const catCtx = document.getElementById('categoryChart').getContext('2d');
-            const categories = {};
+            // Category Pie
+            const ctxCat = document.getElementById('categoryChart').getContext('2d');
+            const map = {};
             state.transactions.filter(t => t.type === 'expense').forEach(t => {
-                categories[t.category] = (categories[t.category] || 0) + parseFloat(t.amount);
+                map[t.category] = (map[t.category] || 0) + parseFloat(t.amount);
             });
 
-            if (catChart) catChart.destroy();
-            catChart = new Chart(catCtx, {
+            if (charts.cat) charts.cat.destroy();
+            charts.cat = new Chart(ctxCat, {
                 type: 'doughnut',
                 data: {
-                    labels: Object.keys(categories),
+                    labels: Object.keys(map),
                     datasets: [{
-                        data: Object.values(categories),
-                        backgroundColor: ['#22d3ee', '#3b82f6', '#818cf8', '#f472b6', '#fbbf24', '#34d399', '#94a3b8'],
-                        borderWidth: 0,
-                        hoverOffset: 10
+                        data: Object.values(map),
+                        backgroundColor: ['#06b6d4', '#8b5cf6', '#3b82f6', '#10b981', '#f43f5e', '#f59e0b'],
+                        borderWidth: 0
                     }]
                 },
                 options: {
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 12, family: 'Sarabun' } } },
-                        title: { display: true, text: 'สัดส่วนค่าใช้จ่าย', color: '#fff', font: { size: 14 } }
-                    },
-                    cutout: '70%'
+                    cutout: '70%',
+                    plugins: { 
+                        legend: { position: 'bottom', labels: { color: '#94a3b8', font: { family: 'Sarabun' } } }
+                    }
                 }
             });
 
-            // Trend Chart (Last 7 transactions or days)
-            const trendCtx = document.getElementById('trendChart').getContext('2d');
-            const recent = state.transactions.slice(-10);
+            // Flow Bar
+            const ctxFlow = document.getElementById('flowChart').getContext('2d');
+            const recent = state.transactions.slice(-7);
             
-            if (trendChart) trendChart.destroy();
-            trendChart = new Chart(trendCtx, {
-                type: 'line',
+            if (charts.flow) charts.flow.destroy();
+            charts.flow = new Chart(ctxFlow, {
+                type: 'bar',
                 data: {
-                    labels: recent.map(r => new Date(r.date).toLocaleDateString('th-TH', {day: 'numeric', month: 'short'})),
+                    labels: recent.map(r => r.label.substring(0,6)),
                     datasets: [{
-                        label: 'จำนวนเงิน',
-                        data: recent.map(r => r.amount),
-                        borderColor: '#22d3ee',
-                        backgroundColor: 'rgba(34, 211, 238, 0.1)',
-                        fill: true,
-                        tension: 0.4
+                        label: 'Amount',
+                        data: recent.map(r => r.type === 'income' ? r.amount : -r.amount),
+                        backgroundColor: recent.map(r => r.type === 'income' ? '#10b981' : '#f43f5e'),
+                        borderRadius: 8
                     }]
                 },
                 options: {
                     maintainAspectRatio: false,
                     scales: {
-                        y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)' } },
-                        x: { ticks: { color: '#64748b' }, grid: { display: false } }
+                        y: { grid: { color: '#1e293b' }, ticks: { color: '#64748b' } },
+                        x: { grid: { display: false }, ticks: { color: '#64748b' } }
                     },
-                    plugins: {
-                        legend: { display: false },
-                        title: { display: true, text: 'แนวโน้มรายการล่าสุด', color: '#fff', font: { size: 14 } }
-                    }
+                    plugins: { legend: { display: false } }
                 }
             });
         }
 
-        // --- Logic Functions ---
-        document.getElementById('txForm').onsubmit = (e) => {
+        // --- Event Handlers ---
+        document.getElementById('financeForm').onsubmit = (e) => {
             e.preventDefault();
             const tx = {
                 label: document.getElementById('label').value,
-                amount: document.getElementById('amount').value,
                 type: document.getElementById('type').value,
                 category: document.getElementById('category').value,
+                amount: document.getElementById('amount').value,
                 date: new Date().toISOString()
             };
             state.transactions.push(tx);
-            saveToStorage();
+            save();
             e.target.reset();
         };
 
-        function deleteTx(idx) {
-            state.transactions.splice(idx, 1);
-            saveToStorage();
+        function deleteTx(i) {
+            state.transactions.splice(i, 1);
+            save();
         }
 
-        function toggleSettings() {
-            const modal = document.getElementById('settingsModal');
-            modal.classList.toggle('hidden');
-            modal.classList.toggle('flex');
-            
-            if (!modal.classList.contains('hidden')) {
-                document.getElementById('baseInput').value = state.baseBalance;
-                if (state.goal) {
-                    document.getElementById('goalTitleInput').value = state.goal.title;
-                    document.getElementById('goalAmountInput').value = state.goal.target;
-                }
-            }
+        function openSettings() {
+            document.getElementById('settingsModal').classList.replace('hidden', 'flex');
+            document.getElementById('baseInp').value = state.baseBalance;
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.replace('flex', 'hidden');
         }
 
         function saveSettings() {
-            state.baseBalance = parseFloat(document.getElementById('baseInput').value) || 0;
-            const gt = document.getElementById('goalTitleInput').value;
-            const ga = parseFloat(document.getElementById('goalAmountInput').value);
-            
-            if (gt && ga) state.goal = { title: gt, target: ga };
-            else state.goal = null;
-
-            saveToStorage();
-            toggleSettings();
+            state.baseBalance = parseFloat(document.getElementById('baseInp').value) || 0;
+            save();
+            closeSettings();
         }
 
-        function exportData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
-            const dlAnchorElem = document.createElement('a');
-            dlAnchorElem.setAttribute("href", dataStr);
-            dlAnchorElem.setAttribute("download", "nexus_v51_backup.json");
-            dlAnchorElem.click();
-        }
-
-        function resetData() {
-            if (confirm("คุณกำลังจะลบข้อมูลทั้งหมดถาวร! ข้อมูลเดิมที่ถูก Migration มาก็จะหายไปด้วย ยืนยันหรือไม่?")) {
+        function wipeAllData() {
+            if (confirm("🚨 คำเตือน: ข้อมูลเวอร์ชัน v54 และข้อมูลที่ถูกยกยอดมาทั้งหมดจะถูกลบ ล้างข้อมูลหรือไม่?")) {
                 localStorage.clear();
                 location.reload();
             }
         }
 
-        // --- System Init ---
-        function initSystem() {
-            runDataMigration();
-            
-            // Clock & Date
-            setInterval(() => {
-                const now = new Date();
-                document.getElementById('clock').innerText = now.toLocaleTimeString('th-TH', {hour12: false});
-            }, 1000);
-            
-            document.getElementById('dateDisplay').innerText = new Date().toLocaleDateString('th-TH', {
-                weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-            });
+        function downloadBackup() {
+            const data = JSON.stringify(state, null, 2);
+            const blob = new Blob([data], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `nexus_v54_bkp_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
         }
 
-        window.onload = initSystem;
+        // Initializer
+        window.onload = () => {
+            migrate();
+            render();
+            setInterval(() => {
+                document.getElementById('realtime-clock').innerText = new Date().toLocaleTimeString('th-TH');
+            }, 1000);
+        };
     </script>
 </body>
 </html>
