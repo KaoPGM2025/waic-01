@@ -3,224 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Nexus v60.0.0 MetaAI 5.0</title>
+    <title>Finance Nexus v60.1.0 MetaAI 5.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Kanit:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Kanit:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --meta-ai-glow: #00f2fe;
-            --meta-ai-deep: #4facfe;
-            --bg-dark: #020617;
+            --meta-ai-primary: #06b6d4;
+            --meta-ai-secondary: #8b5cf6;
+            --bg-deep: #020617;
         }
 
         body {
             font-family: 'Sarabun', sans-serif;
-            background: radial-gradient(circle at bottom left, #0f172a, #020617);
+            background-color: var(--bg-deep);
+            background-image: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #020617 100%);
             color: #f1f5f9;
-            /* ขนาดตัวอักษรขนาดกลาง 18px ตามคำขอ */
-            font-size: 18px;
+            /* ปรับขนาดตัวอักษรขนาดกลาง 18.5px ตามคำขอ */
+            font-size: 18.5px;
             line-height: 1.6;
             min-height: 100vh;
         }
 
-        h1, h2, h3, .font-kanit { font-family: 'Kanit', sans-serif; }
+        .font-kanit { font-family: 'Kanit', sans-serif; }
 
-        .meta-card {
-            background: rgba(15, 23, 42, 0.8);
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 242, 254, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 24px;
-            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            border-color: var(--meta-ai-primary);
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.15);
         }
 
         .ai-status-badge {
-            background: linear-gradient(135deg, var(--meta-ai-glow), var(--meta-ai-deep));
-            color: #020617;
-            padding: 8px 16px;
+            background: linear-gradient(90deg, #06b6d4, #8b5cf6);
+            padding: 2px 10px;
             border-radius: 99px;
-            font-weight: 700;
-            font-size: 16px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
         }
 
         .input-meta {
-            background: rgba(30, 41, 59, 0.5);
+            background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 12px 16px;
             color: white;
             width: 100%;
-            font-size: 18px;
+            transition: border 0.3s;
+        }
+
+        .input-meta:focus {
+            outline: none;
+            border-color: var(--meta-ai-primary);
         }
 
         .btn-meta {
-            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-            color: #020617;
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            border-radius: 14px;
             padding: 14px;
-            border-radius: 12px;
-            font-weight: 700;
-            width: 100%;
-            transition: 0.3s;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .btn-meta:hover {
-            transform: scale(1.02);
-            filter: brightness(1.1);
-        }
+        .btn-meta:active { transform: scale(0.98); }
 
         .progress-container {
             height: 10px;
             background: rgba(255, 255, 255, 0.05);
-            border-radius: 5px;
+            border-radius: 99px;
             overflow: hidden;
         }
 
-        .progress-bar {
+        .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #00f2fe, #4facfe);
-            width: 0%;
-            transition: width 1s ease;
+            background: linear-gradient(90deg, #06b6d4, #8b5cf6);
+            transition: width 1s ease-in-out;
         }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: rgba(0, 242, 254, 0.2); border-radius: 10px; }
+        .ai-message {
+            border-left: 4px solid var(--meta-ai-primary);
+            background: rgba(6, 182, 212, 0.05);
+            padding: 15px;
+            border-radius: 0 16px 16px 0;
+            font-style: italic;
+        }
     </style>
 </head>
 <body class="p-4 md:p-10">
 
     <div class="max-w-6xl mx-auto">
-        <!-- Header & AI Status -->
-        <header class="mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
             <div>
-                <h1 class="text-4xl font-black text-white flex items-center gap-3">
-                    METAAI <span class="text-cyan-400">5.0</span>
-                </h1>
-                <p class="text-slate-400">Nexus v60.0.0 • ระบบวิเคราะห์อัจฉริยะ</p>
-            </div>
-            
-            <div class="meta-card p-4 px-6 flex flex-col items-end">
-                <span class="text-xs uppercase text-slate-500 font-bold mb-1 tracking-widest">สถานะทางการเงินโดย AI</span>
-                <div id="aiStatusBadge" class="ai-status-badge">
-                    <span>กำลังวิเคราะห์...</span>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="ai-status-badge">MetaAI 5.0</span>
+                    <h1 class="text-3xl font-bold font-kanit tracking-tight text-white">FINANCE <span class="text-cyan-400">NEXUS</span></h1>
                 </div>
-                <p id="aiAdvice" class="text-xs text-slate-400 mt-2 max-w-[200px] text-right">เชื่อมต่อข้อมูล Quantum สำเร็จ</p>
+                <p class="text-slate-400">Version 60.1.0 • ระบบวิเคราะห์สถานะการเงินอัตโนมัติ</p>
+            </div>
+            <div class="text-right">
+                <p class="text-sm font-bold text-slate-500 uppercase">Balance คงเหลือปัจจุบัน</p>
+                <h2 id="balanceDisplay" class="text-5xl font-bold text-white tracking-tighter">฿0.00</h2>
             </div>
         </header>
 
-        <!-- Main Dashboard -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <!-- Left: Goals & Inputs -->
-            <div class="space-y-6">
-                <!-- Balance Display -->
-                <div class="meta-card p-6 bg-gradient-to-br from-slate-900 to-slate-800 border-none">
-                    <p class="text-slate-400 text-sm font-bold uppercase">ยอดเงินคงเหลือ</p>
-                    <h2 id="totalBalance" class="text-4xl font-bold text-white mt-1 tracking-tight">฿0.00</h2>
+        <!-- AI Insight Section -->
+        <section class="glass-card p-6 mb-8 border-cyan-500/20">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-full bg-cyan-500/20 flex items-center justify-center animate-pulse">
+                    <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-width="2"></path></svg>
                 </div>
+                <h3 class="text-xl font-bold font-kanit">การวิเคราะห์จาก MetaAI</h3>
+            </div>
+            <div id="aiInsight" class="ai-message text-slate-300">
+                กำลังรวบรวมข้อมูลและวิเคราะห์สถานะทางการเงินของคุณ...
+            </div>
+        </section>
 
-                <!-- Savings Goal -->
-                <div class="meta-card p-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left: Goal & Form -->
+            <div class="space-y-8">
+                <!-- Goal Tracking -->
+                <div class="glass-card p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-lg">เป้าหมาย</h3>
-                        <button onclick="toggleGoalModal()" class="text-cyan-400 text-sm hover:underline">แก้ไข</button>
+                        <h3 class="font-bold text-lg font-kanit">เป้าหมายปัจจุบัน</h3>
+                        <button onclick="toggleGoalModal()" class="text-xs text-cyan-400 hover:underline">ตั้งค่า</button>
                     </div>
-                    <p id="goalTitle" class="text-slate-400 text-sm mb-1">สะสมเงินออม</p>
-                    <div class="flex justify-between items-end mb-2">
-                        <span id="goalTarget" class="text-xl font-bold">฿0.00</span>
-                        <span id="goalPercent" class="text-cyan-400 text-sm font-bold">0%</span>
-                    </div>
-                    <div class="progress-container">
-                        <div id="goalProgress" class="progress-bar"></div>
+                    <div class="space-y-4">
+                        <div class="flex justify-between">
+                            <span id="goalTitle" class="text-slate-400">เงินออมสำรอง</span>
+                            <span id="goalTarget" class="font-bold">฿0.00</span>
+                        </div>
+                        <div class="progress-container">
+                            <div id="goalBar" class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <p id="goalStatus" class="text-sm text-slate-500 text-center italic"></p>
                     </div>
                 </div>
 
                 <!-- Input Form -->
-                <div class="meta-card p-6">
-                    <h3 class="font-bold mb-4">เพิ่มรายการใหม่</h3>
+                <div class="glass-card p-6">
+                    <h3 class="font-bold text-lg mb-4 font-kanit">บันทึกรายการ</h3>
                     <form id="txForm" class="space-y-4">
-                        <input type="text" id="desc" placeholder="เช่น เงินเดือน, ค่าส้มตำ" required class="input-meta">
+                        <input type="text" id="desc" placeholder="รายการของคุณ..." required class="input-meta">
                         <div class="grid grid-cols-2 gap-2">
                             <select id="type" class="input-meta">
-                                <option value="income">รายรับ (+)</option>
-                                <option value="expense">รายจ่าย (-)</option>
+                                <option value="in">รายรับ (+)</option>
+                                <option value="out" selected>รายจ่าย (-)</option>
                             </select>
-                            <input type="number" id="amount" placeholder="0.00" required class="input-meta font-bold">
+                            <input type="number" id="amt" placeholder="จำนวนเงิน" required class="input-meta">
                         </div>
-                        <button type="submit" class="btn-meta">บันทึกลง Quantum</button>
+                        <select id="cat" class="input-meta">
+                            <option value="อาหาร">🍔 อาหาร</option>
+                            <option value="เดินทาง">🚗 การเดินทาง</option>
+                            <option value="บันเทิง">🎬 ความบันเทิง</option>
+                            <option value="ของใช้">🏠 ของใช้/ที่พัก</option>
+                            <option value="สุขภาพ">💊 สุขภาพ</option>
+                            <option value="อื่นๆ">✨ อื่นๆ</option>
+                        </select>
+                        <button type="submit" class="btn-meta w-full font-kanit text-lg">บันทึกข้อมูล</button>
                     </form>
                 </div>
             </div>
 
-            <!-- Middle & Right: Analysis -->
-            <div class="lg:col-span-2 space-y-6">
-                <!-- Charts Grid -->
+            <!-- Right: Analysis & History -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Analysis Graphs -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="meta-card p-6 h-64">
-                        <p class="text-xs font-bold text-slate-500 uppercase mb-4">การกระจายรายจ่าย</p>
-                        <canvas id="pieChart"></canvas>
+                    <div class="glass-card p-6">
+                        <h4 class="text-xs font-bold text-slate-500 uppercase mb-4 tracking-widest">สัดส่วนการใช้จ่าย</h4>
+                        <div class="h-48">
+                            <canvas id="catChart"></canvas>
+                        </div>
                     </div>
-                    <div class="meta-card p-6 h-64">
-                        <p class="text-xs font-bold text-slate-500 uppercase mb-4">วิเคราะห์กระแสเงิน</p>
-                        <canvas id="lineChart"></canvas>
+                    <div class="glass-card p-6">
+                        <h4 class="text-xs font-bold text-slate-500 uppercase mb-4 tracking-widest">การเติบโตของเงิน</h4>
+                        <div class="h-48">
+                            <canvas id="flowChart"></canvas>
+                        </div>
                     </div>
                 </div>
 
                 <!-- History -->
-                <div class="meta-card p-6">
-                    <h3 class="font-bold mb-4">ประวัติรายการ</h3>
+                <div class="glass-card p-6">
+                    <h3 class="font-bold text-lg mb-4 font-kanit">ประวัติธุรกรรม</h3>
                     <div id="txHistory" class="space-y-3 max-h-96 overflow-y-auto pr-2">
-                        <!-- Items rendered here -->
+                        <!-- List Items -->
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Goal Edit Modal -->
-    <div id="goalModal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center z-50 p-4">
-        <div class="meta-card p-8 w-full max-w-md">
-            <h3 class="text-2xl font-bold mb-6">ตั้งเป้าหมาย MetaAI</h3>
+    <!-- Goal Modal -->
+    <div id="goalModal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center p-6 z-50">
+        <div class="glass-card w-full max-w-sm p-8 border-cyan-500/50">
+            <h3 class="text-xl font-bold mb-6 font-kanit">แก้ไขเป้าหมาย</h3>
             <div class="space-y-4">
-                <input type="text" id="newGoalTitle" placeholder="ระบุเป้าหมาย..." class="input-meta">
-                <input type="number" id="newGoalTarget" placeholder="ระบุจำนวนเงิน..." class="input-meta">
-                <div class="flex gap-4">
-                    <button onclick="saveGoal()" class="btn-meta">อัปเดตเป้าหมาย</button>
-                    <button onclick="toggleGoalModal()" class="px-4 text-slate-400">ยกเลิก</button>
+                <input type="text" id="mGoalTitle" placeholder="ชื่อเป้าหมาย..." class="input-meta">
+                <input type="number" id="mGoalAmt" placeholder="จำนวนเงินที่ต้องการ..." class="input-meta">
+                <div class="flex gap-3 pt-4">
+                    <button onclick="saveGoal()" class="btn-meta flex-1">ยืนยัน</button>
+                    <button onclick="toggleGoalModal()" class="flex-1 text-slate-400">ยกเลิก</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const STORAGE_KEY = 'nexus_v60_meta_data';
-        const LEGACY_KEYS = ['nexus_v56_data', 'nexus_v54_store', 'nexus_v53_storage'];
+        const DB_KEY = 'meta_finance_v60';
+        const MIGRATION_KEYS = ['nexus_v56_data', 'nexus_v54_store'];
 
         let state = {
             transactions: [],
-            goal: { title: "เงินออมตั้งตัว", target: 50000 }
+            goal: { title: "เงินสำรองฉุกเฉิน", target: 50000 },
+            lastUpdated: new Date().toISOString()
         };
 
-        let charts = { pie: null, line: null };
+        let charts = {};
 
         // --- Core Engine ---
         function init() {
-            const saved = localStorage.getItem(STORAGE_KEY);
+            const saved = localStorage.getItem(DB_KEY);
             if (saved) {
                 state = JSON.parse(saved);
             } else {
-                // Migration logic
-                for (const key of LEGACY_KEYS) {
-                    const legacy = localStorage.getItem(key);
-                    if (legacy) {
-                        const parsed = JSON.parse(legacy);
-                        state.transactions = parsed.transactions || [];
+                // Automated Migration
+                for (const key of MIGRATION_KEYS) {
+                    const oldData = localStorage.getItem(key);
+                    if (oldData) {
+                        const parsed = JSON.parse(oldData);
+                        state.transactions = Array.isArray(parsed) ? parsed : (parsed.transactions || []);
                         if (parsed.goal) state.goal = parsed.goal;
-                        console.log("MetaAI: ข้อมูลเดิมถูกโอนย้ายสำเร็จจาก " + key);
-                        save();
+                        console.log(`MetaAI 5.0: Data successfully migrated from ${key}`);
                         break;
                     }
                 }
@@ -229,143 +253,147 @@
         }
 
         function save() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            state.lastUpdated = new Date().toISOString();
+            localStorage.setItem(DB_KEY, JSON.stringify(state));
             render();
         }
 
-        // --- UI Rendering ---
         function render() {
-            const totalIn = state.transactions.filter(t => t.type === 'income').reduce((s, t) => s + parseFloat(t.amount), 0);
-            const totalOut = state.transactions.filter(t => t.type === 'expense').reduce((s, t) => s + parseFloat(t.amount), 0);
-            const balance = totalIn - totalOut;
+            const income = state.transactions.filter(t => t.type === 'in').reduce((s, t) => s + Number(t.amt), 0);
+            const expense = state.transactions.filter(t => t.type === 'out').reduce((s, t) => s + Number(t.amt), 0);
+            const balance = income - expense;
 
-            document.getElementById('totalBalance').innerText = '฿' + balance.toLocaleString(undefined, {minimumFractionDigits: 2});
-
-            // AI Status Logic (v60.0.0 Exclusive)
-            updateAIStatus(balance, totalIn, totalOut);
-
+            // Display
+            document.getElementById('balanceDisplay').innerText = `฿${balance.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            
             // Goal
             document.getElementById('goalTitle').innerText = state.goal.title;
-            document.getElementById('goalTarget').innerText = '฿' + parseFloat(state.goal.target).toLocaleString();
-            const progress = state.goal.target > 0 ? (balance / state.goal.target) * 100 : 0;
-            const cappedProgress = Math.min(Math.max(progress, 0), 100);
-            document.getElementById('goalProgress').style.width = cappedProgress + '%';
-            document.getElementById('goalPercent').innerText = Math.round(progress) + '%';
+            document.getElementById('goalTarget').innerText = `฿${state.goal.target.toLocaleString()}`;
+            const pct = Math.min(100, Math.max(0, (balance / state.goal.target) * 100));
+            document.getElementById('goalBar').style.width = pct + '%';
+            document.getElementById('goalStatus').innerText = pct >= 100 ? "สำเร็จเป้าหมายแล้ว! ยอดเยี่ยมมาก" : `อีก ${(state.goal.target - balance).toLocaleString()} จะถึงเป้าหมาย`;
 
-            // List
-            const list = document.getElementById('txHistory');
-            list.innerHTML = state.transactions.length === 0 ? '<p class="text-slate-500 text-center py-4">ไม่มีรายการ</p>' : 
-            state.transactions.slice().reverse().map((t, idx) => `
-                <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 hover:border-cyan-400/30 transition-all">
+            // History
+            const historyEl = document.getElementById('txHistory');
+            historyEl.innerHTML = state.transactions.slice().reverse().map((t, idx) => `
+                <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl">
                     <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full flex items-center justify-center ${t.type === 'income' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">
-                            ${t.type === 'income' ? '↓' : '↑'}
+                        <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center">
+                            ${t.type === 'in' ? '📈' : '📉'}
                         </div>
                         <div>
-                            <p class="font-bold text-white text-[18px]">${t.desc}</p>
-                            <p class="text-xs text-slate-500">${new Date(t.date).toLocaleDateString('th-TH')}</p>
+                            <p class="font-bold text-white">${t.desc}</p>
+                            <p class="text-xs text-slate-500">${t.cat} • ${new Date(t.date).toLocaleDateString('th-TH')}</p>
                         </div>
                     </div>
                     <div class="text-right">
-                        <p class="font-bold text-[18px] ${t.type === 'income' ? 'text-emerald-400' : 'text-rose-400'}">
-                            ${t.type === 'income' ? '+' : '-'} ${parseFloat(t.amount).toLocaleString()}
+                        <p class="font-bold ${t.type === 'in' ? 'text-cyan-400' : 'text-purple-400'}">
+                            ${t.type === 'in' ? '+' : '-'} ${Number(t.amt).toLocaleString()}
                         </p>
-                        <button onclick="removeTx(${state.transactions.length - 1 - idx})" class="text-[10px] text-slate-600 hover:text-white uppercase tracking-tighter">ลบ</button>
+                        <button onclick="deleteTx(${state.transactions.length - 1 - idx})" class="text-[10px] text-slate-600 hover:text-rose-500 uppercase tracking-tighter">ลบ</button>
                     </div>
                 </div>
             `).join('');
 
+            updateAIAnalysis(balance, income, expense);
             updateCharts();
         }
 
-        function updateAIStatus(balance, tin, tout) {
-            const badge = document.getElementById('aiStatusBadge');
-            const advice = document.getElementById('aiAdvice');
+        // --- MetaAI Analysis Engine 5.0 ---
+        function updateAIAnalysis(balance, income, expense) {
+            const insightBox = document.getElementById('aiInsight');
+            const recent = state.transactions.slice(-5);
+            const expenseRatio = income > 0 ? (expense / income) * 100 : 0;
             
+            let status = "";
+            let advice = "";
+
             if (balance < 0) {
-                badge.className = "ai-status-badge bg-gradient-to-r from-rose-500 to-orange-500 text-white";
-                badge.innerHTML = "<span>วิกฤต (ติดลบ)</span>";
-                advice.innerText = "MetaAI เตือน: คุณกำลังใช้เงินเกินตัว โปรดตัดรายจ่ายที่ไม่จำเป็นออกด่วน";
-            } else if (tout > tin && tin > 0) {
-                badge.className = "ai-status-badge bg-gradient-to-r from-amber-500 to-orange-400 text-white";
-                badge.innerHTML = "<span>ควรระวัง</span>";
-                advice.innerText = "MetaAI วิเคราะห์: รายจ่ายเดือนนี้สูงกว่ารายรับ ควรวางแผนการออมเพิ่ม";
+                status = "สถานะ: วิกฤตทางการเงิน (ติดลบ)";
+                advice = "MetaAI ตรวจพบว่าคุณใช้จ่ายเกินตัว! แนะนำให้หยุดการใช้จ่ายในหมวดที่ไม่จำเป็นทันที และสำรวจหนี้สินที่มีอยู่";
+            } else if (expenseRatio > 80) {
+                status = "สถานะ: ตึงตัว (High Spending)";
+                advice = "คุณใช้จ่ายไปกว่า 80% ของรายรับที่มี การออมจะทำได้ยากขึ้น ลองลดค่าใช้จ่ายหมวด 'บันเทิง' หรือ 'อื่นๆ' ดูนะครับ";
             } else if (balance > state.goal.target) {
-                badge.className = "ai-status-badge bg-gradient-to-r from-cyan-400 to-emerald-400 text-slate-900";
-                badge.innerHTML = "<span>ถึงเป้าหมายแล้ว!</span>";
-                advice.innerText = "ยินดีด้วย! คุณบรรลุเป้าหมายการเงินแล้ว MetaAI แนะนำให้ตั้งเป้าหมายใหม่ที่ท้าทายขึ้น";
+                status = "สถานะ: มั่งคั่ง (Goal Achieved)";
+                advice = "ยินดีด้วย! คุณมีเงินเกินเป้าหมายที่ตั้งไว้แล้ว MetaAI แนะนำให้ขยับเป้าหมายให้สูงขึ้น หรือเริ่มมองหาการลงทุนที่ความเสี่ยงต่ำ";
             } else {
-                badge.className = "ai-status-badge bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-900";
-                badge.innerHTML = "<span>มั่นคง</span>";
-                advice.innerText = "MetaAI วิเคราะห์: การเงินของคุณอยู่ในเกณฑ์ดี รักษาวินัยแบบนี้ต่อไป";
+                status = "สถานะ: ปกติ (Healthy)";
+                advice = "วินัยการเงินของคุณอยู่ในเกณฑ์ดี หากรักษาอัตรานี้ไว้ คุณจะถึงเป้าหมายภายในเวลาไม่นานครับ";
             }
+
+            insightBox.innerHTML = `<strong>${status}</strong><br>${advice}`;
         }
 
         function updateCharts() {
-            // Pie Chart (Categories)
-            const ctxPie = document.getElementById('pieChart').getContext('2d');
-            const expenses = state.transactions.filter(t => t.type === 'expense');
-            const data = { 'ทั่วไป': 0 };
-            expenses.forEach(e => data['ทั่วไป'] += parseFloat(e.amount));
-
-            if (charts.pie) charts.pie.destroy();
-            charts.pie = new Chart(ctxPie, {
+            // Category Chart
+            const cats = {};
+            state.transactions.filter(t => t.type === 'out').forEach(t => cats[t.cat] = (cats[t.cat] || 0) + Number(t.amt));
+            
+            const ctx1 = document.getElementById('catChart').getContext('2d');
+            if (charts.cat) charts.cat.destroy();
+            charts.cat = new Chart(ctx1, {
                 type: 'doughnut',
                 data: {
-                    labels: ['รายจ่ายรวม'],
+                    labels: Object.keys(cats),
                     datasets: [{
-                        data: [data['ทั่วไป']],
-                        backgroundColor: ['#4facfe'],
-                        borderColor: 'transparent'
+                        data: Object.values(cats),
+                        backgroundColor: ['#06b6d4', '#8b5cf6', '#3b82f6', '#f472b6', '#10b981', '#f59e0b'],
+                        borderWidth: 0
                     }]
                 },
-                options: { maintainAspectRatio: false, cutout: '80%', plugins: { legend: { display: false } } }
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'right', labels: { color: '#94a3b8', font: { family: 'Sarabun', size: 12 } } } }
+                }
             });
 
-            // Line Chart (Trend)
-            const ctxLine = document.getElementById('lineChart').getContext('2d');
-            let tempBal = 0;
-            const history = state.transactions.map(t => {
-                tempBal += (t.type === 'income' ? parseFloat(t.amount) : -parseFloat(t.amount));
-                return tempBal;
+            // Growth Chart
+            const ctx2 = document.getElementById('flowChart').getContext('2d');
+            let run = 0;
+            const flowData = state.transactions.map(t => {
+                run += (t.type === 'in' ? Number(t.amt) : -Number(t.amt));
+                return run;
             }).slice(-7);
 
-            if (charts.line) charts.line.destroy();
-            charts.line = new Chart(ctxLine, {
+            if (charts.flow) charts.flow.destroy();
+            charts.flow = new Chart(ctx2, {
                 type: 'line',
                 data: {
-                    labels: history.map((_, i) => i + 1),
+                    labels: flowData.map((_, i) => i + 1),
                     datasets: [{
-                        data: history,
-                        borderColor: '#00f2fe',
-                        backgroundColor: 'rgba(0, 242, 254, 0.1)',
+                        label: 'Balance',
+                        data: flowData,
+                        borderColor: '#06b6d4',
+                        backgroundColor: 'rgba(6, 182, 212, 0.1)',
                         fill: true,
                         tension: 0.4
                     }]
                 },
                 options: {
                     maintainAspectRatio: false,
-                    scales: { y: { display: false }, x: { grid: { display: false } } },
+                    scales: { y: { display: false }, x: { grid: { display: false }, ticks: { display: false } } },
                     plugins: { legend: { display: false } }
                 }
             });
         }
 
-        // --- Interactions ---
+        // --- Logic ---
         document.getElementById('txForm').onsubmit = (e) => {
             e.preventDefault();
             state.transactions.push({
                 desc: document.getElementById('desc').value,
+                amt: document.getElementById('amt').value,
                 type: document.getElementById('type').value,
-                amount: document.getElementById('amount').value,
+                cat: document.getElementById('cat').value,
                 date: new Date().toISOString()
             });
             save();
             e.target.reset();
         };
 
-        function removeTx(i) {
-            state.transactions.splice(i, 1);
+        function deleteTx(idx) {
+            state.transactions.splice(idx, 1);
             save();
         }
 
@@ -373,13 +401,13 @@
             const m = document.getElementById('goalModal');
             m.classList.toggle('hidden');
             m.classList.toggle('flex');
-            document.getElementById('newGoalTitle').value = state.goal.title;
-            document.getElementById('newGoalTarget').value = state.goal.target;
+            document.getElementById('mGoalTitle').value = state.goal.title;
+            document.getElementById('mGoalAmt').value = state.goal.target;
         }
 
         function saveGoal() {
-            state.goal.title = document.getElementById('newGoalTitle').value || "เป้าหมาย";
-            state.goal.target = parseFloat(document.getElementById('newGoalTarget').value) || 0;
+            state.goal.title = document.getElementById('mGoalTitle').value || "เป้าหมาย";
+            state.goal.target = Number(document.getElementById('mGoalAmt').value) || 0;
             save();
             toggleGoalModal();
         }
