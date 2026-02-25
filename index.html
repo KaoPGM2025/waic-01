@@ -3,202 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Nexus v54.0.0</title>
+    <title>Finance Nexus v56.0.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Kanit:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --quantum-primary: #06b6d4; /* Cyan */
-            --quantum-secondary: #8b5cf6; /* Violet */
-            --bg-base: #020617;
-            --surface: rgba(15, 23, 42, 0.8);
+            --nebula-primary: #818cf8; /* Indigo */
+            --nebula-accent: #f472b6; /* Pink */
+            --bg-dark: #020617;
+            --card-bg: rgba(30, 41, 59, 0.7);
         }
 
         body {
             font-family: 'Sarabun', sans-serif;
-            background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
-            color: #f1f5f9;
-            /* ปรับขนาดตัวอักษรขนาดกลางที่เหมาะสมที่สุดสำหรับ v54 */
-            font-size: 17.5px;
-            line-height: 1.7;
+            background: radial-gradient(circle at top right, #1e1b4b, #020617);
+            color: #e2e8f0;
+            /* ปรับขนาดตัวอักษรขนาดกลาง 18px ตามคำขอ */
+            font-size: 18px;
+            line-height: 1.6;
             min-height: 100vh;
         }
 
         h1, h2, h3, .font-kanit { font-family: 'Kanit', sans-serif; }
 
-        .quantum-card {
-            background: var(--surface);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 24px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .quantum-card:hover {
-            border-color: rgba(6, 182, 212, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .input-quantum {
-            background: rgba(2, 6, 23, 0.6);
+        .nebula-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 14px;
-            padding: 14px;
+            border-radius: 28px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .nebula-card:hover {
+            border-color: var(--nebula-primary);
+        }
+
+        .input-nebula {
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 12px 16px;
             color: white;
+            width: 100%;
             transition: all 0.3s ease;
         }
 
-        .input-quantum:focus {
+        .input-nebula:focus {
             outline: none;
-            border-color: var(--quantum-primary);
-            box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.15);
+            border-color: var(--nebula-primary);
+            box-shadow: 0 0 15px rgba(129, 140, 248, 0.2);
         }
 
-        .btn-quantum {
-            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-            border-radius: 14px;
-            padding: 16px;
+        .btn-nebula {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            border-radius: 16px;
+            padding: 14px;
             font-weight: 600;
             color: white;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
         }
 
-        .btn-quantum:hover {
-            opacity: 0.9;
-            transform: scale(1.01);
-            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.5);
+        .btn-nebula:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4);
         }
 
-        .status-badge {
-            font-size: 12px;
-            padding: 4px 12px;
+        .progress-bar {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 99px;
-            background: rgba(6, 182, 212, 0.1);
-            color: var(--quantum-primary);
-            border: 1px solid rgba(6, 182, 212, 0.2);
+            overflow: hidden;
         }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #818cf8, #f472b6);
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .list-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .list-item:hover {
+            background: rgba(255, 255, 255, 0.07);
+        }
     </style>
 </head>
-<body class="p-4 lg:p-10">
+<body class="p-4 md:p-8 lg:p-12">
 
-    <div class="max-w-6xl mx-auto">
-        <!-- Main Header -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
             <div>
-                <div class="flex items-center gap-3">
-                    <h1 class="text-3xl font-bold tracking-tight text-white flex items-center gap-2">
-                        <span class="text-cyan-400">NEXUS</span> v54.0.0
-                    </h1>
-                    <span class="status-badge font-kanit">Quantum Core</span>
+                <h1 class="text-4xl font-extrabold text-white mb-2">NEBULA <span class="text-indigo-400">HORIZON</span></h1>
+                <p class="text-slate-400 font-kanit">Version 56.0.0 • ข้อมูลของคุณถูกย้ายมาเรียบร้อยแล้ว</p>
+            </div>
+            <div class="flex gap-4">
+                <div class="text-right">
+                    <p class="text-xs uppercase tracking-widest text-slate-500 font-bold">ยอดเงินคงเหลือรวม</p>
+                    <h2 id="totalBalance" class="text-4xl font-bold text-white tracking-tight">฿0.00</h2>
                 </div>
-                <p class="text-slate-400">ระบบวิเคราะห์การเงินอัจฉริยะ • อัปเกรดฐานข้อมูลแล้ว</p>
             </div>
-            <div id="realtime-clock" class="font-kanit text-slate-400 bg-slate-900/50 px-6 py-2 rounded-full border border-white/5">
-                00:00:00
-            </div>
-        </div>
-
-        <!-- Summary Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div class="quantum-card p-6 border-l-4 border-l-cyan-500">
-                <p class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">ยอดเงินสุทธิ</p>
-                <h2 id="totalBalance" class="text-4xl font-bold text-white tracking-tight">฿0.00</h2>
-            </div>
-            <div class="quantum-card p-6 border-l-4 border-l-emerald-500">
-                <p class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">รายรับเดือนนี้</p>
-                <h2 id="monthlyIncome" class="text-3xl font-bold text-emerald-400">฿0.00</h2>
-            </div>
-            <div class="quantum-card p-6 border-l-4 border-l-rose-500">
-                <p class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">รายจ่ายเดือนนี้</p>
-                <h2 id="monthlyExpense" class="text-3xl font-bold text-rose-400">฿0.00</h2>
-            </div>
-        </div>
+        </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Left: Analysis & Forms -->
+            
+            <!-- Left Column: Form & Goal -->
             <div class="lg:col-span-4 space-y-8">
-                <!-- Form Card -->
-                <div class="quantum-card p-8">
-                    <h3 class="text-xl font-bold text-white mb-6">บันทึกรายการใหม่</h3>
-                    <form id="financeForm" class="space-y-5">
-                        <div class="space-y-2">
-                            <label class="text-sm font-bold text-slate-400 block ml-1">ชื่อรายการ</label>
-                            <input type="text" id="label" placeholder="เช่น ค่าอาหาร, เงินเดือน..." required class="input-quantum w-full">
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="space-y-2">
-                                <label class="text-sm font-bold text-slate-400 block ml-1">ประเภท</label>
-                                <select id="type" class="input-quantum w-full">
-                                    <option value="income">รายรับ</option>
-                                    <option value="expense">รายจ่าย</option>
-                                </select>
+                
+                <!-- Savings Goal Card -->
+                <div class="nebula-card p-8 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10">
+                        <svg class="w-20 h-20" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-4">เป้าหมายการออม</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <p id="goalNameDisplay" class="text-slate-400 text-sm">ยังไม่มีเป้าหมาย</p>
+                                <p id="goalAmountDisplay" class="text-2xl font-bold text-pink-400">฿0.00</p>
                             </div>
-                            <div class="space-y-2">
-                                <label class="text-sm font-bold text-slate-400 block ml-1">หมวดหมู่</label>
-                                <select id="category" class="input-quantum w-full">
-                                    <option value="อาหาร">🍔 อาหาร</option>
-                                    <option value="เดินทาง">🚗 เดินทาง</option>
-                                    <option value="ช้อปปิ้ง">🛍️ ช้อปปิ้ง</option>
-                                    <option value="บิล">🧾 บิล/ค่าไฟ</option>
-                                    <option value="บันเทิง">🎬 บันเทิง</option>
-                                    <option value="อื่นๆ">📦 อื่นๆ</option>
-                                </select>
-                            </div>
+                            <button onclick="openGoalSettings()" class="text-xs text-slate-500 hover:text-white uppercase font-bold">แก้ไข</button>
                         </div>
-                        <div class="space-y-2">
-                            <label class="text-sm font-bold text-slate-400 block ml-1">จำนวนเงิน (฿)</label>
-                            <input type="number" id="amount" step="0.01" placeholder="0.00" required class="input-quantum w-full text-2xl font-bold text-cyan-400">
+                        <div class="progress-bar">
+                            <div id="goalProgress" class="progress-fill" style="width: 0%"></div>
                         </div>
-                        <button type="submit" class="btn-quantum w-full font-kanit text-lg mt-4">บันทึกข้อมูล</button>
-                    </form>
+                        <p id="goalPercentDisplay" class="text-right text-xs font-bold text-slate-500">0% ของเป้าหมาย</p>
+                    </div>
                 </div>
 
-                <!-- Settings Mini Card -->
-                <div class="quantum-card p-6 flex justify-between items-center">
-                    <div class="text-sm text-slate-400">
-                        <p class="font-bold">เงินต้นพื้นฐาน</p>
-                        <p id="displayBase" class="text-cyan-400 font-mono">฿0.00</p>
-                    </div>
-                    <button onclick="openSettings()" class="bg-slate-800 hover:bg-slate-700 p-3 rounded-xl transition-colors">
-                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-                    </button>
+                <!-- Transaction Form -->
+                <div class="nebula-card p-8">
+                    <h3 class="text-xl font-bold text-white mb-6">บันทึกรายการ</h3>
+                    <form id="financeForm" class="space-y-5">
+                        <input type="text" id="label" placeholder="ชื่อรายการ..." required class="input-nebula">
+                        <div class="grid grid-cols-2 gap-4">
+                            <select id="type" class="input-nebula">
+                                <option value="income">รายรับ (+)</option>
+                                <option value="expense">รายจ่าย (-)</option>
+                            </select>
+                            <select id="category" class="input-nebula">
+                                <option value="อาหาร">🍴 อาหาร</option>
+                                <option value="เดินทาง">🚗 เดินทาง</option>
+                                <option value="ช้อปปิ้ง">🛍️ ช้อปปิ้ง</option>
+                                <option value="ที่พัก">🏠 ที่พัก/บิล</option>
+                                <option value="บันเทิง">🎮 บันเทิง</option>
+                                <option value="อื่นๆ">✨ อื่นๆ</option>
+                            </select>
+                        </div>
+                        <input type="number" id="amount" step="0.01" placeholder="จำนวนเงิน 0.00" required class="input-nebula text-xl font-bold">
+                        <button type="submit" class="btn-nebula w-full text-lg">บันทึกข้อมูล</button>
+                    </form>
                 </div>
             </div>
 
-            <!-- Right: Visualization & History -->
+            <!-- Right Column: Graphs & History -->
             <div class="lg:col-span-8 space-y-8">
-                <!-- Analytics Charts -->
+                
+                <!-- Charts Row -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="quantum-card p-6">
-                        <h4 class="text-sm font-bold text-slate-500 mb-4 flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-cyan-500"></span> หมวดหมู่การจ่าย
-                        </h4>
-                        <div class="h-64"><canvas id="categoryChart"></canvas></div>
+                    <div class="nebula-card p-6 h-80">
+                        <h4 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-tighter">หมวดหมู่รายจ่าย</h4>
+                        <canvas id="categoryChart"></canvas>
                     </div>
-                    <div class="quantum-card p-6">
-                        <h4 class="text-sm font-bold text-slate-500 mb-4 flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-violet-500"></span> รายรับ vs รายจ่าย (7 รายการล่าสุด)
-                        </h4>
-                        <div class="h-64"><canvas id="flowChart"></canvas></div>
+                    <div class="nebula-card p-6 h-80">
+                        <h4 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-tighter">แนวโน้มการเงิน</h4>
+                        <canvas id="trendChart"></canvas>
                     </div>
                 </div>
 
-                <!-- List History -->
-                <div class="quantum-card p-6">
+                <!-- History List -->
+                <div class="nebula-card p-8">
                     <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-xl font-bold text-white">ประวัติรายการ</h3>
-                        <button onclick="downloadBackup()" class="text-xs text-slate-500 hover:text-cyan-400 transition-colors uppercase font-bold tracking-tighter">Backup Data</button>
+                        <h3 class="text-xl font-bold text-white">ประวัติการเงิน</h3>
+                        <div class="flex gap-2">
+                            <button onclick="downloadBackup()" class="p-2 hover:bg-white/5 rounded-lg transition-colors" title="Backup">
+                                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            </button>
+                        </div>
                     </div>
-                    <div id="txList" class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
-                        <!-- Content via JS -->
+                    <div id="txList" class="max-h-[600px] overflow-y-auto space-y-2 pr-2">
+                        <!-- Items rendered here -->
                     </div>
                 </div>
             </div>
@@ -206,120 +202,94 @@
     </div>
 
     <!-- Modals -->
-    <div id="settingsModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
-        <div class="quantum-card w-full max-w-md p-8">
-            <h3 class="text-2xl font-bold text-white mb-6">ตั้งค่าฐานระบบ v54</h3>
-            <div class="space-y-5">
-                <div class="space-y-2">
-                    <label class="text-sm font-bold text-slate-400 block">เงินต้นในบัญชี (เริ่มต้น)</label>
-                    <input type="number" id="baseInp" class="input-quantum w-full">
-                </div>
+    <div id="goalModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-sm hidden items-center justify-center p-6">
+        <div class="nebula-card w-full max-w-md p-8">
+            <h3 class="text-2xl font-bold text-white mb-6 font-kanit">ตั้งเป้าหมาย Nebula</h3>
+            <div class="space-y-4">
+                <input type="text" id="goalTitleInp" placeholder="ชื่อเป้าหมาย (เช่น ซื้อโทรศัพท์ใหม่)" class="input-nebula">
+                <input type="number" id="goalAmountInp" placeholder="ยอดเงินเป้าหมาย" class="input-nebula">
                 <div class="flex gap-4 pt-4">
-                    <button onclick="saveSettings()" class="btn-quantum flex-1">ยืนยัน</button>
-                    <button onclick="closeSettings()" class="bg-slate-800 text-slate-400 rounded-xl px-6 hover:bg-slate-700 transition-all">ยกเลิก</button>
-                </div>
-                <div class="pt-8 border-t border-white/5">
-                    <button onclick="wipeAllData()" class="text-xs text-rose-800 hover:text-rose-500 transition-colors uppercase font-bold">Wipe All Data (คืนค่าโรงงาน)</button>
+                    <button onclick="saveGoal()" class="btn-nebula flex-1">บันทึกเป้าหมาย</button>
+                    <button onclick="closeGoalSettings()" class="px-6 py-2 text-slate-400 hover:text-white transition-colors">ปิด</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Storage Configuration
-        const CURRENT_V = 'nexus_v54_store';
-        const PREV_V = 'nexus_v53_storage';
-        const LEGACY_KEYS = ['nexus_v51_data', 'nexus_v49_ledger', 'nexus_v47_ledger', 'nexus_ledger'];
+        const STORAGE_KEY = 'nexus_v56_data';
+        const LEGACY_KEYS = ['nexus_v54_store', 'nexus_v53_storage', 'nexus_v51_data', 'nexus_ledger'];
 
         let state = {
             transactions: [],
-            baseBalance: 0
+            baseBalance: 0,
+            goal: { title: "เงินออมสะสม", target: 10000 }
         };
 
-        let charts = { cat: null, flow: null };
+        let charts = { cat: null, trend: null };
 
-        // --- Data Migration Hub ---
-        function migrate() {
-            const current = localStorage.getItem(CURRENT_V);
-            if (current) {
-                state = JSON.parse(current);
-                return;
-            }
-
-            // Try migrating from v53
-            const v53 = localStorage.getItem(PREV_V);
-            if (v53) {
-                state = JSON.parse(v53);
-                console.log("Migrated from v53");
-                save();
-                return;
-            }
-
-            // Try migrating from older legacy keys
-            for (const k of LEGACY_KEYS) {
-                const raw = localStorage.getItem(k);
-                if (raw) {
-                    try {
-                        const parsed = JSON.parse(raw);
+        // --- Migration & Persistence ---
+        function init() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                state = JSON.parse(saved);
+            } else {
+                // Migrate from previous versions
+                for (const key of LEGACY_KEYS) {
+                    const legacyData = localStorage.getItem(key);
+                    if (legacyData) {
+                        const parsed = JSON.parse(legacyData);
                         state.transactions = Array.isArray(parsed) ? parsed : (parsed.transactions || []);
                         state.baseBalance = parsed.baseBalance || 0;
-                        console.log(`Migrated from legacy: ${k}`);
+                        if (parsed.goal) state.goal = parsed.goal;
+                        console.log(`Successfully migrated from ${key}`);
                         save();
                         break;
-                    } catch(e) {}
+                    }
                 }
             }
-        }
-
-        function save() {
-            localStorage.setItem(CURRENT_V, JSON.stringify(state));
             render();
         }
 
+        function save() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            render();
+        }
+
+        // --- Rendering Engine ---
         function render() {
-            let totalFlow = 0;
-            let mIn = 0;
-            let mOut = 0;
-            const now = new Date();
+            const totalIn = state.transactions.filter(t => t.type === 'income').reduce((s, t) => s + parseFloat(t.amount), 0);
+            const totalOut = state.transactions.filter(t => t.type === 'expense').reduce((s, t) => s + parseFloat(t.amount), 0);
+            const balance = state.baseBalance + totalIn - totalOut;
 
-            state.transactions.forEach(t => {
-                const amt = parseFloat(t.amount);
-                const d = new Date(t.date);
-                if (t.type === 'income') {
-                    totalFlow += amt;
-                    if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) mIn += amt;
-                } else {
-                    totalFlow -= amt;
-                    if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) mOut += amt;
-                }
-            });
+            // Header & Totals
+            document.getElementById('totalBalance').innerText = '฿' + balance.toLocaleString(undefined, {minimumFractionDigits: 2});
 
-            const net = state.baseBalance + totalFlow;
+            // Goal Rendering
+            document.getElementById('goalNameDisplay').innerText = state.goal.title;
+            document.getElementById('goalAmountDisplay').innerText = '฿' + parseFloat(state.goal.target).toLocaleString();
+            const progressPercent = Math.min(100, Math.max(0, (balance / state.goal.target) * 100));
+            document.getElementById('goalProgress').style.width = progressPercent + '%';
+            document.getElementById('goalPercentDisplay').innerText = Math.round(progressPercent) + '% ของเป้าหมาย';
 
-            // UI Elements
-            document.getElementById('totalBalance').innerText = '฿' + net.toLocaleString(undefined, {minimumFractionDigits: 2});
-            document.getElementById('monthlyIncome').innerText = '฿' + mIn.toLocaleString();
-            document.getElementById('monthlyExpense').innerText = '฿' + mOut.toLocaleString();
-            document.getElementById('displayBase').innerText = '฿' + state.baseBalance.toLocaleString();
-
-            // List
-            const container = document.getElementById('txList');
-            container.innerHTML = state.transactions.slice().reverse().map((t, idx) => `
-                <div class="flex items-center justify-between p-4 bg-slate-800/30 rounded-2xl border border-white/5 hover:border-cyan-500/20 transition-all">
+            // List Rendering
+            const list = document.getElementById('txList');
+            list.innerHTML = state.transactions.slice().reverse().map((t, idx) => `
+                <div class="list-item flex items-center justify-between">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center text-xl shadow-inner border border-white/5">
-                            ${t.type === 'income' ? '💹' : '📉'}
+                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl bg-slate-800 border border-white/5 shadow-lg">
+                            ${t.type === 'income' ? '💰' : '💸'}
                         </div>
                         <div>
                             <p class="font-bold text-white">${t.label}</p>
-                            <p class="text-[12px] font-bold uppercase text-slate-500 tracking-wider">${t.category} • ${new Date(t.date).toLocaleDateString('th-TH')}</p>
+                            <p class="text-[14px] text-slate-500">${t.category} • ${new Date(t.date).toLocaleDateString('th-TH')}</p>
                         </div>
                     </div>
                     <div class="text-right">
-                        <p class="font-bold text-lg ${t.type === 'income' ? 'text-emerald-400' : 'text-rose-400'}">
+                        <p class="font-bold ${t.type === 'income' ? 'text-indigo-400' : 'text-pink-400'}">
                             ${t.type === 'income' ? '+' : '-'} ${parseFloat(t.amount).toLocaleString()}
                         </p>
-                        <button onclick="deleteTx(${state.transactions.length - 1 - idx})" class="text-[10px] text-slate-600 hover:text-rose-500 uppercase font-bold">Delete</button>
+                        <button onclick="deleteTx(${state.transactions.length - 1 - idx})" class="text-[10px] text-slate-700 hover:text-rose-500 uppercase font-black">Remove</button>
                     </div>
                 </div>
             `).join('');
@@ -329,52 +299,57 @@
 
         function updateCharts() {
             // Category Pie
-            const ctxCat = document.getElementById('categoryChart').getContext('2d');
-            const map = {};
-            state.transactions.filter(t => t.type === 'expense').forEach(t => {
-                map[t.category] = (map[t.category] || 0) + parseFloat(t.amount);
-            });
+            const expenses = state.transactions.filter(t => t.type === 'expense');
+            const catMap = {};
+            expenses.forEach(t => catMap[t.category] = (catMap[t.category] || 0) + parseFloat(t.amount));
 
+            const catCtx = document.getElementById('categoryChart').getContext('2d');
             if (charts.cat) charts.cat.destroy();
-            charts.cat = new Chart(ctxCat, {
+            charts.cat = new Chart(catCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: Object.keys(map),
+                    labels: Object.keys(catMap),
                     datasets: [{
-                        data: Object.values(map),
-                        backgroundColor: ['#06b6d4', '#8b5cf6', '#3b82f6', '#10b981', '#f43f5e', '#f59e0b'],
-                        borderWidth: 0
+                        data: Object.values(catMap),
+                        backgroundColor: ['#818cf8', '#f472b6', '#34d399', '#fbbf24', '#f87171', '#a78bfa'],
+                        borderWidth: 0,
+                        hoverOffset: 20
                     }]
                 },
                 options: {
                     maintainAspectRatio: false,
-                    cutout: '70%',
-                    plugins: { 
-                        legend: { position: 'bottom', labels: { color: '#94a3b8', font: { family: 'Sarabun' } } }
-                    }
+                    cutout: '75%',
+                    plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { family: 'Sarabun', size: 14 } } } }
                 }
             });
 
-            // Flow Bar
-            const ctxFlow = document.getElementById('flowChart').getContext('2d');
-            const recent = state.transactions.slice(-7);
-            
-            if (charts.flow) charts.flow.destroy();
-            charts.flow = new Chart(ctxFlow, {
-                type: 'bar',
+            // Trend Area Chart
+            const trendCtx = document.getElementById('trendChart').getContext('2d');
+            let currentBalance = state.baseBalance;
+            const trendData = state.transactions.map(t => {
+                currentBalance += (t.type === 'income' ? parseFloat(t.amount) : -parseFloat(t.amount));
+                return currentBalance;
+            }).slice(-10);
+
+            if (charts.trend) charts.trend.destroy();
+            charts.trend = new Chart(trendCtx, {
+                type: 'line',
                 data: {
-                    labels: recent.map(r => r.label.substring(0,6)),
+                    labels: trendData.map((_, i) => `T-${trendData.length - i - 1}`),
                     datasets: [{
-                        label: 'Amount',
-                        data: recent.map(r => r.type === 'income' ? r.amount : -r.amount),
-                        backgroundColor: recent.map(r => r.type === 'income' ? '#10b981' : '#f43f5e'),
-                        borderRadius: 8
+                        label: 'ยอดคงเหลือ',
+                        data: trendData,
+                        borderColor: '#818cf8',
+                        backgroundColor: 'rgba(129, 140, 248, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0
                     }]
                 },
                 options: {
                     maintainAspectRatio: false,
                     scales: {
-                        y: { grid: { color: '#1e293b' }, ticks: { color: '#64748b' } },
+                        y: { display: false },
                         x: { grid: { display: false }, ticks: { color: '#64748b' } }
                     },
                     plugins: { legend: { display: false } }
@@ -382,7 +357,7 @@
             });
         }
 
-        // --- Event Handlers ---
+        // --- Interaction Logics ---
         document.getElementById('financeForm').onsubmit = (e) => {
             e.preventDefault();
             const tx = {
@@ -402,26 +377,23 @@
             save();
         }
 
-        function openSettings() {
-            document.getElementById('settingsModal').classList.replace('hidden', 'flex');
-            document.getElementById('baseInp').value = state.baseBalance;
+        function openGoalSettings() {
+            document.getElementById('goalModal').classList.replace('hidden', 'flex');
+            document.getElementById('goalTitleInp').value = state.goal.title;
+            document.getElementById('goalAmountInp').value = state.goal.target;
         }
 
-        function closeSettings() {
-            document.getElementById('settingsModal').classList.replace('flex', 'hidden');
+        function closeGoalSettings() {
+            document.getElementById('goalModal').classList.replace('flex', 'hidden');
         }
 
-        function saveSettings() {
-            state.baseBalance = parseFloat(document.getElementById('baseInp').value) || 0;
+        function saveGoal() {
+            state.goal = {
+                title: document.getElementById('goalTitleInp').value || "เป้าหมายการออม",
+                target: parseFloat(document.getElementById('goalAmountInp').value) || 0
+            };
             save();
-            closeSettings();
-        }
-
-        function wipeAllData() {
-            if (confirm("🚨 คำเตือน: ข้อมูลเวอร์ชัน v54 และข้อมูลที่ถูกยกยอดมาทั้งหมดจะถูกลบ ล้างข้อมูลหรือไม่?")) {
-                localStorage.clear();
-                location.reload();
-            }
+            closeGoalSettings();
         }
 
         function downloadBackup() {
@@ -430,18 +402,11 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `nexus_v54_bkp_${new Date().toISOString().split('T')[0]}.json`;
+            a.download = `nexus_v56_backup.json`;
             a.click();
         }
 
-        // Initializer
-        window.onload = () => {
-            migrate();
-            render();
-            setInterval(() => {
-                document.getElementById('realtime-clock').innerText = new Date().toLocaleTimeString('th-TH');
-            }, 1000);
-        };
+        window.onload = init;
     </script>
 </body>
 </html>
