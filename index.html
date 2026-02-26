@@ -10,7 +10,7 @@
     <style>
         body {
             font-family: 'Kanit', sans-serif;
-            font-size: 16px; /* ขนาดกลางมาตรฐาน อ่านง่ายทุกอุปกรณ์ */
+            font-size: 16px; /* Medium font size as requested */
             background-color: #f1f5f9;
         }
         .card {
@@ -44,7 +44,6 @@
             box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
             border: 1px solid rgba(59, 130, 246, 0.3);
         }
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
@@ -52,7 +51,7 @@
 <body class="p-4 md:p-10 text-slate-700">
 
     <div class="max-w-6xl mx-auto space-y-8">
-        <!-- Dashboard Header v11.0 -->
+        <!-- Dashboard Header -->
         <header class="flex flex-col md:flex-row justify-between items-center bg-slate-900 text-white p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
             <div class="absolute -top-10 -left-10 w-40 h-40 bg-blue-600 rounded-full blur-[80px] opacity-20"></div>
             <div class="z-10 text-center md:text-left">
@@ -60,30 +59,21 @@
                     <span class="bg-blue-500 text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-widest">Next-Gen</span>
                     <h1 class="text-3xl font-bold tracking-tight">Financial MetaAi 11.0</h1>
                 </div>
-                <p class="text-slate-400 font-light">Version 74.0.0 • AI Advanced Core v2</p>
+                <p class="text-slate-400 font-light">Version 74.0.0 • AI Core with Cloud Persistence</p>
             </div>
             <div class="z-10 mt-8 md:mt-0 bg-white/5 p-6 rounded-2xl border border-white/10 backdrop-blur-md text-center min-w-[240px]">
-                <div class="text-[10px] uppercase tracking-[0.2em] text-blue-400 mb-2 font-bold">Financial Status Indicator</div>
+                <div class="text-[10px] uppercase tracking-[0.2em] text-blue-400 mb-2 font-bold">สถานะทางการเงินอัตโนมัติ</div>
                 <div id="financialStatus" class="text-2xl font-bold text-slate-300">รอยืนยันข้อมูล</div>
             </div>
         </header>
 
         <!-- Top Overview -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Balance Display -->
             <div class="card border-l-[10px] border-blue-500">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">ยอดเงินคงเหลือสุทธิ</p>
-                        <h2 id="totalBalance" class="text-4xl font-bold text-slate-800">0.00 ฿</h2>
-                    </div>
-                    <div class="p-3 bg-blue-50 rounded-2xl text-blue-600">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    </div>
-                </div>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">ยอดเงินคงเหลือสุทธิ</p>
+                <h2 id="totalBalance" class="text-4xl font-bold text-slate-800">0.00 ฿</h2>
             </div>
 
-            <!-- Enhanced Goal Percentage Tracking -->
             <div class="card border-l-[10px] border-emerald-500">
                 <div class="flex justify-between items-center mb-3">
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">เป้าหมายความสำเร็จ</p>
@@ -98,431 +88,249 @@
                 </div>
             </div>
 
-            <!-- Advanced AI Analysis (Conditional) -->
             <div class="card bg-slate-900 text-white border-none ai-glow">
                 <div class="flex items-center gap-2 mb-4">
                     <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                    <p class="text-[10px] font-bold text-blue-400 uppercase tracking-[0.2em]">MetaAi Processing Unit</p>
+                    <p class="text-[10px] font-bold text-blue-400 uppercase tracking-[0.2em]">MetaAi Analysis</p>
                 </div>
                 <div id="aiSummary" class="text-[15px] font-light leading-relaxed italic text-slate-400">
-                    "ระบบ AI กำลังรอข้อมูลบันทึกจริง เพื่อประมวลผลและวิเคราะห์สุขภาพทางการเงินของคุณอย่างแม่นยำ..."
+                    "กรุณาบันทึกข้อมูลเพื่อเริ่มการวิเคราะห์โดย AI ตามความเป็นจริง"
                 </div>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Left: Inputs & Real-time Graph -->
+            <!-- Form & Chart -->
             <div class="lg:col-span-7 space-y-8">
                 <div class="card">
-                    <h3 class="text-xl font-bold mb-6 flex items-center gap-3 text-slate-800">
-                        <div class="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-blue-600 shadow-sm">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        </div>
-                        บันทึกธุรกรรมใหม่
-                    </h3>
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-3 text-slate-800">บันทึกธุรกรรมใหม่</h3>
                     <form id="financeForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="md:col-span-2">
-                            <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">ชื่อรายการธุรกรรม</label>
-                            <input type="text" id="desc" required class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all text-slate-700" placeholder="ระบุรายการ เช่น เงินเดือน, ค่าใช้จ่ายอื่นๆ">
+                            <label class="text-xs font-bold text-slate-500 mb-2 uppercase">ชื่อรายการ</label>
+                            <input type="text" id="desc" required class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none" placeholder="เช่น เงินเดือน, ค่าอาหาร">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">จำนวนเงิน (บาท)</label>
-                            <input type="number" id="amount" required step="0.01" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-bold" placeholder="0.00">
+                            <label class="text-xs font-bold text-slate-500 mb-2 uppercase">จำนวนเงิน</label>
+                            <input type="number" id="amount" required step="0.01" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold" placeholder="0.00">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">ประเภท</label>
-                            <select id="type" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all cursor-pointer font-medium">
+                            <label class="text-xs font-bold text-slate-500 mb-2 uppercase">ประเภท</label>
+                            <select id="type" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer font-medium">
                                 <option value="income">รายรับ (+)</option>
                                 <option value="expense">รายจ่าย (-)</option>
                             </select>
                         </div>
                         <div class="md:col-span-2 mt-2">
-                            <button type="submit" class="w-full btn-primary text-white py-5 rounded-2xl font-bold text-lg shadow-xl shadow-blue-200">
-                                บันทึกข้อมูลเข้าระบบ
-                            </button>
+                            <button type="submit" class="w-full btn-primary text-white py-5 rounded-2xl font-bold text-lg">บันทึกและซิงค์ข้อมูล</button>
                         </div>
                     </form>
                 </div>
 
                 <div class="card">
-                    <div class="flex flex-col md:flex-row justify-between md:items-center mb-8 gap-4">
-                        <h3 class="text-xl font-bold text-slate-800">กราฟวิเคราะห์แนวโน้ม (บันทึกอัตโนมัติ)</h3>
-                        <div class="flex gap-6">
-                            <div class="flex items-center gap-2"><div class="w-3 h-3 bg-emerald-500 rounded-full"></div><span class="text-xs font-bold text-slate-500">INCOME</span></div>
-                            <div class="flex items-center gap-2"><div class="w-3 h-3 bg-rose-500 rounded-full"></div><span class="text-xs font-bold text-slate-500">EXPENSE</span></div>
-                        </div>
-                    </div>
-                    <div class="h-[350px]">
-                        <canvas id="financeChart"></canvas>
-                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-8">กราฟวิเคราะห์แนวโน้มสะสม</h3>
+                    <div class="h-[350px]"><canvas id="financeChart"></canvas></div>
                 </div>
             </div>
 
-            <!-- Right: Auto-Cleaning Transaction History -->
+            <!-- Recent History -->
             <div class="lg:col-span-5">
-                <div class="card h-full flex flex-col min-h-[600px] border-none shadow-xl bg-gradient-to-b from-white to-slate-50">
+                <div class="card h-full flex flex-col min-h-[600px] bg-gradient-to-b from-white to-slate-50">
                     <div class="flex justify-between items-center mb-8">
                         <div>
                             <h3 class="text-xl font-bold text-slate-800">ธุรกรรมล่าสุด</h3>
-                            <p class="text-[10px] text-rose-500 font-bold uppercase tracking-widest mt-1">Auto-clean in 60s (Live)</p>
-                        </div>
-                        <div class="p-3 bg-slate-100 rounded-2xl text-slate-400">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            <p class="text-[10px] text-rose-500 font-bold uppercase mt-1">รายการจะหายไปจากหน้าจอใน 1 นาที (ข้อมูลเดิมไม่หาย)</p>
                         </div>
                     </div>
-                    
-                    <div id="recentList" class="space-y-4 overflow-y-auto pr-3 custom-scroll flex-grow">
-                        <!-- Placeholder -->
-                        <div class="flex flex-col items-center justify-center py-28 text-slate-300">
-                            <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                                <svg class="w-10 h-10 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </div>
-                            <p class="text-sm font-medium">ยังไม่มีรายการที่เคลื่อนไหว</p>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-8 pt-6 border-t border-slate-200">
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center gap-2">
-                                <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
-                                <span class="text-xs font-bold text-slate-400" id="dataStatus">Cloud Sync Active</span>
-                            </div>
-                            <span class="text-[10px] text-slate-300 font-bold uppercase">MetaAi Core v11</span>
-                        </div>
+                    <div id="recentList" class="space-y-4 overflow-y-auto flex-grow">
+                        <p class="text-center text-slate-300 py-20">ยังไม่มีความเคลื่อนไหว</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Enhanced Modal -->
+    <!-- Modal -->
     <div id="goalModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md hidden flex items-center justify-center z-50 p-4">
-        <div class="bg-white p-10 rounded-[2.5rem] w-full max-w-md shadow-2xl scale-in-center">
-            <h3 class="text-2xl font-bold mb-2 text-slate-800">ตั้งเป้าหมายทางการเงิน</h3>
-            <p class="text-slate-400 text-sm mb-8">ระบุจำนวนเงินที่คุณต้องการออมเพื่อวัดผลสำเร็จเป็นเปอร์เซ็นต์</p>
-            <div class="relative mb-8">
-                <input type="number" id="newGoalInput" class="w-full p-5 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none focus:border-blue-500 transition-all font-bold text-2xl pl-12" placeholder="0">
-                <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xl">฿</span>
-            </div>
+        <div class="bg-white p-10 rounded-[2.5rem] w-full max-w-md shadow-2xl">
+            <h3 class="text-2xl font-bold mb-8 text-slate-800">ตั้งเป้าหมายออมเงิน</h3>
+            <input type="number" id="newGoalInput" class="w-full p-5 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none font-bold text-2xl mb-8" placeholder="0">
             <div class="flex gap-4">
-                <button onclick="closeGoalModal()" class="flex-1 py-4 font-bold text-slate-400 hover:text-slate-600 transition-colors">ยกเลิก</button>
-                <button onclick="saveGoal()" class="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-lg shadow-blue-200">บันทึกเป้าหมาย</button>
+                <button onclick="closeGoalModal()" class="flex-1 py-4 font-bold text-slate-400">ยกเลิก</button>
+                <button onclick="saveGoal()" class="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-bold">บันทึก</button>
             </div>
         </div>
     </div>
 
-    <script>
-        // --- System State Core 11.0 ---
-        const config = {
-            appId: typeof __app_id !== 'undefined' ? __app_id : 'fin-meta-v74',
-            historyTimeout: 60000 // 1 minute (60s)
-        };
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // ข้อมูลหลัก (Master Data) จะไม่หายไปไหน
-        let masterData = {
-            transactions: [],
-            balance: 0,
-            goal: 50000,
-            incomeTotal: 0,
-            expenseTotal: 0
-        };
+        // Firebase Config
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'fin-meta-v74';
 
-        // ข้อมูลที่แสดงผลชั่วคราวบน UI
-        let recentItems = []; 
+        let user = null;
+        let masterData = { transactions: [], balance: 0, goal: 50000, incomeTotal: 0, expenseTotal: 0 };
+        let recentItems = [];
         let financeChart = null;
 
-        // --- Element Mapping ---
         const elements = {
-            form: document.getElementById('financeForm'),
-            recentList: document.getElementById('recentList'),
             balance: document.getElementById('totalBalance'),
             goalProgress: document.getElementById('goalProgress'),
             goalBar: document.getElementById('goalBar'),
             goalText: document.getElementById('goalText'),
             status: document.getElementById('financialStatus'),
             aiSummary: document.getElementById('aiSummary'),
-            modal: document.getElementById('goalModal'),
-            goalInput: document.getElementById('newGoalInput'),
-            dataStatus: document.getElementById('dataStatus')
+            recentList: document.getElementById('recentList')
         };
 
-        // --- Chart Engine ---
-        function initChart() {
-            const ctx = document.getElementById('financeChart').getContext('2d');
-            const gradientInc = ctx.createLinearGradient(0, 0, 0, 400);
-            gradientInc.addColorStop(0, 'rgba(16, 185, 129, 0.2)');
-            gradientInc.addColorStop(1, 'rgba(16, 185, 129, 0)');
-
-            const gradientExp = ctx.createLinearGradient(0, 0, 0, 400);
-            gradientExp.addColorStop(0, 'rgba(244, 63, 94, 0.2)');
-            gradientExp.addColorStop(1, 'rgba(244, 63, 94, 0)');
-
-            financeChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [
-                        {
-                            label: 'Income Accumulation',
-                            data: [],
-                            borderColor: '#10b981',
-                            borderWidth: 4,
-                            pointBackgroundColor: '#fff',
-                            pointBorderColor: '#10b981',
-                            pointBorderWidth: 3,
-                            pointRadius: 4,
-                            backgroundColor: gradientInc,
-                            fill: true,
-                            tension: 0.4
-                        },
-                        {
-                            label: 'Expense Accumulation',
-                            data: [],
-                            borderColor: '#f43f5e',
-                            borderWidth: 4,
-                            pointBackgroundColor: '#fff',
-                            pointBorderColor: '#f43f5e',
-                            pointBorderWidth: 3,
-                            pointRadius: 4,
-                            backgroundColor: gradientExp,
-                            fill: true,
-                            tension: 0.4
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: { mode: 'index', intersect: false },
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { 
-                            beginAtZero: true, 
-                            grid: { color: '#f1f5f9', drawBorder: false },
-                            ticks: { font: { family: 'Kanit' }, color: '#94a3b8' }
-                        },
-                        x: { 
-                            grid: { display: false },
-                            ticks: { font: { family: 'Kanit' }, color: '#94a3b8' }
-                        }
-                    }
-                }
-            });
+        // Auth Logic (Rule 3)
+        async function initAuth() {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
+            }
         }
 
-        // --- MetaAi Analysis Core v11 ---
-        function runMetaAiAnalysis() {
-            // กฎข้อที่ 1: หากยังไม่มีการบันทึกข้อมูล จะไม่วิเคราะห์
-            if (masterData.transactions.length === 0) {
-                elements.status.innerText = "รอยืนยันข้อมูล";
-                elements.status.className = "text-2xl font-bold text-slate-400";
-                elements.aiSummary.innerText = `"ระบบ AI กำลังรอข้อมูลบันทึกจริง เพื่อประมวลผลและวิเคราะห์สุขภาพทางการเงินของคุณอย่างแม่นยำ..."`;
-                return;
-            }
+        onAuthStateChanged(auth, (u) => {
+            user = u;
+            if (user) loadData();
+        });
 
-            const expRatio = masterData.incomeTotal > 0 ? (masterData.expenseTotal / masterData.incomeTotal) : (masterData.expenseTotal > 0 ? 1 : 0);
-            const savingsRate = masterData.incomeTotal > 0 ? ((masterData.incomeTotal - masterData.expenseTotal) / masterData.incomeTotal) : 0;
-            
-            // Financial Status Logic
-            let stText = "";
-            let stColor = "";
-
-            if (masterData.balance < 0) {
-                stText = "ติดลบ (หนี้สิน)";
-                stColor = "text-rose-500";
-            } else if (expRatio > 0.85) {
-                stText = "ความเสี่ยงสูงมาก";
-                stColor = "text-orange-600";
-            } else if (expRatio > 0.5) {
-                stText = "ปกติดี";
-                stColor = "text-blue-500";
-            } else {
-                stText = "สุขภาพการเงินยอดเยี่ยม";
-                stColor = "text-emerald-500";
+        // Load Persistence Data (F5 safe)
+        async function loadData() {
+            if (!user) return;
+            const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'settings', 'profile');
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                masterData = { ...masterData, ...docSnap.data() };
+                updateUI();
             }
-            
-            elements.status.innerText = stText;
-            elements.status.className = "text-2xl font-bold " + stColor;
-
-            // AI Contextual Analysis
-            let insight = "";
-            if (masterData.balance > masterData.goal) {
-                insight = "MetaAi 11.0: มหัศจรรย์มาก! คุณบรรลุเป้าหมายออมเงินแล้ว AI แนะนำให้นำส่วนเกิน 20% ไปออมในสินทรัพย์เสี่ยงต่ำ และอีก 10% ให้เป็นรางวัลตัวเองเพื่อรักษาวินัย";
-            } else if (expRatio > 0.9) {
-                insight = "MetaAi 11.0: ตรวจพบพฤติกรรมใช้จ่ายใกล้เคียงรายรับเกินไป (90%+) AI แนะนำให้เช็ค 'ประวัติล่าสุด' เพื่อมองหาค่าใช้จ่ายฟุ่มเฟือยและปรับลดทันทีภายในเดือนนี้";
-            } else if (savingsRate > 0.4) {
-                insight = "MetaAi 11.0: อัตราการออมของคุณอยู่ที่ " + (savingsRate * 100).toFixed(0) + "% ซึ่งสูงกว่ามาตรฐานสากล หากรักษาวินัยนี้ไว้ คุณจะถึงเป้าหมายในระยะเวลาอันสั้น";
-            } else {
-                insight = "MetaAi 11.0: การเงินของคุณอยู่ในระดับที่บริหารจัดการได้ แนะนำให้พยายามรักษาอัตราส่วนรายจ่ายไม่ให้เกิน 60% ของรายได้เพื่อความมั่นคงระยะยาว";
-            }
-            
-            elements.aiSummary.innerText = `"${insight}"`;
         }
 
-        // --- UI Updates ---
-        function updateDashboard() {
-            // Balance
+        // Save Data to Firestore (Rule 1)
+        async function syncData() {
+            if (!user) return;
+            const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'settings', 'profile');
+            await setDoc(docRef, masterData);
+        }
+
+        function updateUI() {
             elements.balance.innerText = masterData.balance.toLocaleString(undefined, { minimumFractionDigits: 2 }) + ' ฿';
-            
-            // Goal Percentage
             const progress = masterData.goal > 0 ? (masterData.balance / masterData.goal) * 100 : 0;
             const safeProgress = Math.min(Math.max(progress, 0), 100).toFixed(1);
             elements.goalProgress.innerText = safeProgress + '%';
             elements.goalBar.style.width = safeProgress + '%';
             elements.goalText.innerText = `เป้าหมาย: ${masterData.goal.toLocaleString()} ฿`;
-
-            // Chart
+            
             updateChart();
+            runAi();
+        }
 
-            // AI
-            runMetaAiAnalysis();
+        function runAi() {
+            if (masterData.transactions.length === 0) return;
+            const expRatio = masterData.incomeTotal > 0 ? (masterData.expenseTotal / masterData.incomeTotal) : 0;
+            
+            let stText = "ปกติดี";
+            let stColor = "text-blue-500";
+            if (masterData.balance < 0) { stText = "วิกฤต (หนี้สิน)"; stColor = "text-rose-500"; }
+            else if (expRatio > 0.8) { stText = "ความเสี่ยงสูง"; stColor = "text-orange-500"; }
+            else if (expRatio < 0.3 && masterData.incomeTotal > 0) { stText = "ยอดเยี่ยม"; stColor = "text-emerald-500"; }
+            
+            elements.status.innerText = stText;
+            elements.status.className = "text-2xl font-bold " + stColor;
+            
+            let insight = expRatio > 0.7 ? "AI: รายจ่ายคุณสูงถึง " + (expRatio*100).toFixed(0) + "% แนะนำให้ลดค่าใช้จ่ายที่ไม่จำเป็น" : "AI: การเงินของคุณมั่นคงดีมาก รักษาระดับการออมไว้ครับ";
+            elements.aiSummary.innerText = `"${insight}"`;
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('financeChart').getContext('2d');
+            financeChart = new Chart(ctx, {
+                type: 'line',
+                data: { labels: [], datasets: [
+                    { label: 'Income', data: [], borderColor: '#10b981', fill: false, tension: 0.4 },
+                    { label: 'Expense', data: [], borderColor: '#f43f5e', fill: false, tension: 0.4 }
+                ]},
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
         }
 
         function updateChart() {
             if (!financeChart) return;
             const labels = masterData.transactions.map((_, i) => i + 1);
             let inAcc = 0, exAcc = 0;
-            const inData = [], exData = [];
-
-            masterData.transactions.forEach(t => {
-                if (t.type === 'income') inAcc += t.amount;
-                else exAcc += t.amount;
-                inData.push(inAcc);
-                exData.push(exAcc);
-            });
-
+            const inData = masterData.transactions.map(t => { if(t.type === 'income') inAcc += t.amount; return inAcc; });
+            const exData = masterData.transactions.map(t => { if(t.type === 'expense') exAcc += t.amount; return exAcc; });
             financeChart.data.labels = labels;
             financeChart.data.datasets[0].data = inData;
             financeChart.data.datasets[1].data = exData;
-            financeChart.update('none'); // Update without animation for performance
+            financeChart.update();
         }
 
         function renderRecent() {
             if (recentItems.length === 0) {
-                elements.recentList.innerHTML = `
-                    <div class="flex flex-col items-center justify-center py-28 text-slate-300">
-                        <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                            <svg class="w-10 h-10 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        </div>
-                        <p class="text-sm font-medium">ยังไม่มีรายการที่เคลื่อนไหว</p>
-                    </div>`;
+                elements.recentList.innerHTML = '<p class="text-center text-slate-300 py-20">ยังไม่มีความเคลื่อนไหว</p>';
                 return;
             }
-
             elements.recentList.innerHTML = recentItems.map(item => `
-                <div id="item-${item.id}" class="group flex justify-between items-center p-5 bg-white border border-slate-100 rounded-2xl shadow-sm transition-all animate-in slide-in-from-right-5">
-                    <div class="flex gap-4 items-center">
-                        <div class="w-12 h-12 flex items-center justify-center rounded-xl ${item.type === 'income' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}">
-                            ${item.type === 'income' ? 
-                                '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>' : 
-                                '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 17l-4 4m0 0l-4-4m4 4V3"></path></svg>'}
-                        </div>
-                        <div>
-                            <div class="font-bold text-slate-800">${item.desc}</div>
-                            <div class="timer-badge mt-1" id="timer-${item.id}">
-                                <span class="w-1.5 h-1.5 bg-rose-500 rounded-full animate-ping"></span>
-                                <span>60s remaining</span>
-                            </div>
-                        </div>
+                <div class="flex justify-between items-center p-5 bg-white border border-slate-100 rounded-2xl mb-4 animate-in slide-in-from-right-5">
+                    <div>
+                        <div class="font-bold">${item.desc}</div>
+                        <div class="timer-badge" id="timer-${item.id}">60s remaining</div>
                     </div>
-                    <div class="text-right">
-                        <div class="text-xl font-bold ${item.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}">
-                            ${item.type === 'income' ? '+' : '-'}${item.amount.toLocaleString()}
-                        </div>
-                        <div class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">${new Date(item.timestamp).toLocaleTimeString()}</div>
+                    <div class="text-right font-bold ${item.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}">
+                        ${item.type === 'income' ? '+' : '-'}${item.amount.toLocaleString()}
                     </div>
                 </div>
             `).join('');
         }
 
-        // --- Events ---
-        elements.form.addEventListener('submit', (e) => {
+        document.getElementById('financeForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const descInput = document.getElementById('desc');
-            const amountInput = document.getElementById('amount');
-            const typeInput = document.getElementById('type');
-            
-            const desc = descInput.value;
-            const amount = parseFloat(amountInput.value);
-            const type = typeInput.value;
+            const desc = document.getElementById('desc').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const type = document.getElementById('type').value;
             const now = Date.now();
 
-            const newItem = {
-                id: now,
-                desc,
-                amount,
-                type,
-                timestamp: now,
-                expiry: now + config.historyTimeout
-            };
-
-            // บันทึกลง Master Data (ถาวรในเซสชัน)
+            const newItem = { id: now, desc, amount, type, timestamp: now, expiry: now + 60000 };
             masterData.transactions.push(newItem);
-            if (type === 'income') {
-                masterData.balance += amount;
-                masterData.incomeTotal += amount;
-            } else {
-                masterData.balance -= amount;
-                masterData.expenseTotal += amount;
-            }
+            if (type === 'income') { masterData.balance += amount; masterData.incomeTotal += amount; }
+            else { masterData.balance -= amount; masterData.expenseTotal += amount; }
 
-            // บันทึกลง Recent (ชั่วคราวบนหน้าจอ)
             recentItems.unshift(newItem);
-
-            updateDashboard();
+            updateUI();
             renderRecent();
-            elements.form.reset();
-            descInput.focus();
+            syncData();
+            e.target.reset();
         });
 
-        function setNewGoal() {
-            elements.modal.classList.remove('hidden');
-            elements.goalInput.value = masterData.goal;
-            elements.goalInput.focus();
-        }
-
-        function closeGoalModal() {
-            elements.modal.classList.add('hidden');
-        }
-
-        function saveGoal() {
-            const val = parseFloat(elements.goalInput.value);
-            if (val > 0) {
-                masterData.goal = val;
-                updateDashboard();
-                closeGoalModal();
-            }
-        }
-
-        // --- Auto-Clean Background Job ---
         setInterval(() => {
             const now = Date.now();
-            let hasRemoved = false;
-
+            let changed = false;
             recentItems = recentItems.filter(item => {
-                const timeLeft = Math.max(0, Math.round((item.expiry - now) / 1000));
-                const label = document.querySelector(`#timer-${item.id} span:last-child`);
-                
-                if (timeLeft <= 0) {
-                    hasRemoved = true;
-                    return false;
-                }
-                
-                if (label) {
-                    label.innerText = `${timeLeft}s remaining`;
-                }
+                const left = Math.max(0, Math.round((item.expiry - now) / 1000));
+                const el = document.getElementById(`timer-${item.id}`);
+                if (left <= 0) { changed = true; return false; }
+                if (el) el.innerText = `${left}s remaining`;
                 return true;
             });
-
-            if (hasRemoved) renderRecent();
+            if (changed) renderRecent();
         }, 1000);
 
-        // --- Init ---
-        window.onload = () => {
-            initChart();
-            updateDashboard();
+        window.setNewGoal = () => document.getElementById('goalModal').classList.remove('hidden');
+        window.closeGoalModal = () => document.getElementById('goalModal').classList.add('hidden');
+        window.saveGoal = () => {
+            const v = parseFloat(document.getElementById('newGoalInput').value);
+            if (v > 0) { masterData.goal = v; updateUI(); syncData(); closeGoalModal(); }
         };
 
+        window.onload = () => { initAuth(); initChart(); };
     </script>
 </body>
 </html>
