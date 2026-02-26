@@ -3,481 +3,299 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Nexus v72.0.0 MetaAI 10.0</title>
+    <title>Financial MetaAi 10.0 - v72.0.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Kanit:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --apex-cyan: #06b6d4;
-            --apex-purple: #8b5cf6;
-            --apex-bg: #0f172a;
-            --apex-card: #1e293b;
-            --font-main: 18px; /* ขนาดตัวอักษรกลางๆ ตามคำขอ */
-        }
-
         body {
-            font-family: 'Sarabun', sans-serif;
-            background-color: var(--apex-bg);
-            color: #f1f5f9;
-            font-size: var(--font-main);
-            line-height: 1.6;
+            font-family: 'Kanit', sans-serif;
+            font-size: 17px; /* ขนาดกลางๆ ตามที่ขอ */
+            background-color: #f0f2f5;
         }
-
-        .font-kanit { font-family: 'Kanit', sans-serif; }
-
-        .apex-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            transition: all 0.3s ease;
+        .card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
         }
-
-        .gradient-text {
-            background: linear-gradient(135deg, #22d3ee, #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .btn-animate {
+            transition: transform 0.2s;
         }
-
-        .input-field {
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 12px;
-            color: white;
-            font-size: 17px;
+        .btn-animate:active {
+            transform: scale(0.95);
         }
-
-        .btn-apex {
-            background: linear-gradient(135deg, #06b6d4, #7c3aed);
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .btn-apex:active { transform: scale(0.98); }
-
-        .countdown-pill {
-            background: rgba(244, 63, 94, 0.15);
-            color: #fb7185;
+        .timer-badge {
+            font-size: 0.75rem;
+            background: #fee2e2;
+            color: #ef4444;
             padding: 2px 8px;
-            border-radius: 6px;
-            font-size: 14px;
+            border-radius: 999px;
             font-weight: bold;
         }
-
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 999px;
-            font-size: 15px;
-            font-weight: 600;
-        }
-
-        /* สำหรับ Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
     </style>
 </head>
-<body class="p-4 md:p-6 lg:p-10">
+<body class="p-4 md:p-8">
 
-    <div class="max-w-7xl mx-auto">
-        <!-- Top Bar -->
-        <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-            <div>
-                <h1 class="text-4xl font-extrabold font-kanit">Finance <span class="gradient-text">Nexus</span></h1>
-                <p class="text-slate-400 font-medium">v72.0.0 MetaAI 10.0 Apex</p>
+    <div class="max-w-5xl mx-auto space-y-6">
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row justify-between items-center bg-blue-600 text-white p-6 rounded-2xl shadow-lg">
+            <div class="text-center md:text-left">
+                <h1 class="text-2xl font-bold">Financial MetaAi 10.0 <span class="text-sm font-normal opacity-80">v72.0.0</span></h1>
+                <p class="text-blue-100">ระบบวิเคราะห์ข้อมูลอัตโนมัติ</p>
             </div>
-            <div id="statusIndicator" class="flex items-center gap-4">
-                <!-- สถานะทางการเงินอัตโนมัติจะแสดงที่นี่ -->
-                <div class="apex-card px-6 py-4 border-t-2 border-cyan-500">
-                    <p class="text-xs text-slate-400 uppercase font-bold mb-1">ยอดคงเหลือ</p>
-                    <p id="totalBalance" class="text-3xl font-black font-kanit">฿0.00</p>
+            <div class="mt-4 md:mt-0 text-center">
+                <div class="text-sm opacity-80">สถานะทางการเงิน</div>
+                <div id="financialStatus" class="text-xl font-bold italic">- รอข้อมูล -</div>
+            </div>
+        </header>
+
+        <!-- Summary Widgets -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="card border-l-4 border-green-500">
+                <div class="text-gray-500 text-sm">ยอดเงินคงเหลือ</div>
+                <div id="totalBalance" class="text-3xl font-bold text-gray-800">0.00 ฿</div>
+            </div>
+            <div class="card border-l-4 border-blue-500">
+                <div class="text-gray-500 text-sm">เป้าหมาย (Progress %)</div>
+                <div id="goalProgress" class="text-3xl font-bold text-blue-600">0%</div>
+                <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                    <div id="goalBar" class="bg-blue-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
                 </div>
+            </div>
+            <div class="card border-l-4 border-purple-500">
+                <div class="text-gray-500 text-sm">วิเคราะห์โดย MetaAi</div>
+                <div id="aiSummary" class="text-sm mt-1 text-gray-600 italic">"ยังไม่มีการบันทึกข้อมูล AI จึงยังไม่เริ่มวิเคราะห์"</div>
             </div>
         </div>
 
-        <!-- AI Analysis Section -->
-        <section class="apex-card p-6 mb-8">
-            <div class="flex items-center gap-4 mb-6">
-                <div class="w-14 h-14 bg-gradient-to-br from-cyan-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                    </svg>
-                </div>
-                <div>
-                    <h2 class="text-xl font-bold font-kanit">บทวิเคราะห์จาก MetaAI 10.0</h2>
-                    <p id="aiReadiness" class="text-sm text-slate-500 font-medium">ระบบกำลังรอข้อมูลใหม่เพื่อประมวลผล...</p>
-                </div>
-            </div>
-            
-            <div id="aiDashboard" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- AI Insight Text -->
-                <div class="md:col-span-2 bg-slate-900/40 p-5 rounded-xl border border-white/5 min-h-[120px] flex items-center">
-                    <p id="aiInsightText" class="text-slate-300 italic">"ยังไม่มีการบันทึกข้อมูลในขณะนี้ AI จะเริ่มวิเคราะห์เมื่อพบรายการธุรกรรมของคุณตามความเป็นจริง"</p>
-                </div>
-                <!-- Financial Status -->
-                <div class="bg-slate-900/40 p-5 rounded-xl border border-white/5 flex flex-col justify-center items-center text-center">
-                    <p class="text-xs font-bold text-slate-500 uppercase mb-2">สถานะการเงินปัจจุบัน</p>
-                    <div id="financialStatusBadge" class="status-badge bg-slate-800 text-slate-400">Standby</div>
-                    <p id="savingRateText" class="mt-2 text-sm text-slate-500 font-bold">อัตราการออม: --%</p>
-                </div>
-            </div>
-        </section>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Left Panel: Input & Goals -->
-            <div class="lg:col-span-4 space-y-8">
-                <!-- Recording Form -->
-                <div class="apex-card p-6 shadow-xl">
-                    <h3 class="font-kanit font-bold text-xl mb-6">บันทึกธุรกรรมใหม่</h3>
-                    <form id="transactionForm" class="space-y-4">
-                        <input type="text" id="desc" placeholder="รายละเอียดรายการ" class="input-field w-full" required>
-                        <div class="grid grid-cols-2 gap-3">
-                            <select id="type" class="input-field w-full">
-                                <option value="income">รายรับ (+)</option>
-                                <option value="expense" selected>รายจ่าย (-)</option>
-                            </select>
-                            <input type="number" id="amt" placeholder="จำนวนเงิน" class="input-field w-full" required>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Form & Graph Column -->
+            <div class="space-y-6">
+                <!-- Add Transaction Form -->
+                <div class="card">
+                    <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <span>📝 บันทึกธุรกรรม</span>
+                    </h2>
+                    <form id="financeForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-gray-600">รายการ</label>
+                            <input type="text" id="desc" required class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400" placeholder="เช่น เงินเดือน, ค่าอาหาร">
                         </div>
-                        <select id="cat" class="input-field w-full">
-                            <option value="ทั่วไป">📁 ทั่วไป</option>
-                            <option value="อาหาร">🍱 อาหาร/เครื่องดื่ม</option>
-                            <option value="เดินทาง">🚗 การเดินทาง</option>
-                            <option value="บิล/ที่พัก">🏠 บิล/ที่พัก</option>
-                            <option value="ช้อปปิ้ง">🛍️ ช้อปปิ้ง</option>
-                        </select>
-                        <button type="submit" class="btn-apex w-full py-4 rounded-xl text-white text-lg shadow-lg">บันทึกเข้าสู่ระบบ</button>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm text-gray-600">จำนวนเงิน</label>
+                                <input type="number" id="amount" required class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400" placeholder="0.00">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600">ประเภท</label>
+                                <select id="type" class="w-full p-2 border rounded-lg">
+                                    <option value="income">รายรับ (+)</option>
+                                    <option value="expense">รายจ่าย (-)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold btn-animate hover:bg-blue-700">บันทึกข้อมูล</button>
                     </form>
                 </div>
 
-                <!-- Goal Management -->
-                <div class="apex-card p-6 border-l-4 border-indigo-500">
-                    <div class="flex justify-between items-start mb-4">
-                        <h3 class="font-kanit font-bold text-xl">เป้าหมายสะสม</h3>
-                        <button onclick="toggleGoalModal()" class="text-indigo-400 hover:text-white transition">แก้ไข</button>
-                    </div>
-                    <div class="space-y-4">
-                        <div>
-                            <div class="flex justify-between mb-2">
-                                <span id="displayGoalName" class="text-slate-300 font-medium">--</span>
-                                <span id="goalPercentDisplay" class="font-black text-indigo-400">0%</span>
-                            </div>
-                            <div class="h-4 bg-slate-900 rounded-full overflow-hidden border border-white/5 p-0.5">
-                                <div id="goalProgress" class="h-full bg-gradient-to-r from-cyan-400 to-indigo-500 rounded-full transition-all duration-1000" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        <div class="flex justify-between items-center text-sm font-bold">
-                            <span class="text-slate-500">คงเหลือที่ต้องเก็บ</span>
-                            <span id="goalRemainingText" class="text-white">฿0.00</span>
-                        </div>
+                <!-- Analysis Graph -->
+                <div class="card">
+                    <h2 class="text-lg font-semibold mb-4">📊 กราฟวิเคราะห์สัดส่วน</h2>
+                    <div style="height: 250px;">
+                        <canvas id="financeChart"></canvas>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Panel: Graphs & Activity -->
-            <div class="lg:col-span-8 space-y-8">
-                <!-- Automatic Charts -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="apex-card p-6 min-h-[300px]">
-                        <p class="text-xs font-black text-slate-500 uppercase mb-4 tracking-wider">สัดส่วนรายจ่าย (อัตโนมัติ)</p>
-                        <div class="h-60">
-                            <canvas id="donutChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="apex-card p-6 min-h-[300px]">
-                        <p class="text-xs font-black text-slate-500 uppercase mb-4 tracking-wider">แนวโน้มการเงินล่าสุด</p>
-                        <div class="h-60">
-                            <canvas id="lineChart"></canvas>
-                        </div>
-                    </div>
+            <!-- Transaction History Column -->
+            <div class="card flex flex-col h-full">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold">🕒 ประวัติล่าสุด (ลบใน 1 นาที)</h2>
+                    <span class="text-xs text-gray-400">*ข้อมูลหลักจะถูกเก็บไว้เสมอ</span>
                 </div>
-
-                <!-- Transaction Feed with Countdown -->
-                <div class="apex-card p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="font-kanit font-bold text-xl">ธุรกรรมล่าสุด</h3>
-                        <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                            <span class="text-xs font-bold text-slate-500">AUTO-HIDE SYSTEM ACTIVE</span>
-                        </div>
-                    </div>
-                    <div id="txFeed" class="space-y-3">
-                        <!-- รายการจะเพิ่มที่นี่ -->
-                        <div class="text-center py-10 text-slate-600 italic">รอข้อมูลรายการใหม่...</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Goal Edit Modal -->
-    <div id="goalModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md hidden items-center justify-center p-6 z-50">
-        <div class="apex-card p-8 w-full max-w-md">
-            <h3 class="text-2xl font-bold font-kanit mb-4">ตั้งค่าเป้าหมายใหม่</h3>
-            <div class="space-y-4">
-                <input type="text" id="goalTitleInput" placeholder="เป้าหมาย เช่น บ้าน, รถ, เที่ยว" class="input-field w-full">
-                <input type="number" id="goalAmountInput" placeholder="จำนวนเงินที่ต้องการ" class="input-field w-full">
-                <div class="flex gap-3 mt-4">
-                    <button onclick="toggleGoalModal()" class="flex-1 py-3 text-slate-400 font-bold">ยกเลิก</button>
-                    <button onclick="updateGoal()" class="flex-1 btn-apex py-3 rounded-xl text-white">บันทึก</button>
+                <div id="recentList" class="space-y-3 flex-grow overflow-y-auto max-h-[500px]">
+                    <!-- Items appear here -->
+                    <div class="text-center py-10 text-gray-400">ยังไม่มีรายการล่าสุด</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const CORE_KEY = 'finance_nexus_v72_apex';
-        const LEGACY_KEYS = ['finance_nexus_v70_quantum', 'finance_nexus_v68', 'finance_nexus_v66'];
-
-        let state = {
+        // State Management
+        let masterData = {
             transactions: [],
-            goal: { title: 'กองทุนสำรอง', target: 30000 },
-            sessionVisibles: [] // {id, expireTime}
+            balance: 0,
+            goal: 50000, // เป้าหมายตัวอย่าง
+            incomeTotal: 0,
+            expenseTotal: 0
         };
 
-        let donutChart, lineChart;
+        let recentItems = []; // สำหรับนับถอยหลัง 1 นาที
+        let myChart = null;
 
-        function initApp() {
-            // Migration System
-            const saved = localStorage.getItem(CORE_KEY);
-            if (saved) {
-                state = JSON.parse(saved);
-                state.sessionVisibles = []; // Clear old visibility on load
-            } else {
-                // Recover data from older versions
-                let recoveredTx = [];
-                LEGACY_KEYS.forEach(k => {
-                    const old = localStorage.getItem(k);
-                    if (old) {
-                        try {
-                            const parsed = JSON.parse(old);
-                            const list = parsed.transactions || [];
-                            list.forEach(item => {
-                                if (!recoveredTx.find(x => x.id === item.id)) recoveredTx.push(item);
-                            });
-                            if (parsed.goal) state.goal = parsed.goal;
-                        } catch(e) {}
+        const form = document.getElementById('financeForm');
+        const recentList = document.getElementById('recentList');
+        const balanceDisplay = document.getElementById('totalBalance');
+        const goalDisplay = document.getElementById('goalProgress');
+        const goalBar = document.getElementById('goalBar');
+        const statusDisplay = document.getElementById('financialStatus');
+        const aiSummary = document.getElementById('aiSummary');
+
+        // Initialize Chart
+        function initChart() {
+            const ctx = document.getElementById('financeChart').getContext('2d');
+            myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['รายรับ', 'รายจ่าย'],
+                    datasets: [{
+                        data: [0, 0],
+                        backgroundColor: ['#10b981', '#f43f5e'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
                     }
-                });
-                state.transactions = recoveredTx;
-                save();
-            }
-
-            setupCharts();
-            updateUI();
-            setInterval(tick, 1000);
+                }
+            });
         }
 
-        function save() {
-            localStorage.setItem(CORE_KEY, JSON.stringify(state));
-        }
-
-        function updateUI() {
-            const txs = state.transactions;
-            const inc = txs.filter(t => t.type === 'income').reduce((a, b) => a + Number(b.amount), 0);
-            const exp = txs.filter(t => t.type === 'expense').reduce((a, b) => a + Number(b.amount), 0);
-            const balance = inc - exp;
-
-            // Balance Update
-            document.getElementById('totalBalance').innerText = `฿${balance.toLocaleString(undefined, {minimumFractionDigits:2})}`;
-
-            // Goal Update
-            const g = state.goal;
-            const progress = g.target > 0 ? (balance / g.target) * 100 : 0;
-            const clampedProgress = Math.min(100, Math.max(0, progress));
-            
-            document.getElementById('displayGoalName').innerText = g.title;
-            document.getElementById('goalPercentDisplay').innerText = `${clampedProgress.toFixed(1)}%`;
-            document.getElementById('goalProgress').style.width = `${clampedProgress}%`;
-            document.getElementById('goalRemainingText').innerText = `฿${Math.max(0, g.target - balance).toLocaleString()}`;
-
-            // AI Analysis System
-            analyzeWithAI(balance, inc, exp, txs);
-            
-            // Auto Update Charts
-            refreshCharts(txs);
-            
-            // Update Activity Feed
-            renderFeed();
-        }
-
-        function analyzeWithAI(balance, inc, exp, txs) {
-            const aiText = document.getElementById('aiInsightText');
-            const aiReadiness = document.getElementById('aiReadiness');
-            const badge = document.getElementById('financialStatusBadge');
-            const rateText = document.getElementById('savingRateText');
-
-            if (txs.length === 0) {
-                aiReadiness.innerText = "ระบบกำลังรอข้อมูลใหม่เพื่อประมวลผล...";
-                aiText.innerText = "ยังไม่มีการบันทึกข้อมูลในขณะนี้ AI จะเริ่มวิเคราะห์เมื่อพบรายการธุรกรรมของคุณตามความเป็นจริง";
-                badge.className = "status-badge bg-slate-800 text-slate-400";
-                badge.innerText = "Standby";
-                rateText.innerText = "อัตราการออม: --%";
-                return;
-            }
-
-            aiReadiness.innerText = "MetaAI วิเคราะห์สำเร็จตามข้อมูลจริง";
-            const saveRate = inc > 0 ? ((inc - exp) / inc) * 100 : 0;
-            rateText.innerText = `อัตราการออม: ${saveRate.toFixed(1)}%`;
-
-            if (saveRate > 30) {
-                badge.className = "status-badge bg-emerald-500/20 text-emerald-400";
-                badge.innerText = "สุขภาพดีเยี่ยม";
-                aiText.innerText = `จากข้อมูลจริง ${txs.length} รายการ คุณบริหารจัดการเงินได้ดีมาก อัตราการออมที่ ${saveRate.toFixed(0)}% จะช่วยให้คุณบรรลุเป้าหมาย '${state.goal.title}' เร็วกว่าที่คาดไว้`;
-            } else if (saveRate > 0) {
-                badge.className = "status-badge bg-cyan-500/20 text-cyan-400";
-                badge.innerText = "คล่องตัว";
-                aiText.innerText = `สถานะการเงินมีความคล่องตัว แต่ควรระวังรายจ่ายในหมวด '${getTopCat(txs)}' ที่เริ่มมียอดสะสมสูงขึ้นในช่วงนี้`;
-            } else {
-                badge.className = "status-badge bg-rose-500/20 text-rose-400";
-                badge.innerText = "สภาวะตึงตัว";
-                aiText.innerText = `AI ตรวจพบรายจ่ายรวม ฿${exp.toLocaleString()} สูงกว่ารายรับ ระบบแนะนำให้คุณชะลอการจ่ายที่ไม่จำเป็นออกไปก่อนเพื่อให้ยอดคงเหลือกลับมาเป็นบวก`;
-            }
-        }
-
-        function getTopCat(txs) {
-            const map = {};
-            txs.filter(t => t.type === 'expense').forEach(t => map[t.category] = (map[t.category] || 0) + Number(t.amount));
-            return Object.keys(map).reduce((a, b) => map[a] > map[b] ? a : b, 'ทั่วไป');
-        }
-
-        // Transaction Logic
-        document.getElementById('transactionForm').addEventListener('submit', (e) => {
+        // Add Transaction
+        form.addEventListener('submit', (e) => {
             e.preventDefault();
-            const id = Date.now();
-            const newItem = {
-                id,
-                description: document.getElementById('desc').value,
-                amount: document.getElementById('amt').value,
-                type: document.getElementById('type').value,
-                category: document.getElementById('cat').value,
-                timestamp: id
-            };
+            const desc = document.getElementById('desc').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const type = document.getElementById('type').value;
+            const now = Date.now();
 
-            state.transactions.push(newItem);
-            state.sessionVisibles.push({ id, expires: id + 60000 });
-            
-            save();
-            updateUI();
-            e.target.reset();
+            const item = { id: now, desc, amount, type, timestamp: now, expiry: now + 60000 };
+
+            // 1. Save to Master (Never Deleted)
+            masterData.transactions.push(item);
+            if(type === 'income') {
+                masterData.balance += amount;
+                masterData.incomeTotal += amount;
+            } else {
+                masterData.balance -= amount;
+                masterData.expenseTotal += amount;
+            }
+
+            // 2. Add to Recent (Temporary UI)
+            recentItems.unshift(item);
+
+            // 3. Update UI
+            updateDashboard();
+            renderRecent();
+            form.reset();
         });
 
-        function renderFeed() {
-            const feed = document.getElementById('txFeed');
-            const now = Date.now();
+        function updateDashboard() {
+            // Update Balance
+            balanceDisplay.innerText = masterData.balance.toLocaleString() + ' ฿';
             
-            const activeSessionItems = state.transactions.filter(t => {
-                const sv = state.sessionVisibles.find(v => v.id === t.id);
-                return sv && sv.expires > now;
-            }).reverse();
+            // Update Goal %
+            const progress = Math.min((masterData.balance / masterData.goal) * 100, 100).toFixed(1);
+            goalDisplay.innerText = progress + '%';
+            goalBar.style.width = progress + '%';
 
-            if (activeSessionItems.length === 0) {
-                feed.innerHTML = `<div class="text-center py-10 text-slate-600 italic">รายการล่าสุดถูกซ่อนแล้ว (ข้อมูลเดิมยังปลอดภัยในระบบ)</div>`;
+            // Update Chart
+            myChart.data.datasets[0].data = [masterData.incomeTotal, masterData.expenseTotal];
+            myChart.update();
+
+            // AI & Status Analysis
+            analyzeFinancialStatus();
+        }
+
+        function analyzeFinancialStatus() {
+            if (masterData.transactions.length === 0) return;
+
+            // 1. Financial Status Label
+            let status = "";
+            let color = "";
+            const ratio = masterData.expenseTotal / masterData.incomeTotal;
+
+            if (masterData.balance < 0) {
+                status = "เสี่ยงมาก (ติดลบ)";
+                color = "text-red-600";
+            } else if (ratio > 0.8) {
+                status = "ควรระมัดระวัง";
+                color = "text-orange-500";
+            } else {
+                status = "สุขภาพการเงินดี";
+                color = "text-green-600";
+            }
+            statusDisplay.innerText = status;
+            statusDisplay.className = `text-xl font-bold italic ${color}`;
+
+            // 2. AI Detailed Analysis
+            let aiText = "";
+            if (masterData.incomeTotal === 0 && masterData.expenseTotal > 0) {
+                aiText = "MetaAi วิเคราะห์: คุณกำลังใช้เงินเก็บโดยไม่มีรายได้เข้ามา แนะนำให้หาแหล่งรายได้เสริม";
+            } else if (ratio < 0.3) {
+                aiText = "MetaAi วิเคราะห์: ยอดเยี่ยม! คุณออมเงินได้มากกว่า 70% แนะนำให้นำเงินไปลงทุนเพื่อความมั่งคั่ง";
+            } else if (ratio > 0.9) {
+                aiText = "MetaAi วิเคราะห์: รายจ่ายเกือบเท่ารายรับ! ลองสำรวจประวัติล่าสุดว่ารายการใดที่ไม่จำเป็น";
+            } else {
+                aiText = "MetaAi วิเคราะห์: การเงินของคุณอยู่ในระดับมาตรฐาน รักษาดุลยพินิจการใช้จ่ายเช่นนี้ต่อไป";
+            }
+            aiSummary.innerText = `"${aiText}"`;
+        }
+
+        function renderRecent() {
+            if (recentItems.length === 0) {
+                recentList.innerHTML = '<div class="text-center py-10 text-gray-400">ยังไม่มีรายการล่าสุด</div>';
                 return;
             }
 
-            feed.innerHTML = activeSessionItems.map(t => {
-                const sv = state.sessionVisibles.find(v => v.id === t.id);
-                const timeLeft = Math.max(0, Math.ceil((sv.expires - now) / 1000));
-                return `
-                    <div class="flex justify-between items-center p-4 bg-slate-800/50 rounded-xl border border-white/5 animate-pulse-once">
-                        <div class="flex items-center gap-3">
-                            <div class="text-2xl">${getEmoji(t.category)}</div>
-                            <div>
-                                <p class="font-bold text-white">${t.description}</p>
-                                <p class="text-[14px] text-slate-500">${t.category}</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="font-black font-kanit ${t.type === 'income' ? 'text-cyan-400' : 'text-rose-400'}">
-                                ${t.type === 'income' ? '+' : '-'}฿${Number(t.amount).toLocaleString()}
-                            </p>
-                            <span class="countdown-pill">HIDING IN ${timeLeft}S</span>
-                        </div>
+            recentList.innerHTML = recentItems.map(item => `
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-100 shadow-sm animate-fade-in">
+                    <div>
+                        <div class="font-medium text-gray-800">${item.desc}</div>
+                        <div class="text-xs text-gray-500">${new Date(item.timestamp).toLocaleTimeString()}</div>
                     </div>
-                `;
-            }).join('');
+                    <div class="text-right">
+                        <div class="font-bold ${item.type === 'income' ? 'text-green-600' : 'text-red-500'}">
+                            ${item.type === 'income' ? '+' : '-'}${item.amount.toLocaleString()}
+                        </div>
+                        <span class="timer-badge" id="timer-${item.id}">...</span>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        function getEmoji(c) {
-            const m = {'อาหาร':'🍱','เดินทาง':'🚗','บิล/ที่พัก':'🏠','ช้อปปิ้ง':'🛍️','ทั่วไป':'📁'};
-            return m[c] || '💰';
-        }
-
-        // Timer Tick
-        function tick() {
+        // Countdown Timer Logic
+        setInterval(() => {
             const now = Date.now();
             let changed = false;
-            
-            state.sessionVisibles = state.sessionVisibles.filter(v => {
-                if (v.expires <= now) {
+
+            recentItems = recentItems.filter(item => {
+                const timeLeft = Math.round((item.expiry - now) / 1000);
+                const timerEl = document.getElementById(`timer-${item.id}`);
+                
+                if (timeLeft <= 0) {
                     changed = true;
-                    return false;
+                    return false; // Remove from recent
+                }
+                
+                if (timerEl) {
+                    timerEl.innerText = timeLeft + 's';
                 }
                 return true;
             });
 
-            if (changed || state.sessionVisibles.length > 0) renderFeed();
-        }
+            if (changed) renderRecent();
+        }, 1000);
 
-        // Chart Systems
-        function setupCharts() {
-            const donutCtx = document.getElementById('donutChart').getContext('2d');
-            donutChart = new Chart(donutCtx, {
-                type: 'doughnut',
-                data: { labels: [], datasets: [{ data: [], backgroundColor: ['#06b6d4','#8b5cf6','#f43f5e','#fbbf24','#10b981'], borderWidth: 0 }] },
-                options: { maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { family: 'Sarabun', size: 12 } } } } }
-            });
-
-            const lineCtx = document.getElementById('lineChart').getContext('2d');
-            lineChart = new Chart(lineCtx, {
-                type: 'line',
-                data: { labels: [], datasets: [{ data: [], borderColor: '#06b6d4', tension: 0.4, fill: true, backgroundColor: 'rgba(6, 182, 212, 0.1)' }] },
-                options: { maintainAspectRatio: false, scales: { x: { display: false }, y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' } } }, plugins: { legend: { display: false } } }
-            });
-        }
-
-        function refreshCharts(txs) {
-            // Donut Update
-            const exps = txs.filter(t => t.type === 'expense');
-            const cats = {};
-            exps.forEach(e => cats[e.category] = (cats[e.category] || 0) + Number(e.amount));
-            
-            donutChart.data.labels = Object.keys(cats);
-            donutChart.data.datasets[0].data = Object.values(cats);
-            donutChart.update('none');
-
-            // Line Update
-            let balance = 0;
-            const points = txs.slice(-15).map(t => {
-                balance += (t.type === 'income' ? Number(t.amount) : -Number(t.amount));
-                return balance;
-            });
-            lineChart.data.labels = points.map((_, i) => i);
-            lineChart.data.datasets[0].data = points;
-            lineChart.update('none');
-        }
-
-        // Goal Modal
-        function toggleGoalModal() {
-            const m = document.getElementById('goalModal');
-            m.classList.toggle('hidden');
-            m.classList.toggle('flex');
-            document.getElementById('goalTitleInput').value = state.goal.title;
-            document.getElementById('goalAmountInput').value = state.goal.target;
-        }
-
-        function updateGoal() {
-            state.goal.title = document.getElementById('goalTitleInput').value || "ออมเพื่ออนาคต";
-            state.goal.target = Number(document.getElementById('goalAmountInput').value) || 0;
-            save();
-            updateUI();
-            toggleGoalModal();
-        }
-
-        initApp();
+        // On Load
+        window.onload = () => {
+            initChart();
+        };
     </script>
+
 </body>
 </html>
