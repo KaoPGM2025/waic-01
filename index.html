@@ -3,334 +3,391 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial MetaAi 11.0 - v74.0.0</title>
+    <title>Wealth Tracker v80.0.0 - Google AI Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- โหลด Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap');
+        
         body {
             font-family: 'Kanit', sans-serif;
-            font-size: 16px; /* Medium font size as requested */
-            background-color: #f1f5f9;
+            background-color: #f8fafc;
+            font-size: 17px; /* ขนาดกลางๆ ตามคำขอ */
         }
+
         .card {
             background: white;
             border-radius: 1.5rem;
-            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
-            padding: 1.75rem;
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            transition: all 0.3s ease;
         }
+
         .btn-primary {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 1rem;
+            font-weight: 500;
+            transition: transform 0.2s;
         }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+
+        .btn-primary:active {
+            transform: scale(0.95);
         }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Countdown Style */
         .timer-badge {
-            font-size: 0.75rem;
-            background: #fff1f2;
-            color: #e11d48;
-            padding: 4px 12px;
-            border-radius: 999px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            border: 1px solid #ffe4e6;
+            font-family: monospace;
+            background: #fee2e2;
+            color: #ef4444;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
         }
-        .ai-glow {
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-        }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
-<body class="p-4 md:p-10 text-slate-700">
+<body class="p-4 md:p-8">
 
-    <div class="max-w-6xl mx-auto space-y-8">
-        <!-- Dashboard Header -->
-        <header class="flex flex-col md:flex-row justify-between items-center bg-slate-900 text-white p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
-            <div class="absolute -top-10 -left-10 w-40 h-40 bg-blue-600 rounded-full blur-[80px] opacity-20"></div>
-            <div class="z-10 text-center md:text-left">
-                <div class="flex items-center gap-3 justify-center md:justify-start mb-2">
-                    <span class="bg-blue-500 text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-widest">Next-Gen</span>
-                    <h1 class="text-3xl font-bold tracking-tight">Financial MetaAi 11.0</h1>
-                </div>
-                <p class="text-slate-400 font-light">Version 74.0.0 • AI Core with Cloud Persistence</p>
+    <div class="max-w-5xl mx-auto">
+        <!-- Header & App Version -->
+        <header class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">Wealth Tracker</h1>
+                <p class="text-gray-500">เวอร์ชัน 80.0.0-googleAi80.0</p>
             </div>
-            <div class="z-10 mt-8 md:mt-0 bg-white/5 p-6 rounded-2xl border border-white/10 backdrop-blur-md text-center min-w-[240px]">
-                <div class="text-[10px] uppercase tracking-[0.2em] text-blue-400 mb-2 font-bold">สถานะทางการเงินอัตโนมัติ</div>
-                <div id="financialStatus" class="text-2xl font-bold text-slate-300">รอยืนยันข้อมูล</div>
+            <div id="aiStatus" class="status-badge bg-blue-100 text-blue-700 flex items-center gap-2">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                <span>AI กำลังรอข้อมูล...</span>
             </div>
         </header>
 
-        <!-- Top Overview -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="card border-l-[10px] border-blue-500">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">ยอดเงินคงเหลือสุทธิ</p>
-                <h2 id="totalBalance" class="text-4xl font-bold text-slate-800">0.00 ฿</h2>
-            </div>
-
-            <div class="card border-l-[10px] border-emerald-500">
-                <div class="flex justify-between items-center mb-3">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">เป้าหมายความสำเร็จ</p>
-                    <button onclick="setNewGoal()" class="text-xs font-bold text-emerald-600 hover:bg-emerald-50 px-3 py-1 rounded-lg transition-colors">ตั้งค่าเป้าหมาย</button>
-                </div>
-                <div class="flex items-baseline gap-3">
-                    <h2 id="goalProgress" class="text-4xl font-bold text-emerald-600">0%</h2>
-                    <p id="goalText" class="text-xs text-slate-500 font-medium">เป้าหมาย: 50,000 ฿</p>
-                </div>
-                <div class="w-full bg-slate-100 rounded-full h-3.5 mt-4 border border-slate-200 overflow-hidden">
-                    <div id="goalBar" class="bg-gradient-to-r from-emerald-400 to-emerald-600 h-full rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(16,185,129,0.4)]" style="width: 0%"></div>
-                </div>
-            </div>
-
-            <div class="card bg-slate-900 text-white border-none ai-glow">
-                <div class="flex items-center gap-2 mb-4">
-                    <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                    <p class="text-[10px] font-bold text-blue-400 uppercase tracking-[0.2em]">MetaAi Analysis</p>
-                </div>
-                <div id="aiSummary" class="text-[15px] font-light leading-relaxed italic text-slate-400">
-                    "กรุณาบันทึกข้อมูลเพื่อเริ่มการวิเคราะห์โดย AI ตามความเป็นจริง"
-                </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Form & Chart -->
-            <div class="lg:col-span-7 space-y-8">
-                <div class="card">
-                    <h3 class="text-xl font-bold mb-6 flex items-center gap-3 text-slate-800">บันทึกธุรกรรมใหม่</h3>
-                    <form id="financeForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="md:col-span-2">
-                            <label class="text-xs font-bold text-slate-500 mb-2 uppercase">ชื่อรายการ</label>
-                            <input type="text" id="desc" required class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none" placeholder="เช่น เงินเดือน, ค่าอาหาร">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Left Column: Settings & Input -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Savings Goal Setting -->
+                <section class="card p-6">
+                    <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                        <i data-lucide="target" class="text-blue-500"></i> เป้าหมายการออม
+                    </h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">เป้าหมาย (บาท)</label>
+                            <input type="number" id="goalAmount" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" placeholder="ระบุจำนวนเงิน">
                         </div>
                         <div>
-                            <label class="text-xs font-bold text-slate-500 mb-2 uppercase">จำนวนเงิน</label>
-                            <input type="number" id="amount" required step="0.01" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold" placeholder="0.00">
+                            <label class="block text-sm text-gray-600 mb-1">สัดส่วนที่ต้องการออม (%)</label>
+                            <input type="number" id="goalPercent" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" placeholder="เช่น 20">
                         </div>
-                        <div>
-                            <label class="text-xs font-bold text-slate-500 mb-2 uppercase">ประเภท</label>
-                            <select id="type" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer font-medium">
-                                <option value="income">รายรับ (+)</option>
-                                <option value="expense">รายจ่าย (-)</option>
-                            </select>
-                        </div>
-                        <div class="md:col-span-2 mt-2">
-                            <button type="submit" class="w-full btn-primary text-white py-5 rounded-2xl font-bold text-lg">บันทึกและซิงค์ข้อมูล</button>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="card">
-                    <h3 class="text-xl font-bold text-slate-800 mb-8">กราฟวิเคราะห์แนวโน้มสะสม</h3>
-                    <div class="h-[350px]"><canvas id="financeChart"></canvas></div>
-                </div>
-            </div>
-
-            <!-- Recent History -->
-            <div class="lg:col-span-5">
-                <div class="card h-full flex flex-col min-h-[600px] bg-gradient-to-b from-white to-slate-50">
-                    <div class="flex justify-between items-center mb-8">
-                        <div>
-                            <h3 class="text-xl font-bold text-slate-800">ธุรกรรมล่าสุด</h3>
-                            <p class="text-[10px] text-rose-500 font-bold uppercase mt-1">รายการจะหายไปจากหน้าจอใน 1 นาที (ข้อมูลเดิมไม่หาย)</p>
-                        </div>
+                        <button onclick="saveSettings()" class="w-full btn-primary">บันทึกเป้าหมาย</button>
                     </div>
-                    <div id="recentList" class="space-y-4 overflow-y-auto flex-grow">
-                        <p class="text-center text-slate-300 py-20">ยังไม่มีความเคลื่อนไหว</p>
+                </section>
+
+                <!-- Transaction Input -->
+                <section class="card p-6">
+                    <h2 class="text-xl font-semibold mb-4">บันทึกรายรับ-รายจ่าย</h2>
+                    <div class="space-y-4">
+                        <select id="transType" class="w-full p-3 border rounded-xl outline-none">
+                            <option value="income">รายรับ (+)</option>
+                            <option value="expense">รายจ่าย (-)</option>
+                        </select>
+                        <input type="text" id="transDesc" class="w-full p-3 border rounded-xl outline-none" placeholder="คำอธิบาย เช่น เงินเดือน">
+                        <input type="number" id="transAmount" class="w-full p-3 border rounded-xl outline-none" placeholder="จำนวนเงิน">
+                        <button onclick="addTransaction()" class="w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded-xl font-medium transition-colors">
+                            บันทึกข้อมูล
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Middle/Right Column: Analysis & History -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Dashboard Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="card p-5 bg-gradient-to-br from-green-50 to-white border border-green-100">
+                        <p class="text-sm text-green-600">เงินคงเหลือทั้งหมด</p>
+                        <h3 id="balanceDisplay" class="text-2xl font-bold">0.00 ฿</h3>
+                    </div>
+                    <div class="card p-5 bg-gradient-to-br from-blue-50 to-white border border-blue-100">
+                        <p class="text-sm text-blue-600">ความคืบหน้าเป้าหมาย</p>
+                        <h3 id="goalProgressDisplay" class="text-2xl font-bold text-blue-600">0%</h3>
+                    </div>
+                    <div class="card p-5 bg-gradient-to-br from-purple-50 to-white border border-purple-100">
+                        <p class="text-sm text-purple-600">สถานะโดย AI</p>
+                        <h3 id="aiAdviceDisplay" class="text-lg font-medium leading-tight text-purple-800">รอกข้อมูลเบื้องต้น</h3>
                     </div>
                 </div>
+
+                <!-- Analysis Chart -->
+                <section class="card p-6">
+                    <h2 class="text-xl font-semibold mb-4">กราฟวิเคราะห์แนวโน้ม (บันทึกอัตโนมัติ)</h2>
+                    <div class="h-64">
+                        <canvas id="financeChart"></canvas>
+                    </div>
+                </section>
+
+                <!-- Transaction History -->
+                <section class="card p-6">
+                    <h2 class="text-xl font-semibold mb-4 flex justify-between items-center">
+                        ประวัติธุรกรรมล่าสุด
+                        <span class="text-xs font-normal text-gray-400">รายการล่าสุดจะถูกซ่อนจากหน้านี้ใน 1 นาที</span>
+                    </h2>
+                    <div id="historyList" class="space-y-3">
+                        <div class="text-center py-8 text-gray-400">ยังไม่มีข้อมูลการบันทึก</div>
+                    </div>
+                </section>
             </div>
         </div>
     </div>
 
-    <!-- Modal -->
-    <div id="goalModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md hidden flex items-center justify-center z-50 p-4">
-        <div class="bg-white p-10 rounded-[2.5rem] w-full max-w-md shadow-2xl">
-            <h3 class="text-2xl font-bold mb-8 text-slate-800">ตั้งเป้าหมายออมเงิน</h3>
-            <input type="number" id="newGoalInput" class="w-full p-5 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none font-bold text-2xl mb-8" placeholder="0">
-            <div class="flex gap-4">
-                <button onclick="closeGoalModal()" class="flex-1 py-4 font-bold text-slate-400">ยกเลิก</button>
-                <button onclick="saveGoal()" class="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-bold">บันทึก</button>
-            </div>
-        </div>
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 hidden bg-gray-900 text-white px-6 py-3 rounded-2xl shadow-2xl z-50 animate-bounce">
+        บันทึกข้อมูลเรียบร้อยแล้ว!
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, query, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Helper to safely trigger lucide icons
+        const refreshIcons = () => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        };
 
         // Firebase Config
         const firebaseConfig = JSON.parse(__firebase_config);
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'fin-meta-v74';
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'wealth-tracker-80';
 
-        let user = null;
-        let masterData = { transactions: [], balance: 0, goal: 50000, incomeTotal: 0, expenseTotal: 0 };
-        let recentItems = [];
-        let financeChart = null;
+        let currentUser = null;
+        let chartInstance = null;
+        let transactions = [];
+        let userSettings = { goalAmount: 0, goalPercent: 0 };
 
-        const elements = {
-            balance: document.getElementById('totalBalance'),
-            goalProgress: document.getElementById('goalProgress'),
-            goalBar: document.getElementById('goalBar'),
-            goalText: document.getElementById('goalText'),
-            status: document.getElementById('financialStatus'),
-            aiSummary: document.getElementById('aiSummary'),
-            recentList: document.getElementById('recentList')
-        };
-
-        // Auth Logic (Rule 3)
-        async function initAuth() {
+        // 1. Authentication
+        const initAuth = async () => {
             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                 await signInWithCustomToken(auth, __initial_auth_token);
             } else {
                 await signInAnonymously(auth);
             }
-        }
-
-        onAuthStateChanged(auth, (u) => {
-            user = u;
-            if (user) loadData();
-        });
-
-        // Load Persistence Data (F5 safe)
-        async function loadData() {
-            if (!user) return;
-            const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'settings', 'profile');
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                masterData = { ...masterData, ...docSnap.data() };
-                updateUI();
-            }
-        }
-
-        // Save Data to Firestore (Rule 1)
-        async function syncData() {
-            if (!user) return;
-            const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'settings', 'profile');
-            await setDoc(docRef, masterData);
-        }
-
-        function updateUI() {
-            elements.balance.innerText = masterData.balance.toLocaleString(undefined, { minimumFractionDigits: 2 }) + ' ฿';
-            const progress = masterData.goal > 0 ? (masterData.balance / masterData.goal) * 100 : 0;
-            const safeProgress = Math.min(Math.max(progress, 0), 100).toFixed(1);
-            elements.goalProgress.innerText = safeProgress + '%';
-            elements.goalBar.style.width = safeProgress + '%';
-            elements.goalText.innerText = `เป้าหมาย: ${masterData.goal.toLocaleString()} ฿`;
-            
-            updateChart();
-            runAi();
-        }
-
-        function runAi() {
-            if (masterData.transactions.length === 0) return;
-            const expRatio = masterData.incomeTotal > 0 ? (masterData.expenseTotal / masterData.incomeTotal) : 0;
-            
-            let stText = "ปกติดี";
-            let stColor = "text-blue-500";
-            if (masterData.balance < 0) { stText = "วิกฤต (หนี้สิน)"; stColor = "text-rose-500"; }
-            else if (expRatio > 0.8) { stText = "ความเสี่ยงสูง"; stColor = "text-orange-500"; }
-            else if (expRatio < 0.3 && masterData.incomeTotal > 0) { stText = "ยอดเยี่ยม"; stColor = "text-emerald-500"; }
-            
-            elements.status.innerText = stText;
-            elements.status.className = "text-2xl font-bold " + stColor;
-            
-            let insight = expRatio > 0.7 ? "AI: รายจ่ายคุณสูงถึง " + (expRatio*100).toFixed(0) + "% แนะนำให้ลดค่าใช้จ่ายที่ไม่จำเป็น" : "AI: การเงินของคุณมั่นคงดีมาก รักษาระดับการออมไว้ครับ";
-            elements.aiSummary.innerText = `"${insight}"`;
-        }
-
-        function initChart() {
-            const ctx = document.getElementById('financeChart').getContext('2d');
-            financeChart = new Chart(ctx, {
-                type: 'line',
-                data: { labels: [], datasets: [
-                    { label: 'Income', data: [], borderColor: '#10b981', fill: false, tension: 0.4 },
-                    { label: 'Expense', data: [], borderColor: '#f43f5e', fill: false, tension: 0.4 }
-                ]},
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-        }
-
-        function updateChart() {
-            if (!financeChart) return;
-            const labels = masterData.transactions.map((_, i) => i + 1);
-            let inAcc = 0, exAcc = 0;
-            const inData = masterData.transactions.map(t => { if(t.type === 'income') inAcc += t.amount; return inAcc; });
-            const exData = masterData.transactions.map(t => { if(t.type === 'expense') exAcc += t.amount; return exAcc; });
-            financeChart.data.labels = labels;
-            financeChart.data.datasets[0].data = inData;
-            financeChart.data.datasets[1].data = exData;
-            financeChart.update();
-        }
-
-        function renderRecent() {
-            if (recentItems.length === 0) {
-                elements.recentList.innerHTML = '<p class="text-center text-slate-300 py-20">ยังไม่มีความเคลื่อนไหว</p>';
-                return;
-            }
-            elements.recentList.innerHTML = recentItems.map(item => `
-                <div class="flex justify-between items-center p-5 bg-white border border-slate-100 rounded-2xl mb-4 animate-in slide-in-from-right-5">
-                    <div>
-                        <div class="font-bold">${item.desc}</div>
-                        <div class="timer-badge" id="timer-${item.id}">60s remaining</div>
-                    </div>
-                    <div class="text-right font-bold ${item.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}">
-                        ${item.type === 'income' ? '+' : '-'}${item.amount.toLocaleString()}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        document.getElementById('financeForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const desc = document.getElementById('desc').value;
-            const amount = parseFloat(document.getElementById('amount').value);
-            const type = document.getElementById('type').value;
-            const now = Date.now();
-
-            const newItem = { id: now, desc, amount, type, timestamp: now, expiry: now + 60000 };
-            masterData.transactions.push(newItem);
-            if (type === 'income') { masterData.balance += amount; masterData.incomeTotal += amount; }
-            else { masterData.balance -= amount; masterData.expenseTotal += amount; }
-
-            recentItems.unshift(newItem);
-            updateUI();
-            renderRecent();
-            syncData();
-            e.target.reset();
-        });
-
-        setInterval(() => {
-            const now = Date.now();
-            let changed = false;
-            recentItems = recentItems.filter(item => {
-                const left = Math.max(0, Math.round((item.expiry - now) / 1000));
-                const el = document.getElementById(`timer-${item.id}`);
-                if (left <= 0) { changed = true; return false; }
-                if (el) el.innerText = `${left}s remaining`;
-                return true;
-            });
-            if (changed) renderRecent();
-        }, 1000);
-
-        window.setNewGoal = () => document.getElementById('goalModal').classList.remove('hidden');
-        window.closeGoalModal = () => document.getElementById('goalModal').classList.add('hidden');
-        window.saveGoal = () => {
-            const v = parseFloat(document.getElementById('newGoalInput').value);
-            if (v > 0) { masterData.goal = v; updateUI(); syncData(); closeGoalModal(); }
         };
 
-        window.onload = () => { initAuth(); initChart(); };
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                loadData();
+            }
+        });
+
+        // 2. Load Data & Real-time Listeners
+        const loadData = () => {
+            if (!currentUser) return;
+
+            // Listen to settings
+            onSnapshot(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings', 'userPref'), (docSnap) => {
+                if (docSnap.exists()) {
+                    userSettings = docSnap.data();
+                    document.getElementById('goalAmount').value = userSettings.goalAmount || 0;
+                    document.getElementById('goalPercent').value = userSettings.goalPercent || 0;
+                    updateUI();
+                }
+            }, (err) => console.error("Firestore Error Settings:", err));
+
+            // Listen to transactions
+            const q = query(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'transactions'));
+            onSnapshot(q, (snapshot) => {
+                transactions = snapshot.docs.map(d => ({ id: d.id, ...d.data() }))
+                    .sort((a, b) => b.timestamp - a.timestamp);
+                updateUI();
+                updateChart();
+                analyzeAI();
+            }, (err) => console.error("Firestore Error Trans:", err));
+        };
+
+        // 3. UI Update Logic
+        const updateUI = () => {
+            const balance = transactions.reduce((acc, curr) => 
+                curr.type === 'income' ? acc + curr.amount : acc - curr.amount, 0);
+            
+            document.getElementById('balanceDisplay').innerText = `${balance.toLocaleString()} ฿`;
+
+            // Progress Logic
+            if (userSettings.goalAmount > 0) {
+                const progress = (balance / userSettings.goalAmount) * 100;
+                document.getElementById('goalProgressDisplay').innerText = `${Math.max(0, progress).toFixed(1)}%`;
+            }
+
+            // History with Countdown
+            const historyContainer = document.getElementById('historyList');
+            const now = Date.now();
+            
+            const recentItems = transactions.filter(t => (now - t.timestamp) < 60000);
+            
+            if (recentItems.length === 0) {
+                historyContainer.innerHTML = `<div class="text-center py-8 text-gray-400">ยังไม่มีประวัติล่าสุด (จะแสดงเฉพาะที่บันทึกไม่เกิน 1 นาที)</div>`;
+                refreshIcons();
+                return;
+            }
+
+            historyContainer.innerHTML = recentItems.map(t => {
+                const timeLeft = Math.ceil((60000 - (now - t.timestamp)) / 1000);
+                
+                return `
+                    <div class="flex justify-between items-center p-4 bg-gray-50 rounded-xl border border-gray-100">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 rounded-full ${t.type === 'income' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}">
+                                <i data-lucide="${t.type === 'income' ? 'trending-up' : 'trending-down'}" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium">${t.desc}</p>
+                                <p class="text-xs text-gray-400">${new Date(t.timestamp).toLocaleTimeString()}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}">
+                                ${t.type === 'income' ? '+' : '-'}${t.amount.toLocaleString()} ฿
+                            </p>
+                            <span class="timer-badge">หายใน ${timeLeft}s</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            refreshIcons();
+        };
+
+        // 4. Chart Logic
+        const updateChart = () => {
+            const canvas = document.getElementById('financeChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const dataPoints = [...transactions].sort((a, b) => a.timestamp - b.timestamp);
+            let runningBalance = 0;
+            const labels = dataPoints.map(t => new Date(t.timestamp).toLocaleTimeString());
+            const balances = dataPoints.map(t => {
+                runningBalance = t.type === 'income' ? runningBalance + t.amount : runningBalance - t.amount;
+                return runningBalance;
+            });
+
+            if (chartInstance) chartInstance.destroy();
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'กระแสเงินสด (บาท)',
+                        data: balances,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: false } }
+                }
+            });
+        };
+
+        // 5. AI Analysis
+        const analyzeAI = () => {
+            const aiDisplay = document.getElementById('aiAdviceDisplay');
+            const aiBadge = document.getElementById('aiStatus');
+
+            if (transactions.length < 3) {
+                aiDisplay.innerText = "บันทึกข้อมูลเพิ่ม 3 รายการเพื่อให้ AI เริ่มวิเคราะห์";
+                return;
+            }
+
+            aiBadge.innerHTML = `<i data-lucide="brain" class="w-4 h-4"></i><span>AI กำลังวิเคราะห์...</span>`;
+            
+            const income = transactions.filter(t => t.type === 'income').reduce((a, b) => a + b.amount, 0);
+            const expense = transactions.filter(t => t.type === 'expense').reduce((a, b) => a + b.amount, 0);
+            const balanceValue = income - expense;
+            const savingsRate = income > 0 ? (balanceValue / income) * 100 : 0;
+
+            let advice = "";
+            if (savingsRate > userSettings.goalPercent) {
+                advice = "ยอดเยี่ยม! การออมของคุณสูงกว่าเป้าหมาย รักษามาตรฐานนี้ไว้ครับ";
+            } else if (savingsRate > 0) {
+                advice = `พยายามอีกนิด! ปัจจุบันออมได้ ${savingsRate.toFixed(1)}% (เป้าหมาย ${userSettings.goalPercent}%)`;
+            } else {
+                advice = "คำเตือน: รายจ่ายมากกว่ารายรับ ควรลดรายจ่ายที่ไม่จำเป็นทันที";
+            }
+
+            aiDisplay.innerText = advice;
+            refreshIcons();
+        };
+
+        // 6. Action Functions (Exposed to Global)
+        window.addTransaction = async () => {
+            if (!currentUser) return;
+            const type = document.getElementById('transType').value;
+            const desc = document.getElementById('transDesc').value;
+            const amount = parseFloat(document.getElementById('transAmount').value);
+
+            if (!desc || isNaN(amount)) return;
+
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'transactions'), {
+                    type, desc, amount, timestamp: Date.now()
+                });
+                document.getElementById('transDesc').value = '';
+                document.getElementById('transAmount').value = '';
+                showToast();
+            } catch (err) {
+                console.error("Save Error:", err);
+            }
+        };
+
+        window.saveSettings = async () => {
+            if (!currentUser) return;
+            const goalAmount = parseFloat(document.getElementById('goalAmount').value) || 0;
+            const goalPercent = parseFloat(document.getElementById('goalPercent').value) || 0;
+
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings', 'userPref'), {
+                    goalAmount, goalPercent
+                });
+                showToast();
+            } catch (err) {
+                console.error("Settings Save Error:", err);
+            }
+        };
+
+        const showToast = () => {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+        };
+
+        // 7. Auto-refresh for Timer
+        setInterval(updateUI, 1000);
+
+        // Start everything
+        window.addEventListener('load', () => {
+            refreshIcons();
+            initAuth();
+        });
+
     </script>
 </body>
 </html>
