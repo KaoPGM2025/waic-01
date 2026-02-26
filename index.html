@@ -10,174 +10,416 @@
     <style>
         body {
             font-family: 'Kanit', sans-serif;
-            font-size: 17px; /* ขนาดกลางๆ ตามที่ขอ */
-            background-color: #f0f2f5;
+            font-size: 16px; /* ขนาดกลางตามมาตรฐาน อ่านง่าย */
+            background-color: #f8fafc;
         }
         .card {
             background: white;
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 1.25rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
             padding: 1.5rem;
+            border: 1px solid #f1f5f9;
         }
-        .btn-animate {
-            transition: transform 0.2s;
+        .btn-primary {
+            background-color: #2563eb;
+            transition: all 0.2s;
         }
-        .btn-animate:active {
-            transform: scale(0.95);
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-1px);
         }
         .timer-badge {
             font-size: 0.75rem;
             background: #fee2e2;
             color: #ef4444;
-            padding: 2px 8px;
+            padding: 4px 10px;
             border-radius: 999px;
-            font-weight: bold;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
         }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-4 md:p-8 text-slate-700">
 
-    <div class="max-w-5xl mx-auto space-y-6">
-        <!-- Header -->
-        <header class="flex flex-col md:flex-row justify-between items-center bg-blue-600 text-white p-6 rounded-2xl shadow-lg">
-            <div class="text-center md:text-left">
-                <h1 class="text-2xl font-bold">Financial MetaAi 10.0 <span class="text-sm font-normal opacity-80">v72.0.0</span></h1>
-                <p class="text-blue-100">ระบบวิเคราะห์ข้อมูลอัตโนมัติ</p>
+    <div class="max-w-6xl mx-auto space-y-6">
+        <!-- Main Header -->
+        <header class="flex flex-col md:flex-row justify-between items-center bg-slate-900 text-white p-8 rounded-[2rem] shadow-xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-4 opacity-10">
+                <svg width="100" height="100" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
             </div>
-            <div class="mt-4 md:mt-0 text-center">
-                <div class="text-sm opacity-80">สถานะทางการเงิน</div>
-                <div id="financialStatus" class="text-xl font-bold italic">- รอข้อมูล -</div>
+            <div class="z-10 text-center md:text-left">
+                <h1 class="text-3xl font-bold tracking-tight">Financial MetaAi 10.0</h1>
+                <p class="text-slate-400 font-light">Version 72.0.0 • AI-Driven Analytics</p>
+            </div>
+            <div class="z-10 mt-6 md:mt-0 bg-slate-800/50 p-4 rounded-xl border border-slate-700 backdrop-blur-sm text-center min-w-[200px]">
+                <div class="text-xs uppercase tracking-widest text-slate-400 mb-1">Financial Status</div>
+                <div id="financialStatus" class="text-xl font-bold text-blue-400">รอข้อมูลบันทึก</div>
             </div>
         </header>
 
-        <!-- Summary Widgets -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="card border-l-4 border-green-500">
-                <div class="text-gray-500 text-sm">ยอดเงินคงเหลือ</div>
-                <div id="totalBalance" class="text-3xl font-bold text-gray-800">0.00 ฿</div>
-            </div>
-            <div class="card border-l-4 border-blue-500">
-                <div class="text-gray-500 text-sm">เป้าหมาย (Progress %)</div>
-                <div id="goalProgress" class="text-3xl font-bold text-blue-600">0%</div>
-                <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
-                    <div id="goalBar" class="bg-blue-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+        <!-- Top Statistics -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Balance Card -->
+            <div class="card bg-gradient-to-br from-white to-slate-50 border-l-8 border-blue-500">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-slate-500 uppercase">ยอดเงินคงเหลือ</p>
+                        <h2 id="totalBalance" class="text-3xl font-bold mt-1">0.00 ฿</h2>
+                    </div>
+                    <div class="p-2 bg-blue-50 rounded-lg text-blue-500">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
                 </div>
             </div>
-            <div class="card border-l-4 border-purple-500">
-                <div class="text-gray-500 text-sm">วิเคราะห์โดย MetaAi</div>
-                <div id="aiSummary" class="text-sm mt-1 text-gray-600 italic">"ยังไม่มีการบันทึกข้อมูล AI จึงยังไม่เริ่มวิเคราะห์"</div>
+
+            <!-- Goal Card -->
+            <div class="card bg-gradient-to-br from-white to-slate-50 border-l-8 border-emerald-500">
+                <div class="flex justify-between items-center mb-2">
+                    <p class="text-sm font-medium text-slate-500 uppercase">เป้าหมายสะสม</p>
+                    <button onclick="setNewGoal()" class="text-xs text-blue-600 hover:underline">ตั้งเป้าหมาย</button>
+                </div>
+                <div class="flex items-end gap-2">
+                    <h2 id="goalProgress" class="text-3xl font-bold text-emerald-600">0%</h2>
+                    <p id="goalText" class="text-xs text-slate-400 mb-1 pb-1">จากเป้าหมาย 50,000 ฿</p>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-2.5 mt-3 overflow-hidden">
+                    <div id="goalBar" class="bg-emerald-500 h-full rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(16,185,129,0.5)]" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- AI Insight Card -->
+            <div class="card bg-slate-900 text-white border-none relative overflow-hidden">
+                <div class="absolute -right-4 -bottom-4 opacity-10">
+                    <svg width="80" height="80" fill="white" viewBox="0 0 24 24"><path d="M12 2c5.52 0 10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2zm1 10h3l-4-4-4 4h3v4h2v-4z"></path></svg>
+                </div>
+                <p class="text-xs font-bold text-blue-400 uppercase tracking-tighter">MetaAi Intelligence</p>
+                <div id="aiSummary" class="text-sm mt-3 font-light leading-relaxed italic text-slate-300">
+                    "กรุณาบันทึกข้อมูลธุรกรรมเพื่อให้ระบบ AI เริ่มทำการวิเคราะห์แผนการเงินให้คุณตามความเป็นจริง"
+                </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Form & Graph Column -->
-            <div class="space-y-6">
-                <!-- Add Transaction Form -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Left Column: Input & Graph (7 cols) -->
+            <div class="lg:col-span-7 space-y-6">
+                <!-- Form -->
                 <div class="card">
-                    <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
-                        <span>📝 บันทึกธุรกรรม</span>
-                    </h2>
-                    <form id="financeForm" class="space-y-4">
+                    <h3 class="text-lg font-semibold mb-5 flex items-center gap-2">
+                        <span class="p-2 bg-blue-100 text-blue-600 rounded-lg">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        </span>
+                        บันทึกรายการใหม่
+                    </h3>
+                    <form id="financeForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">ชื่อรายการ</label>
+                            <input type="text" id="desc" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="เช่น เงินเดือน, ค่าที่พัก, อาหารกลางวัน">
+                        </div>
                         <div>
-                            <label class="block text-sm text-gray-600">รายการ</label>
-                            <input type="text" id="desc" required class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400" placeholder="เช่น เงินเดือน, ค่าอาหาร">
+                            <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">จำนวนเงิน (บาท)</label>
+                            <input type="number" id="amount" required step="0.01" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="0.00">
                         </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm text-gray-600">จำนวนเงิน</label>
-                                <input type="number" id="amount" required class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400" placeholder="0.00">
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-600">ประเภท</label>
-                                <select id="type" class="w-full p-2 border rounded-lg">
-                                    <option value="income">รายรับ (+)</option>
-                                    <option value="expense">รายจ่าย (-)</option>
-                                </select>
-                            </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">ประเภทธุรกรรม</label>
+                            <select id="type" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all cursor-pointer">
+                                <option value="income">รายรับ (+)</option>
+                                <option value="expense">รายจ่าย (-)</option>
+                            </select>
                         </div>
-                        <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold btn-animate hover:bg-blue-700">บันทึกข้อมูล</button>
+                        <div class="md:col-span-2 pt-2">
+                            <button type="submit" class="w-full btn-primary text-white py-4 rounded-xl font-bold shadow-lg shadow-blue-200">
+                                ยืนยันการบันทึกข้อมูล
+                            </button>
+                        </div>
                     </form>
                 </div>
 
-                <!-- Analysis Graph -->
+                <!-- Chart -->
                 <div class="card">
-                    <h2 class="text-lg font-semibold mb-4">📊 กราฟวิเคราะห์สัดส่วน</h2>
-                    <div style="height: 250px;">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-semibold">กราฟวิเคราะห์พฤติกรรม</h3>
+                        <div class="flex gap-4 text-xs">
+                            <span class="flex items-center gap-1"><span class="w-3 h-3 bg-emerald-500 rounded-full"></span> รายรับ</span>
+                            <span class="flex items-center gap-1"><span class="w-3 h-3 bg-rose-500 rounded-full"></span> รายจ่าย</span>
+                        </div>
+                    </div>
+                    <div class="h-[300px]">
                         <canvas id="financeChart"></canvas>
                     </div>
                 </div>
             </div>
 
-            <!-- Transaction History Column -->
-            <div class="card flex flex-col h-full">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-semibold">🕒 ประวัติล่าสุด (ลบใน 1 นาที)</h2>
-                    <span class="text-xs text-gray-400">*ข้อมูลหลักจะถูกเก็บไว้เสมอ</span>
-                </div>
-                <div id="recentList" class="space-y-3 flex-grow overflow-y-auto max-h-[500px]">
-                    <!-- Items appear here -->
-                    <div class="text-center py-10 text-gray-400">ยังไม่มีรายการล่าสุด</div>
+            <!-- Right Column: Recent History (5 cols) -->
+            <div class="lg:col-span-5">
+                <div class="card h-full flex flex-col min-h-[500px]">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h3 class="text-lg font-semibold">ธุรกรรมล่าสุด</h3>
+                            <p class="text-[10px] text-slate-400 uppercase tracking-widest">Auto-clear UI in 60s</p>
+                        </div>
+                        <span class="p-2 bg-slate-100 rounded-full text-slate-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </span>
+                    </div>
+                    
+                    <div id="recentList" class="space-y-4 overflow-y-auto pr-2 custom-scroll flex-grow">
+                        <div class="flex flex-col items-center justify-center py-20 text-slate-300">
+                            <svg class="w-12 h-12 mb-2 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                            <p class="text-sm italic">ไม่มีรายการที่เพิ่งบันทึก</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 pt-4 border-t border-slate-100">
+                        <div class="flex justify-between items-center text-xs text-slate-400">
+                            <span>* ข้อมูลหลักถูกบันทึกอัตโนมัติ</span>
+                            <span id="dataStatus">Ready</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Modals (Simple Custom) -->
+    <div id="goalModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-2xl w-full max-w-sm shadow-2xl animate-in fade-in zoom-in duration-300">
+            <h3 class="text-xl font-bold mb-4">ตั้งค่าเป้าหมายเงินเก็บ</h3>
+            <input type="number" id="newGoalInput" class="w-full p-4 border rounded-xl mb-6 outline-none focus:ring-2 focus:ring-blue-500" placeholder="ระบุจำนวนเงินเป้าหมาย">
+            <div class="flex gap-3">
+                <button onclick="closeGoalModal()" class="flex-1 py-3 border rounded-xl font-semibold text-slate-500">ยกเลิก</button>
+                <button onclick="saveGoal()" class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold">บันทึก</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // State Management
+        // --- State Configuration ---
+        const config = {
+            appId: typeof __app_id !== 'undefined' ? __app_id : 'fin-meta-72',
+            recentExpiry: 60000 // 1 minute in ms
+        };
+
         let masterData = {
             transactions: [],
             balance: 0,
-            goal: 50000, // เป้าหมายตัวอย่าง
+            goal: 50000,
             incomeTotal: 0,
             expenseTotal: 0
         };
 
-        let recentItems = []; // สำหรับนับถอยหลัง 1 นาที
-        let myChart = null;
+        let recentItems = []; 
+        let financeChart = null;
 
-        const form = document.getElementById('financeForm');
-        const recentList = document.getElementById('recentList');
-        const balanceDisplay = document.getElementById('totalBalance');
-        const goalDisplay = document.getElementById('goalProgress');
-        const goalBar = document.getElementById('goalBar');
-        const statusDisplay = document.getElementById('financialStatus');
-        const aiSummary = document.getElementById('aiSummary');
+        // --- DOM Elements ---
+        const elements = {
+            form: document.getElementById('financeForm'),
+            recentList: document.getElementById('recentList'),
+            balance: document.getElementById('totalBalance'),
+            goalProgress: document.getElementById('goalProgress'),
+            goalBar: document.getElementById('goalBar'),
+            goalText: document.getElementById('goalText'),
+            status: document.getElementById('financialStatus'),
+            aiSummary: document.getElementById('aiSummary'),
+            modal: document.getElementById('goalModal'),
+            goalInput: document.getElementById('newGoalInput'),
+            dataStatus: document.getElementById('dataStatus')
+        };
 
-        // Initialize Chart
+        // --- Initialization ---
         function initChart() {
             const ctx = document.getElementById('financeChart').getContext('2d');
-            myChart = new Chart(ctx, {
-                type: 'doughnut',
+            financeChart = new Chart(ctx, {
+                type: 'line',
                 data: {
-                    labels: ['รายรับ', 'รายจ่าย'],
-                    datasets: [{
-                        data: [0, 0],
-                        backgroundColor: ['#10b981', '#f43f5e'],
-                        borderWidth: 0
-                    }]
+                    labels: [], // Time or index
+                    datasets: [
+                        {
+                            label: 'รายรับสะสม',
+                            data: [],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'รายจ่ายสะสม',
+                            data: [],
+                            borderColor: '#f43f5e',
+                            backgroundColor: 'rgba(244, 63, 94, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ]
                 },
                 options: {
+                    responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: 'bottom' }
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
                     }
                 }
             });
         }
 
-        // Add Transaction
-        form.addEventListener('submit', (e) => {
+        // --- Core Functions ---
+
+        function updateDashboard() {
+            // 1. Balance
+            elements.balance.innerText = masterData.balance.toLocaleString(undefined, { minimumFractionDigits: 2 }) + ' ฿';
+            
+            // 2. Goal Progress
+            const progress = masterData.goal > 0 ? (masterData.balance / masterData.goal) * 100 : 0;
+            const cappedProgress = Math.min(Math.max(progress, 0), 100).toFixed(1);
+            elements.goalProgress.innerText = cappedProgress + '%';
+            elements.goalBar.style.width = cappedProgress + '%';
+            elements.goalText.innerText = `จากเป้าหมาย ${masterData.goal.toLocaleString()} ฿`;
+
+            // 3. Chart Update
+            updateChartData();
+
+            // 4. AI & Status Logic (Only works if data exists)
+            runMetaAiAnalysis();
+        }
+
+        function updateChartData() {
+            if (!financeChart) return;
+            
+            const labels = masterData.transactions.map((_, i) => i + 1);
+            let incAcc = 0;
+            let expAcc = 0;
+            const incData = [];
+            const expData = [];
+
+            masterData.transactions.forEach(t => {
+                if (t.type === 'income') incAcc += t.amount;
+                else expAcc += t.amount;
+                incData.push(incAcc);
+                expData.push(expAcc);
+            });
+
+            financeChart.data.labels = labels;
+            financeChart.data.datasets[0].data = incData;
+            financeChart.data.datasets[1].data = expData;
+            financeChart.update();
+        }
+
+        function runMetaAiAnalysis() {
+            if (masterData.transactions.length === 0) {
+                elements.status.innerText = "รอข้อมูลบันทึก";
+                elements.status.className = "text-xl font-bold text-blue-400";
+                return;
+            }
+
+            const ratio = masterData.incomeTotal > 0 ? (masterData.expenseTotal / masterData.incomeTotal) : (masterData.expenseTotal > 0 ? 2 : 0);
+            
+            // Determine Status
+            let statusText = "";
+            let statusClass = "text-xl font-bold ";
+
+            if (masterData.balance < 0) {
+                statusText = "วิกฤต (หนี้สิน)";
+                statusClass += "text-rose-500";
+            } else if (ratio > 0.8) {
+                statusText = "เสี่ยงสูง";
+                statusClass += "text-orange-500";
+            } else if (ratio > 0.4) {
+                statusText = "มั่นคงระดับปานกลาง";
+                statusClass += "text-blue-500";
+            } else {
+                statusText = "สุขภาพการเงินดีเยี่ยม";
+                statusClass += "text-emerald-500";
+            }
+            
+            elements.status.innerText = statusText;
+            elements.status.className = statusClass;
+
+            // AI Insight
+            let insight = "";
+            if (ratio > 0.9) {
+                insight = "MetaAi: รายจ่ายของคุณสูงถึง " + (ratio * 100).toFixed(0) + "% ของรายได้! AI แนะนำให้หยุดการซื้อสินค้าฟุ่มเฟือยทันที และตรวจสอบประวัติล่าสุดเพื่อตัดรายจ่ายที่ไม่จำเป็น";
+            } else if (masterData.balance > masterData.goal) {
+                insight = "MetaAi: ยินดีด้วย! คุณบรรลุเป้าหมายที่ตั้งไว้แล้ว แนะนำให้เริ่มแบ่งเงินส่วนเกินไปลงทุนในกองทุนหรือสินทรัพย์ที่มีความเสี่ยงต่ำเพื่อเพิ่มมูลค่า";
+            } else if (ratio < 0.3) {
+                insight = "MetaAi: ยอดเยี่ยมมาก พฤติกรรมการเก็บออมของคุณอยู่ในเกณฑ์ดีมาก หากรักษามาตรฐานนี้ได้ คุณจะบรรลุเป้าหมายเร็วกว่ากำหนดถึง 2.5 เท่า";
+            } else {
+                insight = "MetaAi: แผนการเงินอยู่ในเกณฑ์ปกติ มีการบริหารจัดการรายรับรายจ่ายได้สมดุล แต่อย่าลืมสำรองเงินฉุกเฉินให้ครบ 3-6 เท่าของค่าใช้จ่ายรายเดือน";
+            }
+            
+            elements.aiSummary.innerText = `"${insight}"`;
+            elements.dataStatus.innerText = "Analyzed by MetaAi 10.0";
+        }
+
+        function renderRecent() {
+            if (recentItems.length === 0) {
+                elements.recentList.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-20 text-slate-300">
+                        <svg class="w-12 h-12 mb-2 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                        <p class="text-sm italic">ไม่มีรายการที่เพิ่งบันทึก</p>
+                    </div>`;
+                return;
+            }
+
+            elements.recentList.innerHTML = recentItems.map(item => `
+                <div id="item-${item.id}" class="flex justify-between items-center p-4 bg-white border border-slate-100 rounded-xl shadow-sm transition-all animate-in slide-in-from-right-5 duration-300">
+                    <div class="flex gap-3 items-center">
+                        <div class="p-2 rounded-lg ${item.type === 'income' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}">
+                            ${item.type === 'income' ? 
+                                '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path></svg>' : 
+                                '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5-5v12"></path></svg>'}
+                        </div>
+                        <div>
+                            <div class="font-bold text-slate-800">${item.desc}</div>
+                            <div class="timer-badge" id="timer-${item.id}">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span>60s</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-lg font-bold ${item.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}">
+                            ${item.type === 'income' ? '+' : '-'}${item.amount.toLocaleString()}
+                        </div>
+                        <div class="text-[10px] text-slate-400 uppercase tracking-widest">${new Date(item.timestamp).toLocaleTimeString()}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- Event Handlers ---
+
+        elements.form.addEventListener('submit', (e) => {
             e.preventDefault();
             const desc = document.getElementById('desc').value;
             const amount = parseFloat(document.getElementById('amount').value);
             const type = document.getElementById('type').value;
             const now = Date.now();
 
-            const item = { id: now, desc, amount, type, timestamp: now, expiry: now + 60000 };
+            const newItem = {
+                id: now,
+                desc,
+                amount,
+                type,
+                timestamp: now,
+                expiry: now + config.recentExpiry
+            };
 
-            // 1. Save to Master (Never Deleted)
-            masterData.transactions.push(item);
-            if(type === 'income') {
+            // 1. Permanent Storage (Master)
+            masterData.transactions.push(newItem);
+            if (type === 'income') {
                 masterData.balance += amount;
                 masterData.incomeTotal += amount;
             } else {
@@ -185,101 +427,49 @@
                 masterData.expenseTotal += amount;
             }
 
-            // 2. Add to Recent (Temporary UI)
-            recentItems.unshift(item);
+            // 2. Recent List (Temporary UI)
+            recentItems.unshift(newItem);
 
-            // 3. Update UI
+            // 3. UI Sync
             updateDashboard();
             renderRecent();
-            form.reset();
+            elements.form.reset();
+            document.getElementById('desc').focus();
         });
 
-        function updateDashboard() {
-            // Update Balance
-            balanceDisplay.innerText = masterData.balance.toLocaleString() + ' ฿';
-            
-            // Update Goal %
-            const progress = Math.min((masterData.balance / masterData.goal) * 100, 100).toFixed(1);
-            goalDisplay.innerText = progress + '%';
-            goalBar.style.width = progress + '%';
-
-            // Update Chart
-            myChart.data.datasets[0].data = [masterData.incomeTotal, masterData.expenseTotal];
-            myChart.update();
-
-            // AI & Status Analysis
-            analyzeFinancialStatus();
+        // --- Goal Management ---
+        function setNewGoal() {
+            elements.modal.classList.remove('hidden');
+            elements.goalInput.value = masterData.goal;
+            elements.goalInput.focus();
         }
 
-        function analyzeFinancialStatus() {
-            if (masterData.transactions.length === 0) return;
-
-            // 1. Financial Status Label
-            let status = "";
-            let color = "";
-            const ratio = masterData.expenseTotal / masterData.incomeTotal;
-
-            if (masterData.balance < 0) {
-                status = "เสี่ยงมาก (ติดลบ)";
-                color = "text-red-600";
-            } else if (ratio > 0.8) {
-                status = "ควรระมัดระวัง";
-                color = "text-orange-500";
-            } else {
-                status = "สุขภาพการเงินดี";
-                color = "text-green-600";
-            }
-            statusDisplay.innerText = status;
-            statusDisplay.className = `text-xl font-bold italic ${color}`;
-
-            // 2. AI Detailed Analysis
-            let aiText = "";
-            if (masterData.incomeTotal === 0 && masterData.expenseTotal > 0) {
-                aiText = "MetaAi วิเคราะห์: คุณกำลังใช้เงินเก็บโดยไม่มีรายได้เข้ามา แนะนำให้หาแหล่งรายได้เสริม";
-            } else if (ratio < 0.3) {
-                aiText = "MetaAi วิเคราะห์: ยอดเยี่ยม! คุณออมเงินได้มากกว่า 70% แนะนำให้นำเงินไปลงทุนเพื่อความมั่งคั่ง";
-            } else if (ratio > 0.9) {
-                aiText = "MetaAi วิเคราะห์: รายจ่ายเกือบเท่ารายรับ! ลองสำรวจประวัติล่าสุดว่ารายการใดที่ไม่จำเป็น";
-            } else {
-                aiText = "MetaAi วิเคราะห์: การเงินของคุณอยู่ในระดับมาตรฐาน รักษาดุลยพินิจการใช้จ่ายเช่นนี้ต่อไป";
-            }
-            aiSummary.innerText = `"${aiText}"`;
+        function closeGoalModal() {
+            elements.modal.classList.add('hidden');
         }
 
-        function renderRecent() {
-            if (recentItems.length === 0) {
-                recentList.innerHTML = '<div class="text-center py-10 text-gray-400">ยังไม่มีรายการล่าสุด</div>';
-                return;
+        function saveGoal() {
+            const val = parseFloat(elements.goalInput.value);
+            if (val > 0) {
+                masterData.goal = val;
+                updateDashboard();
+                closeGoalModal();
             }
-
-            recentList.innerHTML = recentItems.map(item => `
-                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-100 shadow-sm animate-fade-in">
-                    <div>
-                        <div class="font-medium text-gray-800">${item.desc}</div>
-                        <div class="text-xs text-gray-500">${new Date(item.timestamp).toLocaleTimeString()}</div>
-                    </div>
-                    <div class="text-right">
-                        <div class="font-bold ${item.type === 'income' ? 'text-green-600' : 'text-red-500'}">
-                            ${item.type === 'income' ? '+' : '-'}${item.amount.toLocaleString()}
-                        </div>
-                        <span class="timer-badge" id="timer-${item.id}">...</span>
-                    </div>
-                </div>
-            `).join('');
         }
 
-        // Countdown Timer Logic
+        // --- Background Timers ---
+
         setInterval(() => {
             const now = Date.now();
-            let changed = false;
+            let hasChanges = false;
 
             recentItems = recentItems.filter(item => {
-                const timeLeft = Math.round((item.expiry - now) / 1000);
-                const timerEl = document.getElementById(`timer-${item.id}`);
+                const timeLeft = Math.max(0, Math.round((item.expiry - now) / 1000));
+                const timerEl = document.querySelector(`#timer-${item.id} span`);
                 
                 if (timeLeft <= 0) {
-                    changed = true;
-                    return false; // Remove from recent
+                    hasChanges = true;
+                    return false;
                 }
                 
                 if (timerEl) {
@@ -288,14 +478,15 @@
                 return true;
             });
 
-            if (changed) renderRecent();
+            if (hasChanges) renderRecent();
         }, 1000);
 
-        // On Load
+        // --- Startup ---
         window.onload = () => {
             initChart();
+            updateDashboard();
         };
-    </script>
 
+    </script>
 </body>
 </html>
